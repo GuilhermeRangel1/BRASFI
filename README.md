@@ -13,27 +13,25 @@ Nossa missão é criar um ecossistema financeiro mais responsável, ajudando nos
 - **Responsabilidade Social**: Investimos em empresas e projetos que têm um impacto positivo no meio ambiente.
 - **Transparência e Ética**: Garantimos que nossos processos sejam claros e acessíveis a todos os envolvidos.
 
+## ⚙️ Teconologias Usadas
+
+![Java](https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=java&logoColor=white)
+[![Trello](https://img.shields.io/badge/Trello-0052CC?style=for-the-badge&logo=trello&logoColor=white)](https://trello.com/b/SEU_BOARD_ID)
+
 ## 🙋‍♂️ Criado por:
 
 - [Arthur Xavier](https://github.com/arthurxavi)
 - [Breno Araujo](https://github.com/Breno12334)
 - [Felipe Andrade](https://github.com/felipeandrader)
-- [João Robalinho](https://github.com/JRobalinho)
 - [Guilherme Vinicius](https://github.com/GuilhermeRangel1)
+- [João Robalinho](https://github.com/JRobalinho)
 - [Pedro Gusmão](https://github.com/pedroguswander)
 
+## 🔧 Como Contribuir
 
-## ⚙️ Teconologias Usadas
+Você pode ajudar o nosso projeto de várias formas:
 
-![Java](https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=java&logoColor=white)
-
-
-## 🔧 Como contribuir
-
-Se você quer fazer parte dessa transformação financeira, você pode contribuir para o nosso projeto de diversas formas:
-
-1. **Relatando Issues**: Caso encontre algum problema ou tenha sugestões, sinta-se à vontade para abrir uma issue.
-2. **Contribuindo com o Código**: Se você tem conhecimento técnico, pode ajudar a melhorar a implementação de soluções financeiras sustentáveis.
-3. **Apoio em Divulgações**: Ajudar a expandir nosso alcance e conscientizar mais pessoas sobre finanças sustentáveis.
-
+- **Relatando Problemas**: Se encontrar algum erro ou tiver sugestões, abra uma issue.
+- **Contribuindo com Código**: Se tiver conhecimento técnico, ajude a melhorar as soluções financeiras.
+- **Divulgando**: Ajude a aumentar o alcance e a conscientizar mais pessoas sobre finanças sustentáveis.
 
