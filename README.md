@@ -1,7 +1,9 @@
 
-# Brasfi
+# Projeto para a Brasfi
 
-Brasfi é uma aliança 
+Nosso cliente, A BRASFI, (Brasil Sustentável em Finanças e Investimentos) é uma aliança de pesquisadores fundada em abril de 2020. Sua missão é construir e compartilhar conhecimento sobre finanças e investimentos sustentáveis, promovendo a conexão entre pessoas e organizações para um Brasil mais próspero, resiliente e responsável.
+
+Com uma abordagem multidisciplinar, a BRASFI reúne professores, pesquisadores e alunos de graduação, mestrado e doutorado, além de especialistas do mercado, combinando experiências acadêmicas e práticas para impulsionar o desenvolvimento sustentável no setor financeiro.
 
 ## 🌱 Objetivos
 
