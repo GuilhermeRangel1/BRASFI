@@ -1,5 +1,5 @@
 
-# Projeto para a Brasfi
+# ☀️ Projeto para a Brasfi
 
 Nosso cliente, A BRASFI, (Brasil Sustentável em Finanças e Investimentos) é uma aliança de pesquisadores fundada em abril de 2020. Sua missão é construir e compartilhar conhecimento sobre finanças e investimentos sustentáveis, promovendo a conexão entre pessoas e organizações para um Brasil mais próspero, resiliente e responsável.
 
@@ -13,18 +13,19 @@ Nossa missão é criar um ecossistema financeiro mais responsável, ajudando nos
 - **Responsabilidade Social**: Investimos em empresas e projetos que têm um impacto positivo no meio ambiente.
 - **Transparência e Ética**: Garantimos que nossos processos sejam claros e acessíveis a todos os envolvidos.
 
-
 ## 🙋‍♂️ Criado por:
 
-- [Pedro Gusmão](https://github.com/pedroguswander)
+- [Arthur Xavier](https://github.com/arthurxavi)
+- [Breno Araujo](https://github.com/Breno12334)
+- [Felipe Andrade](https://github.com/felipeandrader)
+- [João Robalinho](https://github.com/JRobalinho)
 - [Guilherme Vinicius](https://github.com/GuilhermeRangel1)
-
+- [Pedro Gusmão](https://github.com/pedroguswander)
 
 
 ## ⚙️ Teconologias Usadas
 
 ![Java](https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=java&logoColor=white)
-
 
 
 ## 🔧 Como contribuir
