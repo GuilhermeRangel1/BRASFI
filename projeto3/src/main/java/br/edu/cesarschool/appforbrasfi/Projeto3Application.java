@@ -1,4 +1,4 @@
-package com.projeto3.projeto3;
+package br.edu.cesarschool.appforbrasfi;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

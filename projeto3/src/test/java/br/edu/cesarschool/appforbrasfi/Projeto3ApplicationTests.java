@@ -1,4 +1,4 @@
-package com.projeto3.projeto3;
+package br.edu.cesarschool.appforbrasfi;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
