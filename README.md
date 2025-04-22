@@ -21,7 +21,6 @@ Nossa missão é criar um ecossistema financeiro mais responsável, ajudando nos
 ## 🙋‍♂️ Criado por:
 
 - [Arthur Xavier](https://github.com/arthurxavi)
-- [Breno Araujo](https://github.com/Breno12334)
 - [Felipe Andrade](https://github.com/felipeandrader)
 - [Guilherme Vinicius](https://github.com/GuilhermeRangel1)
 - [João Robalinho](https://github.com/JRobalinho)
