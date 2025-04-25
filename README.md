@@ -7,6 +7,7 @@ Com uma abordagem multidisciplinar, a BRASFI reúne professores, pesquisadores e
 
 ## UML - SR1
 
+- [Diagrama de Classes UML - SR1](https://lucid.app/lucidchart/f6cb28ee-c956-4cb7-9649-154ae0e29656/edit?viewport_loc=-7468%2C-9705%2C4377%2C2210%2C0_0&invitationId=inv_acaf2bc2-96c4-4108-922d-b1287a485501)
 
 ## 🌱 Objetivos
 
