@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="/webjars/bootstrap/5.3.3/css/bootstrap.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Projeto 3</title>
+    <meta name="author" content="Time de CC Projeto 3"/>
+</head>
+<body>
+
+<h1>PAGINA DE LOGIN</h1>
+
+<form method="post" action="EntrarNaPlataforma" th:object="${usuario}">
+
+    <div class="row">
+        <div class="col-md-5 form-group offset-md-4" >
+            <label>Nome:</label>
+            <input type="text" name="nome" placeholder="Digite seu nome" th:field="*{nome}">
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-5 form-group offset-md-4" >
+            <label>Senha:</label>
+            <input type="password" name="senha" placeholder="Digite sua senha" th:field="*{senha}">
+        </div>
+    </div>
+
+    <div class="container">
+        <button type="submit" class="btn btn-success offset-md-4"
+                style="width: fit-content; margin-top: 10px">
+            ENTRAR
+        </button>
+
+        <a th:href="@{'/cadastro'}">Faça seu cadastro</a>
+        &nbsp;&nbsp;&nbsp;&nbsp;
+    </div>
+
+</form>
+
+<script src="/webjars/jquery/3.7.1/jquery.min.js"></script>
+<script src="/webjars/bootstrap/5.3.3/js/bootstrap.min.js"></script>
+</body>
+</html>
