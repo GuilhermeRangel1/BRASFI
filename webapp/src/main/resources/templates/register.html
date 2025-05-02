@@ -1,0 +1,109 @@
+<!DOCTYPE html> 
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro - BRASFI</title>
+    <link rel="stylesheet" href="css/loginRegister.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+</head>
+<body>
+    <header>
+        <div class="top-bar">
+			<div class="social-icons">
+				<a href="https://open.spotify.com/show/5rtlL3dVTPE5B3zzW9Ltu5?si=96a006de0832402a" target="_blank">
+				  <i class="fab fa-spotify"></i>
+				</a>
+			  <a href="https://www.instagram.com/brasfi_/" target="_blank">
+			    <i class="fab fa-instagram"></i>
+			  </a>
+			  <a href="https://www.linkedin.com/company/brasfi/?originalSubdomain=br" target="_blank">
+			    <i class="fab fa-linkedin-in"></i>
+			  </a>
+			  <a href="https://www.youtube.com/channel/UCCN4DtzVfGLxUrIaP8p7tgA/sub_confirmation%3D1" target="_blank">
+			    <i class="fab fa-youtube"></i>
+			  </a>
+			  <i class="fas fa-search"></i>
+			</div>
+            <div class="top-right">
+                <div class="language-switch">
+                    <button class="active">PT</button>
+                    <button>EN</button>
+                </div>
+            </div>
+        </div>
+
+        <nav class="main-nav">
+            <div class="logo">
+				<p><a href="/"><img src="img/brasfi.jpg" alt="BRASFI" /></a></p>
+            </div>
+            <ul class="menu">
+                <li class="dropdown">
+                    <a href="#">Eventos</a>
+                    <ul class="submenu">
+                        <li><a href="#">Festa na casa</a></li>
+                        <li><a href="#">do seu Zé</a></li>
+                    </ul>
+                </li>
+                <li><a href="#">Colabore</a></li>
+                <li class="dropdown">
+                    <a href="#">Repositórios</a>
+                    <ul class="submenu">
+                        <li><a href="#">Ainda</a></li>
+                        <li><a href="#">Não sei</a></li>
+                    </ul>
+                </li>
+                <li class="dropdown">
+                    <a href="#">Institucional</a>
+                    <ul class="submenu">
+                        <li><a href="#">Sobre</a></li>
+                        <li><a href="#">Equipe</a></li>
+                    </ul>
+                </li>
+                <li class="dropdown">
+                    <a href="#">Transparência</a>
+                    <ul class="submenu">
+                        <li><a href="#">Relatórios</a></li>
+                        <li><a href="#">Prestação de Contas</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="form-container">
+		<div class="login-container">
+		    <h2>Cadastro</h2>
+            <form action="/register" method="POST">
+                <div class="input-group">
+                    <label for="nome">Nome</label>
+                    <input type="text" id="nome" name="nome" required placeholder="Digite seu nome completo">
+                </div>
+                <div class="input-group">
+                    <label for="email">E-mail</label>
+                    <input type="email" id="email" name="email" required placeholder="Digite seu e-mail">
+                </div>
+                <div class="input-group">
+                    <label for="cpf">CPF</label>
+                    <input type="text" id="cpf" name="cpf" required placeholder="Digite seu CPF">
+                </div>
+                <div class="input-group">
+                    <label for="idade">Idade</label>
+                    <input type="text" id="idade" name="idade" required placeholder="Digite sua idade">
+                </div>
+                <div class="input-group">
+                    <label for="senha">Senha</label>
+                    <input type="password" id="senha" name="senha" required placeholder="Crie uma senha">
+                </div>
+                <button type="submit">Cadastrar</button>
+            </form>
+            <div class="links">
+                <p>Já tem uma conta? <a href="/login">Entre aqui</a></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="script.js"></script>
+</body>
+</html>
