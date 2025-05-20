@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Comunidade Hub</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+<h1>Lista de Comunidades</h1>
+<ul id="comunidadesList"></ul>
+
+<script>
+    $(document).ready(function() {
+        $.get("/api/comunidades", function(data) {
+            const list = $("#comunidadesList");
+            data.forEach(function(comunidade) {
+                list.append(`<li>${comunidade.nome}</li>`);
+            });
+        });
+    });
+</script>
+</body>
+</html>

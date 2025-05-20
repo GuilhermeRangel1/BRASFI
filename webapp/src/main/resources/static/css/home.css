@@ -1,0 +1,151 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500&display=swap');
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f5f5f5;
+}
+
+
+.top-bar {
+  background-color: #000;
+  color: #fff;
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 30px;
+  align-items: center;
+}
+
+.social-icons i {
+  margin-right: 15px;
+  color: #fff;
+  cursor: pointer;
+  transition: color 0.3s;
+}
+
+.social-icons i:hover {
+  color: #ffcc00;
+}
+
+.top-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.language-switch button {
+  background: transparent;
+  border: 1px solid #fff;
+  color: #fff;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+
+.language-switch .active {
+  background-color: #ffcc00;
+  color: #000;
+}
+
+.login-button {
+  background-color: #444;
+  color: #fff;
+  padding: 6px 14px;
+  border: none;
+  border-radius: 4px;
+  text-decoration: none;
+  font-weight: bold;
+  transition: background 0.3s;
+}
+
+.login-button:hover {
+  background-color: #666;
+}
+
+.main-nav {
+  background-color: #1a1a1a;
+  display: flex;
+  align-items: center;
+  padding: 10px 30px;
+}
+
+.logo img {
+  height: 60px;
+  border-radius: 6px;
+}
+.menu {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  margin: 0;
+  padding: 0 20px;
+  width: 100%;
+  list-style-type: none;
+  font-family: 'Playfair Display', serif; 
+}
+
+.menu li {
+  position: relative;
+}
+
+.menu a {
+  color: #fff;
+  text-decoration: none;
+  padding: 10px 15px;
+  display: block;
+  font-weight: 500;
+  font-size: 20px;
+  transition: color 0.3s;
+}
+
+.menu a:hover {
+  color: #ffcc00;
+}
+
+.submenu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background-color: #2c2c2c;
+  display: none;
+  padding: 10px 0;
+  min-width: 180px;
+  border-radius: 4px;
+}
+
+.submenu li {
+  list-style: none;
+}
+
+.submenu a {
+  padding: 10px 20px;
+  color: #fff;
+}
+
+.submenu a:hover {
+  background-color: #444;
+  color: #ffcc00;
+}
+
+.dropdown:hover .submenu {
+  display: block;
+}
+.frieren {
+  padding: 50px;
+  width: 500px;
+  height: auto;
+  margin: 0 auto; 
+  text-align: center;
+}
+
+.frieren img {
+  width: 100%;
+  height: auto;
+  border-radius: 10px;
+  display: inline-block;
+}
+
+

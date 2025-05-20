@@ -1,0 +1,46 @@
+<!DOCTYPE html> 
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro - BRASFI</title>
+    <link rel="stylesheet" href="css/loginRegister.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+</head>
+<body>
+    <div class="form-container">
+		<div class="login-container">
+		    <h2>Cadastro</h2>
+            <form action="/register" method="POST">
+                <div class="input-group">
+                    <label for="nome">Nome</label>
+                    <input type="text" id="nome" name="nome" required placeholder="Digite seu nome completo">
+                </div>
+                <div class="input-group">
+                    <label for="email">E-mail</label>
+                    <input type="email" id="email" name="email" required placeholder="Digite seu e-mail">
+                </div>
+                <div class="input-group">
+                    <label for="cpf">CPF</label>
+                    <input type="text" id="cpf" name="cpf" required placeholder="Digite seu CPF">
+                </div>
+                <div class="input-group">
+                    <label for="idade">Idade</label>
+                    <input type="text" id="idade" name="idade" required placeholder="Digite sua idade">
+                </div>
+                <div class="input-group">
+                    <label for="senha">Senha</label>
+                    <input type="password" id="senha" name="senha" required placeholder="Crie uma senha">
+                </div>
+                <button type="submit">Cadastrar</button>
+            </form>
+            <div class="links">
+                <p>Já tem uma conta? <a href="/login">Entre aqui</a></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="script.js"></script>
+</body>
+</html>
