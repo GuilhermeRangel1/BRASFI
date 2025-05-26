@@ -1,14 +1,16 @@
 package com.brasfi.webapp.entities;
 
 import jakarta.persistence.*;
-
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.Objects;
 
 @Entity
 public class Evento implements Serializable {
 
-    @Id
+	private static final long serialVersionUID = 1L;
+	
+	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -16,23 +18,32 @@ public class Evento implements Serializable {
     private String titulo;
 
     @Column(nullable = false)
-    private String dataEvento;
+    private LocalDate dataEvento;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 1000)
     private String convidados;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 1500)
     private String conteudo;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private String categoria;
-    // Getters e Setters
-    public Long getId() {
-        return id;
+    private EventoCategoria categoria;
+
+    public Evento() {
     }
 
-    public void setId(Long id) {
+    public Evento(Long id, String titulo, LocalDate dataEvento, String convidados, String conteudo, EventoCategoria categoria) {
         this.id = id;
+        this.titulo = titulo;
+        this.dataEvento = dataEvento;
+        this.convidados = convidados;
+        this.conteudo = conteudo;
+        this.categoria = categoria;
+    }
+
+    public Long getId() {
+        return id;
     }
 
     public String getTitulo() {
@@ -43,11 +54,11 @@ public class Evento implements Serializable {
         this.titulo = titulo;
     }
 
-    public String getDataEvento() {
+    public LocalDate getDataEvento() {
         return dataEvento;
     }
 
-    public void setDataEvento(String dataEvento) {
+    public void setDataEvento(LocalDate dataEvento) {
         this.dataEvento = dataEvento;
     }
 
@@ -67,19 +78,18 @@ public class Evento implements Serializable {
         this.conteudo = conteudo;
     }
 
-    public String getCategoria() {
+    public EventoCategoria getCategoria() {
         return categoria;
     }
 
-    public void setCategoria(String categoria) {
+    public void setCategoria(EventoCategoria categoria) {
         this.categoria = categoria;
     }
 
-    // equals e hashCode
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof Evento)) return false;
         Evento evento = (Evento) o;
         return Objects.equals(id, evento.id);
     }
@@ -89,16 +99,15 @@ public class Evento implements Serializable {
         return Objects.hash(id);
     }
 
-    // toString
     @Override
     public String toString() {
         return "Evento{" +
                 "id=" + id +
                 ", titulo='" + titulo + '\'' +
-                ", dataEvento='" + dataEvento + '\'' +
-                ", convidados='" + convidados + '\'' +
+                ", dataEvento=" + dataEvento +
+                ", convidados=" + convidados +
                 ", conteudo='" + conteudo + '\'' +
-                ", categoria='" + categoria + '\'' +
+                ", categoria=" + categoria +
                 '}';
     }
 }

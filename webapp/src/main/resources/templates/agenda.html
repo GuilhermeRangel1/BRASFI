@@ -27,19 +27,21 @@
             <ul class="menu" id="main-menu">
                 <li><a href="/">Home</a></li>
                 <li><a href="#">Sobre a BRASFI</a></li>
-                <li><a href="/agenda">Agenda de Eventos</a></li>
+                <li><a href="#">Agenda de Eventos</a></li>
                 <li><a href="#">Eventos Gravados</a></li>
                 <li><a href="#">Comunidade</a></li>
             </ul>
         </div>
     </div>
   </header>
-
-  <footer class="bottom-logo-section">
-      <div class="bottom-brasfi-logo">BRASFI</div>
-      <img src="/img/brasfi.jpg" alt="Logo BRASFI" class="bottom-brasfi-icon">
-  </footer>
-
-  <script src="js/inicio.js"></script>
+<h1>Eventos Agendados</h1>
+<ul th:each="evento : ${eventos}">
+  <li th:text=" 'Nome: ' + ${evento.titulo}"></li>
+  <li th:text=" 'Data: ' + ${evento.dataEvento}"></li>
+  <li th:text=" 'Convidados: ' + ${evento.convidados}"></li>
+  <li th:text=" 'Categoria: ' + ${evento.categoria}"></li>
+  <br>
+</ul>
+<script src="js/inicio.js"></script>
 </body>
 </html>

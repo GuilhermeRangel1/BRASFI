@@ -1,34 +1,50 @@
 package com.brasfi.webapp.controller;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import com.brasfi.webapp.entities.Evento;
-import com.brasfi.webapp.repositories.EventoRepository;
+import com.brasfi.webapp.entities.EventoCategoria;
+import com.brasfi.webapp.service.EventoService;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.servlet.ModelAndView;
-
-import java.util.List;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 public class EventoController {
 
-    private static final Logger logger = LoggerFactory.getLogger(EventoController.class);
-    private final EventoRepository eventoRepository;
-
-    // Injeção de dependência via construtor (recomendado)
-    public EventoController(EventoRepository eventoRepository) {
-        this.eventoRepository = eventoRepository;
+    private final EventoService eventoService;
+    public EventoController(EventoService eventoService) {
+        this.eventoService = eventoService;
     }
 
-    @GetMapping("/eventos-agendados")
-    public ModelAndView eventosAgendados() {
-        List<Evento> eventos = eventoRepository.findAll();
-        logger.info("Número de eventos encontrados: {}", eventos.size());
-        eventos.forEach(evento -> logger.info("Evento: {}", evento.toString()));
-
-        ModelAndView mv = new ModelAndView("eventos_agendados");
-        mv.addObject("eventos", eventos); // Chamada correta no objeto instanciado
-        return mv; // Retorna o ModelAndView configurado
+    @GetMapping("/agenda")
+    public String eventosAgendados(Model model) {
+        model.addAttribute("eventos", eventoService.listarEventos());
+        return "agenda";
     }
+
+    @GetMapping("/evento/novo")
+    public String novoEventoForm(Model model) {
+        model.addAttribute("evento", new Evento());
+        model.addAttribute("categorias", EventoCategoria.values());
+        return "novoEvento";
+    }
+
+    @PostMapping("/evento/salvar")
+    public String salvarEvento(@ModelAttribute Evento evento, Model model) {
+        try {
+            eventoService.salvarEvento(evento);
+            return "redirect:/eventos-agendados";
+        } catch (IllegalArgumentException e) {
+            model.addAttribute("error", e.getMessage());
+            model.addAttribute("categorias", EventoCategoria.values());
+            return "novoEvento";
+        }
+    }
+    @GetMapping("/eventos-agendados/filtro")
+    public String filtrarPorCategoria(@RequestParam("categoria") EventoCategoria categoria, Model model) {
+        model.addAttribute("eventos", eventoService.findByCategoria(categoria));
+        model.addAttribute("categorias", EventoCategoria.values());
+        model.addAttribute("categoriaSelecionada", categoria);
+        return "eventos_agendados";
+    }
+
 }

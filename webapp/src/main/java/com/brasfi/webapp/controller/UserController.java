@@ -1,5 +1,5 @@
 package com.brasfi.webapp.controller;
-
+import jakarta.servlet.http.HttpSession; 
 import com.brasfi.webapp.entities.User;
 import com.brasfi.webapp.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,14 +65,15 @@ public class UserController {
     public String processLogin(
         @RequestParam("email") String email,
         @RequestParam("password") String password,
-        Model model
+        Model model,
+        HttpSession session
     ) {
         User user = userRepository.findByEmail(email);
         if (user == null || !user.getPassword().equals(password)) {
             model.addAttribute("error", "Email ou senha inválidos.");
             return "login";
         }
-
+        session.setAttribute("user", user);
         return "redirect:/"; 
     }
 }
