@@ -25,10 +25,17 @@
 <body>
 
     <h1>Comunidades em que você faz parte</h1>
-    <ul id="comunidadesList" th:each="comunidade : ${comunidades}">
-        <li><a th:href="@{'/comunidades/' + ${comunidade.getId()}}" th:text="${comunidade.nome}"></a></li>
-    </ul>
-
+        <form id="mudar-de-comunidade-form" action="/mudar-de-comunidade" method="post">
+            <div id="comunidadesList" th:each="comunidade : ${comunidades}">
+                <!--<li><a th:href="@{'/comunidades/' + ${comunidade.getId()}}" th:text="${comunidade.nome}"></a></li>-->
+                    <input type="radio"
+                           id="comunidade-atual"
+                           name="comunidade-atual"
+                           th:value="${comunidade.getId()}"
+                           onchange="document.getElementById('mudar-de-comunidade-form').submit()">
+                    <label for="comunidade-atual" th:text="${comunidade.nome}"></label>
+            </div>
+        </form>
     <button onclick="OpenForm()" id="open-criar-comunidade">Criar nova comunidade</button>
 
     <div id="criar-comunidade" style="display: none">

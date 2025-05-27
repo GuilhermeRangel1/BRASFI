@@ -4,6 +4,7 @@ import com.brasfi.webapp.entities.Comunidade;
 import com.brasfi.webapp.entities.NivelDePermissaoComunidade;
 import com.brasfi.webapp.repositories.ComunidadeRepository;
 import com.brasfi.webapp.service.ComunidadeService;
+import org.springframework.boot.Banner;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -29,6 +30,15 @@ public class ComunidadeController {
         mv.addObject("PUBLICA", NivelDePermissaoComunidade.PUBLICA);
         mv.addObject("APENAS_LIDERES", NivelDePermissaoComunidade.APENAS_LIDERES);
         mv.addObject("PERSONALIZADA", NivelDePermissaoComunidade.PERSONALIZADA);
+        return mv;
+    }
+
+    @PostMapping("/mudar-de-comunidade")
+    public ModelAndView mudarDeComunidade(@RequestParam("comunidade-atual") Long comunidadeId) {
+        ModelAndView mv = new ModelAndView();
+        comunidadeRepository.findById(comunidadeId).ifPresent(
+                comunidade -> mv.setViewName("redirect:/comunidades/" + comunidade.getId())
+        );
         return mv;
     }
 
