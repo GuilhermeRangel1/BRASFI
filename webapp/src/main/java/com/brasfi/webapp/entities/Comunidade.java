@@ -8,6 +8,16 @@ public class Comunidade {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    public Comunidade(String nome, String descricao, NivelDePermissaoComunidade nivelDePermissao) {
+        this.nome = nome;
+        this.descricao = descricao;
+        this.nivelDePermissao = nivelDePermissao;
+    }
+
+    public Comunidade() {
+
+    }
+
     public NivelDePermissaoComunidade getNivelDePermissao() {
         return nivelDePermissao;
     }
