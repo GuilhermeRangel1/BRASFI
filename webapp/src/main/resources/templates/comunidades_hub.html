@@ -1,22 +1,97 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Comunidade Hub</title>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BRASFI</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/home.css">
+    <link rel="stylesheet" href="/webjars/bootstrap/5.3.3/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+    <script>
+        function OpenForm()
+        {
+            document.getElementById("criar-comunidade").style.display = "block";
+        }
+    </script>
+
+    <style>
+        .top-bar {
+            margin-top: 20px; /* distanciamento do topo da tela */
+        }
+
+        .comunidade-nome {
+        }
+
+        /* Espaçamento individual entre radios (já incluso com .mb-2) */
+        #comunidadesList .form-check {
+            margin-bottom: 8px;
+        }
+
+    </style>
+
 </head>
 <body>
-<h1>Lista de Comunidades</h1>
-<ul id="comunidadesList"></ul>
 
-<script>
-    $(document).ready(function() {
-        $.get("/api/comunidades", function(data) {
-            const list = $("#comunidadesList");
-            data.forEach(function(comunidade) {
-                list.append(`<li>${comunidade.nome}</li>`);
-            });
-        });
-    });
-</script>
+    <div class="top-bar d-flex justify-content-between align-items-start px-3 py-2 mt-4">
+        <h2 class="comunidade-nome m-0" th:text="${comunidade.nome}">Nome da Comunidade</h2>
+
+        <form id="mudar-de-comunidade-form" action="/mudar-de-comunidade" method="post">
+            <div id="comunidadesList" th:each="com : ${comunidades}" class="form-check mb-2">
+                <input class="form-check-input"
+                       type="radio"
+                       name="comunidade-atual"
+                       th:checked="${com != null} and (${com.id} == ${comunidade.id})"
+                       th:value="${com.getId()}"
+                       onchange="document.getElementById('mudar-de-comunidade-form').submit()">
+                <label class="form-check-label" th:text="${com.nome}"></label>
+            </div>
+        </form>
+    </div>
+
+    <button onclick="OpenForm()" id="open-criar-comunidade">Criar nova comunidade</button>
+
+    <div id="criar-comunidade" style="display: none">
+        <div style="margin-bottom: 200px" class="d-flex justify-content-center align-items-center vh-100">
+            <form action="/criar-comunidade" method="post" id="criar-comunidade-form" class="p-4 border rounded bg-light shadow" style="min-width: 350px;">
+                <div class="mb-3">
+                    <label for="nome" class="form-label">Nome</label>
+                    <input type="text" class="form-control" id="nome" name="nome" placeholder="Digite o nome" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="descricao" class="form-label">Descrição</label>
+                    <textarea class="form-control" id="descricao" name="descricao" rows="4" placeholder="Descreva a comunidade"></textarea>
+                </div>
+                <label class="form-label" style="align-self: center">Integrantes da comunidade</label>
+                <div class="mb-3">
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" id="Publica" name="Nivel de Permissao" th:value="${PUBLICA}">
+                        <label class="form-check-label" for="Publica">Pública</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" id="Lideres" name="Nivel de Permissao" th:value="${APENAS_LIDERES}">
+                        <label class="form-check-label" for="Lideres">Apenas líderes</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" id="Personalizada" name="Nivel de Permissao" th:value="${PERSONALIZADA}">
+                        <label class="form-check-label" for="Personalizada">Personalizada</label>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100">Criar</button>
+            </form>
+        </div>
+
+    </div>
+
+    <script src="/webjars/jquery/3.7.1/ jquery.min.js"></script>
+    <script src="/webjars/bootstrap/5.3.3/js/bootstrap.min.js"></script>
 </body>
 </html>
