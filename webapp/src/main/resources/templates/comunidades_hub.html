@@ -21,21 +21,40 @@
         }
     </script>
 
+    <style>
+        .top-bar {
+            margin-top: 20px; /* distanciamento do topo da tela */
+        }
+
+        .comunidade-nome {
+        }
+
+        /* Espaçamento individual entre radios (já incluso com .mb-2) */
+        #comunidadesList .form-check {
+            margin-bottom: 8px;
+        }
+
+    </style>
+
 </head>
 <body>
 
-    <h1>Comunidades em que você faz parte</h1>
+    <div class="top-bar d-flex justify-content-between align-items-start px-3 py-2 mt-4">
+        <h2 class="comunidade-nome m-0" th:text="${comunidade.nome}">Nome da Comunidade</h2>
+
         <form id="mudar-de-comunidade-form" action="/mudar-de-comunidade" method="post">
-            <div id="comunidadesList" th:each="comunidade : ${comunidades}">
-                <!--<li><a th:href="@{'/comunidades/' + ${comunidade.getId()}}" th:text="${comunidade.nome}"></a></li>-->
-                    <input type="radio"
-                           id="comunidade-atual"
-                           name="comunidade-atual"
-                           th:value="${comunidade.getId()}"
-                           onchange="document.getElementById('mudar-de-comunidade-form').submit()">
-                    <label for="comunidade-atual" th:text="${comunidade.nome}"></label>
+            <div id="comunidadesList" th:each="com : ${comunidades}" class="form-check mb-2">
+                <input class="form-check-input"
+                       type="radio"
+                       name="comunidade-atual"
+                       th:checked="${com != null} and (${com.id} == ${comunidade.id})"
+                       th:value="${com.getId()}"
+                       onchange="document.getElementById('mudar-de-comunidade-form').submit()">
+                <label class="form-check-label" th:text="${com.nome}"></label>
             </div>
         </form>
+    </div>
+
     <button onclick="OpenForm()" id="open-criar-comunidade">Criar nova comunidade</button>
 
     <div id="criar-comunidade" style="display: none">
@@ -70,10 +89,7 @@
             </form>
         </div>
 
-
-
     </div>
-
 
     <script src="/webjars/jquery/3.7.1/ jquery.min.js"></script>
     <script src="/webjars/bootstrap/5.3.3/js/bootstrap.min.js"></script>

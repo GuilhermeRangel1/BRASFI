@@ -23,15 +23,18 @@ public class ComunidadeController {
         this.comunidadeService = new ComunidadeService(comunidadeRepository);
     }
 
-    @GetMapping("/comunidades")
-    public ModelAndView getComunidades() {
-        ModelAndView mv = new ModelAndView("comunidades_hub");
-        mv.addObject("comunidades", comunidadeRepository.findAll());
-        mv.addObject("PUBLICA", NivelDePermissaoComunidade.PUBLICA);
-        mv.addObject("APENAS_LIDERES", NivelDePermissaoComunidade.APENAS_LIDERES);
-        mv.addObject("PERSONALIZADA", NivelDePermissaoComunidade.PERSONALIZADA);
-        return mv;
-    }
+        @GetMapping("/comunidades/{id}")
+        public ModelAndView getComunidades(@PathVariable Long id) {
+            ModelAndView mv = new ModelAndView("comunidades_hub");
+            Optional<Comunidade> comunidade = comunidadeRepository.findById(id);
+
+            comunidade.ifPresent(value -> mv.addObject("comunidade", value));
+            mv.addObject("comunidades", comunidadeRepository.findAll());
+            mv.addObject("PUBLICA", NivelDePermissaoComunidade.PUBLICA);
+            mv.addObject("APENAS_LIDERES", NivelDePermissaoComunidade.APENAS_LIDERES);
+            mv.addObject("PERSONALIZADA", NivelDePermissaoComunidade.PERSONALIZADA);
+            return mv;
+        }
 
     @PostMapping("/mudar-de-comunidade")
     public ModelAndView mudarDeComunidade(@RequestParam("comunidade-atual") Long comunidadeId) {
@@ -61,12 +64,4 @@ public class ComunidadeController {
         return null; //jogar exceção
     }
 
-    @GetMapping("/comunidades/{id}")
-    public ModelAndView getComunidade(@PathVariable Long id) {
-        ModelAndView mv = new ModelAndView("comunidade_especifica");
-
-        Optional<Comunidade> comunidade = comunidadeRepository.findById(id);
-        comunidade.ifPresent(value -> mv.addObject("comunidade", value));
-        return mv;
-    }
 }

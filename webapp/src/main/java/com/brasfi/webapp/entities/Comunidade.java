@@ -2,6 +2,8 @@ package com.brasfi.webapp.entities;
 
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
+
 @Entity
 public class Comunidade {
     @Id
@@ -50,7 +52,6 @@ public class Comunidade {
 
     @Column(nullable = false)
     private String descricao;
-
 
     public void setId(Long id) {
         this.id = id;
