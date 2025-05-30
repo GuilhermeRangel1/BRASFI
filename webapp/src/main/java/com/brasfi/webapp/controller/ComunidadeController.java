@@ -2,13 +2,18 @@ package com.brasfi.webapp.controller;
 
 import com.brasfi.webapp.entities.Comunidade;
 import com.brasfi.webapp.entities.NivelDePermissaoComunidade;
+import com.brasfi.webapp.entities.PostEntrada;
+import com.brasfi.webapp.entities.PostSaida;
 import com.brasfi.webapp.repositories.ComunidadeRepository;
 import com.brasfi.webapp.service.ComunidadeService;
 import org.springframework.boot.Banner;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 
 import java.util.List;
 import java.util.Optional;
@@ -22,6 +27,13 @@ public class ComunidadeController {
         this.comunidadeRepository = comunidadeRepository;
         this.comunidadeService = new ComunidadeService(comunidadeRepository);
     }
+
+        @MessageMapping("/create-post")
+        @SendTo("topics/comunidade")
+        public PostSaida createPost(PostEntrada postEntrada)
+        {
+            return new PostSaida(postEntrada.getAutor() + ": " + postEntrada.getMensagem());
+        }
 
         @GetMapping("/comunidades/{id}")
         public ModelAndView getComunidades(@PathVariable Long id) {
