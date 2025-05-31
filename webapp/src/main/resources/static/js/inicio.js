@@ -2,7 +2,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const menuToggleButton = document.getElementById('menu-toggle-button');
     const mainMenu = document.getElementById('main-menu');
 
-
+    // Define a duração da transição manualmente (em milissegundos)
+    const transitionDuration = 300;
 
     if (menuToggleButton && mainMenu) {
         menuToggleButton.addEventListener('click', () => {
@@ -22,7 +23,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 mainMenu.classList.remove('menu-hidden-display');
                 mainMenu.style.visibility = 'visible';
                 mainMenu.style.pointerEvents = 'auto';
-
             }
         });
 
