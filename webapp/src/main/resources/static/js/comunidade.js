@@ -1,66 +1,88 @@
-const stompClient = new StompJs.Client({
-    brokerUrl: 'ws://' + window.location.host + '/brasfi-webapp-websocket',
-    debug: function(str) {
-        console.log(str);
-    },
-    reconnectDelay: 5000,
-    heartbeatIncoming: 4000,
-    heartbeatOutgoing: 4000
-});
+let stompClient = null;
+let connected = false;
 
-stompClient.onConnect = (frame) => {
-    setConnected(true);
-    console.log('Connected: ' + frame);
-    stompClient.subscribe('/topics/comunidade', (message) => {
-        updateLiveChat(JSON.parse(message.body).content);
-    });
-};
-
+// Conecta ao WebSocket e se inscreve no tópico
 function connect() {
+    const socketUrl = "/brasfi-webapp-websocket";
+
+    stompClient = new StompJs.Client({
+        webSocketFactory: function () {
+            return new SockJS("/brasfi-webapp-websocket");
+        },
+        reconnectDelay: 5000,
+        debug: function (str) {
+            console.log("[STOMP DEBUG] " + str);
+        },
+        onConnect: function (frame) {
+            connected = true;
+            console.log("Conectado: " + frame);
+
+            stompClient.subscribe("/topics/comunidade", function (message) {
+                const post = JSON.parse(message.body);
+                showPost(post);
+            });
+
+            document.getElementById("connect").disabled = true;
+            document.getElementById("disconnect").disabled = false;
+        },
+        onStompError: function (frame) {
+            console.error("Erro STOMP: ", frame.headers["message"]);
+            console.error("Detalhes: ", frame.body);
+        }
+    });
+
     stompClient.activate();
 }
 
-stompClient.onWebSocketError = (error) => {
-    console.error('Error with websocket', error);
-};
-
-stompClient.onStompError = (frame) => {
-    console.error('Broker reported error: ' + frame.headers['message']);
-    console.error('Additional details: ' + frame.body);
-};
-
-function setConnected(connected) {
-    $("#connect").prop("disabled", connected);
-    $("#disconnect").prop("disabled", !connected);
-    if (connected) {
-        $("#conversation").show();
-    }
-    else {
-        $("#conversation").hide();
-    }
-}
-
+// Desconecta do WebSocket
 function disconnect() {
-    stompClient.deactivate();
-    setConnected(false);
-    console.log("Disconnected");
+    if (stompClient && connected) {
+        stompClient.deactivate();
+        connected = false;
+        console.log("Desconectado");
+
+        document.getElementById("connect").disabled = false;
+        document.getElementById("disconnect").disabled = true;
+    }
 }
 
+// Envia uma mensagem para o broker
 function sendMessage() {
-    stompClient.publish({
-        destination: "/app/create-post",
-        body: JSON.stringify({'user': $("#user").val(), 'message': $("#message").val()})
+    const author = document.getElementById("user").value;
+    const content = document.getElementById("message").value;
+
+    if (stompClient && connected && author && content) {
+        const postEntrada = {
+            autor: author,
+            mensagem: content
+        };
+
+        stompClient.publish({
+            destination: "/app/create-post",
+            body: JSON.stringify({'user': $("#user").val(), 'message': $("#message").val()})
+        });
+
+        document.getElementById("message").value = ""; // Limpa campo
+    }
+}
+
+// Exibe a mensagem na tela
+function showPost(post) {
+    const tableBody = document.getElementById("livechat");
+    const row = document.createElement("tr");
+    const cell = document.createElement("td");
+
+    cell.textContent = post.conteudo;
+    row.appendChild(cell);
+    tableBody.appendChild(row);
+}
+
+// Associa os botões
+window.addEventListener("load", () => {
+    document.getElementById("connect").addEventListener("click", connect);
+    document.getElementById("disconnect").addEventListener("click", disconnect);
+    document.getElementById("send").addEventListener("click", function (e) {
+        e.preventDefault();
+        sendMessage();
     });
-    $("#message").val("");
-}
-
-function updateLiveChat(message) {
-    $("#livechat").append("<tr><td>" + message + "</td></tr>");
-}
-
-$(function () {
-    $("form").on('submit', (e) => e.preventDefault());
-    $( "#connect" ).click(() => connect());
-    $( "#disconnect" ).click(() => disconnect());
-    $( "#send" ).click(() => sendMessage());
 });
