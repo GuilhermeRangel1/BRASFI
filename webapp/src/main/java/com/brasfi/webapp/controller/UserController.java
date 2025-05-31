@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 public class UserController {
@@ -17,7 +18,10 @@ public class UserController {
     public String login() {
         return "login"; 
     }
-
+    @GetMapping("/sobre")
+    public ModelAndView sobre() {
+        return new ModelAndView("sobre");
+    }
     @GetMapping("/register")
     public String register() {
         return "register"; 

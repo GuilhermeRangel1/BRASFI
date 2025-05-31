@@ -198,7 +198,7 @@ header {
 .sobre-container {
   display: flex;
   justify-content: center;
-  padding: 100px 40px;
+  padding: 200px 40px;
   position: relative;
   z-index: 1;
 }
@@ -211,12 +211,11 @@ header {
 
 .sobre-content h1 {
   font-size: 60px;
-  color: #215757;
   margin-bottom: 20px;
 }
 
 .sobre-content h1 .green {
-  color: #4CAF50;
+  color: #215757;
 }
 
 .sobre-content p {
@@ -239,12 +238,12 @@ header {
   display: block;
   font-size: 26px;
   font-weight: bold;
-  color: #4CAF50;
+  color: #215757;
   margin-bottom: 6px;
 }
 
 .redes-sociais a {
-  color: #333;
+  color: #215757;
   text-decoration: none;
   margin-right: 15px;
   font-size: 24px;
