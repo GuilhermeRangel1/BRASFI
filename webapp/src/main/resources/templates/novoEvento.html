@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Novo Evento</title>
+</head>
+<body>
+    <h1>Cadastrar Novo Evento</h1>
+
+    <form th:action="@{/evento/salvar}" th:object="${evento}" method="post">
+        
+        <div>
+            <label for="titulo">Título:</label>
+            <input type="text" id="titulo" th:field="*{titulo}" />
+        </div>
+
+        <div>
+            <label for="dataEvento">Data do Evento:</label>
+            <input type="date" id="dataEvento" th:field="*{dataEvento}" />
+        </div>
+
+		<div>
+		    <label for="convidados">Convidados (separados por vírgula):</label>
+		    <input type="text" id="convidados" th:field="*{convidados}" />
+		</div>
+        <div>
+            <label for="conteudo">Conteúdo:</label>
+            <textarea id="conteudo" th:field="*{conteudo}"></textarea>
+        </div>
+
+        <div>
+            <label for="categoria">Categoria:</label>
+            <select id="categoria" th:field="*{categoria}">
+                <option th:each="cat : ${categorias}" th:value="${cat}" th:text="${cat}">Categoria</option>
+            </select>
+        </div>
+
+        <div>
+            <button type="submit">Salvar Evento</button>
+        </div>
+
+        <div th:if="${error != null}">
+            <p style="color: red;" th:text="${error}"></p>
+        </div>
+    </form>
+
+</body>
+</html>

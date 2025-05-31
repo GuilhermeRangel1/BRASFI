@@ -2,11 +2,23 @@ package com.brasfi.webapp.entities;
 
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
+
 @Entity
 public class Comunidade {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    public Comunidade(String nome, String descricao, NivelDePermissaoComunidade nivelDePermissao) {
+        this.nome = nome;
+        this.descricao = descricao;
+        this.nivelDePermissao = nivelDePermissao;
+    }
+
+    public Comunidade() {
+
+    }
 
     public NivelDePermissaoComunidade getNivelDePermissao() {
         return nivelDePermissao;
@@ -40,7 +52,6 @@ public class Comunidade {
 
     @Column(nullable = false)
     private String descricao;
-
 
     public void setId(Long id) {
         this.id = id;
