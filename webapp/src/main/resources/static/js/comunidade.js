@@ -17,10 +17,10 @@ function connect() {
             connected = true;
             console.log("Conectado: " + frame);
 
-            stompClient.subscribe("/topics/comunidade", function (message) {
-                const post = JSON.parse(message.body);
+            stompClient.subscribe("/topic/comunidade", function (message) {
+                const post = JSON.parse(message.body).content;
                 showPost(post);
-            });
+        });
 
             document.getElementById("connect").disabled = true;
             document.getElementById("disconnect").disabled = false;
@@ -59,7 +59,7 @@ function sendMessage() {
 
         stompClient.publish({
             destination: "/app/create-post",
-            body: JSON.stringify({'user': $("#user").val(), 'message': $("#message").val()})
+            body: JSON.stringify({'autor': $("#user").val(), 'mensagem': $("#message").val()})
         });
 
         document.getElementById("message").value = ""; // Limpa campo
@@ -72,14 +72,14 @@ function showPost(post) {
     const row = document.createElement("tr");
     const cell = document.createElement("td");
 
-    cell.textContent = post.conteudo;
+    cell.textContent = post;
     row.appendChild(cell);
     tableBody.appendChild(row);
 }
 
 // Associa os botões
 window.addEventListener("load", () => {
-    document.getElementById("connect").addEventListener("click", connect);
+    connect();
     document.getElementById("disconnect").addEventListener("click", disconnect);
     document.getElementById("send").addEventListener("click", function (e) {
         e.preventDefault();

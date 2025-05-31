@@ -8,12 +8,14 @@ import com.brasfi.webapp.repositories.ComunidadeRepository;
 import com.brasfi.webapp.service.ComunidadeService;
 import org.springframework.boot.Banner;
 import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
+import org.springframework.web.util.HtmlUtils;
 
 import java.util.List;
 import java.util.Optional;
@@ -29,10 +31,12 @@ public class ComunidadeController {
     }
 
         @MessageMapping("/create-post")
-        @SendTo("topics/comunidade")
-        public PostSaida createPost(PostEntrada postEntrada)
+        @SendTo("/topic/comunidade")
+        public PostSaida createPost(@Payload PostEntrada postEntrada)
         {
-            return new PostSaida(postEntrada.getAutor() + ": " + postEntrada.getMensagem());
+            PostSaida ps = new PostSaida(postEntrada.getAutor() + ": " + postEntrada.getMensagem());
+            System.out.println(HtmlUtils.htmlEscape(ps.getContent()));
+            return ps;
         }
 
         @GetMapping("/comunidades/{id}")

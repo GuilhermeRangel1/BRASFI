@@ -1,17 +1,13 @@
 package com.brasfi.webapp.entities;
 
 public class PostSaida {
-    private String conteudo;
+    private String content;
 
-    public PostSaida(String conteudo) {
-        this.conteudo = conteudo;
+    public PostSaida(String content) {
+        this.content = content;
     }
 
-    public String getConteudo() {
-        return conteudo;
-    }
-
-    public void setConteudo(String conteudo) {
-        this.conteudo = conteudo;
+    public String getContent() {
+        return content;
     }
 }
