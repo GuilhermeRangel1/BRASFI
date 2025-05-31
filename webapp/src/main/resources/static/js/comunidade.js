@@ -17,7 +17,7 @@ function connect() {
             connected = true;
             console.log("Conectado: " + frame);
 
-            stompClient.subscribe("/topic/comunidade", function (message) {
+            stompClient.subscribe(`/topic/${comunidadeId}`, function (message) {
                 const post = JSON.parse(message.body).content;
                 showPost(post);
         });
@@ -54,7 +54,7 @@ function sendMessage() {
     if (stompClient && connected && content) {
         stompClient.publish({
             destination: "/app/create-post",
-            body: JSON.stringify({'autor': "", 'mensagem': $("#message").val()})
+            body: JSON.stringify({'autor': "", 'mensagem': $("#message").val(), 'comunidadeId': comunidadeId})
         });
 
         document.getElementById("message").value = ""; // Limpa campo

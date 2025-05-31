@@ -12,6 +12,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.util.HtmlUtils;
 
@@ -23,23 +24,27 @@ public class ComunidadeController {
     private final ComunidadeRepository comunidadeRepository;
     private final ComunidadeService comunidadeService;
     private final PostService postService;
+    private final SimpMessagingTemplate messagingTemplate;
 
-    public ComunidadeController(ComunidadeRepository comunidadeRepository, PostService postService) {
+    public ComunidadeController(ComunidadeRepository comunidadeRepository, PostService postService, ComunidadeService comunidadeService, SimpMessagingTemplate messagingTemplate ) {
         this.comunidadeRepository = comunidadeRepository;
         this.comunidadeService = new ComunidadeService(comunidadeRepository);
         this.postService = postService;
+        this.messagingTemplate = messagingTemplate;
     }
 
         @MessageMapping("/create-post")
-        @SendTo("/topic/comunidade")
-        public PostSaida createPost(@Payload PostEntrada postEntrada)
+        public void createPost(@Payload PostEntrada postEntrada)
         {
             Post post = new Post(null, postEntrada.getMensagem(), 0, null);
             postService.incluirPost(post);
 
             PostSaida ps = new PostSaida(postEntrada.getMensagem());
             System.out.println(HtmlUtils.htmlEscape(ps.getContent()));
-            return ps;
+
+            String destino = "/topic/" + postEntrada.getComunidadeId();
+            System.out.println(destino);
+            messagingTemplate.convertAndSend(destino, ps);
         }
 
         @GetMapping("/comunidades/{id}")

@@ -4,10 +4,20 @@ package com.brasfi.webapp.entities;
 public class PostEntrada {
     private String autor;
     private String mensagem;
+    private Long comunidadeId;
 
-    public PostEntrada(String id, String autor, String mensagem) {
+    public Long getComunidadeId() {
+        return comunidadeId;
+    }
+
+    public void setComunidadeId(Long comunidadeId) {
+        this.comunidadeId = comunidadeId;
+    }
+
+    public PostEntrada(String id, String autor, String mensagem, Long comunidadeId) {
         this.autor = autor;
         this.mensagem = mensagem;
+        this.comunidadeId = comunidadeId;
     }
 
     public String getAutor() {
