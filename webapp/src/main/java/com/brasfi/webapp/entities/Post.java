@@ -20,12 +20,13 @@ public class Post {
         return titulo;
     }
 
-    public Post(String titulo, String descricao, int contadorDelikes, LocalDateTime dataCriacao) {
+    public Post(Long id, String titulo, String descricao, int contadorDelikes, LocalDateTime dataCriacao, Comunidade comunidade) {
+        this.id = id;
         this.titulo = titulo;
         this.descricao = descricao;
         this.contadorDelikes = contadorDelikes;
         this.dataCriacao = dataCriacao;
-        this.id = null;
+        this.comunidade = comunidade;
     }
 
     public void setTitulo(String titulo) {
@@ -67,6 +68,9 @@ public class Post {
 
     @Column()
     private LocalDateTime dataCriacao;
+
+    @ManyToOne
+    private Comunidade comunidade;
 
     public void setId(Long id) {
         this.id = id;

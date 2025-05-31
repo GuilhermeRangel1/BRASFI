@@ -36,7 +36,9 @@ public class ComunidadeController {
         @MessageMapping("/create-post")
         public void createPost(@Payload PostEntrada postEntrada)
         {
-            Post post = new Post(null, postEntrada.getMensagem(), 0, null);
+            Comunidade comunidade = comunidadeRepository.findById(postEntrada.getComunidadeId()).orElse(null);
+
+            Post post = new Post(null, null, postEntrada.getMensagem(), 0, null ,comunidade);
             postService.incluirPost(post);
 
             PostSaida ps = new PostSaida(postEntrada.getMensagem());
@@ -57,7 +59,7 @@ public class ComunidadeController {
             mv.addObject("PUBLICA", NivelDePermissaoComunidade.PUBLICA);
             mv.addObject("APENAS_LIDERES", NivelDePermissaoComunidade.APENAS_LIDERES);
             mv.addObject("PERSONALIZADA", NivelDePermissaoComunidade.PERSONALIZADA);
-            mv.addObject("postagens", postService.buscarTodos());
+            comunidade.ifPresent(value -> mv.addObject("postagens", postService.buscarPorComunidade(value)));
             return mv;
         }
 

@@ -1,6 +1,7 @@
 package com.brasfi.webapp.service;
 
 
+import com.brasfi.webapp.entities.Comunidade;
 import com.brasfi.webapp.entities.Post;
 import com.brasfi.webapp.repositories.PostRepository;
 import org.springframework.stereotype.Service;
@@ -21,5 +22,7 @@ public class PostService {
     }
 
     public List<Post> buscarTodos() { return postRepository.findAll(); }
+
+    public List<Post> buscarPorComunidade(Comunidade comunidade) { return postRepository.findByComunidade(comunidade); }
 
 }
