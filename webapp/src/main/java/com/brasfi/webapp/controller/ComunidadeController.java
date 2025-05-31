@@ -84,4 +84,13 @@ public class ComunidadeController {
         return null; //jogar exceção
     }
 
+    @GetMapping("/comunidades")
+    public String redirecionarParaPrimeiraComunidade() {
+        return comunidadeRepository.findAll()
+                .stream()
+                .findFirst()
+                .map(comunidade -> "redirect:/comunidades/" + comunidade.getId())
+                .orElse("redirect:/erro-sem-comunidades"); // Ou redirecione para uma página com mensagem apropriada
+    }
+
 }
