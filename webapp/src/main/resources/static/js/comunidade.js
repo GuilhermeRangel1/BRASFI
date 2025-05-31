@@ -48,18 +48,13 @@ function disconnect() {
 
 // Envia uma mensagem para o broker
 function sendMessage() {
-    const author = document.getElementById("user").value;
+    //const author = document.getElementById("user").value;
     const content = document.getElementById("message").value;
 
-    if (stompClient && connected && author && content) {
-        const postEntrada = {
-            autor: author,
-            mensagem: content
-        };
-
+    if (stompClient && connected && content) {
         stompClient.publish({
             destination: "/app/create-post",
-            body: JSON.stringify({'autor': $("#user").val(), 'mensagem': $("#message").val()})
+            body: JSON.stringify({'autor': "", 'mensagem': $("#message").val()})
         });
 
         document.getElementById("message").value = ""; // Limpa campo
@@ -80,7 +75,7 @@ function showPost(post) {
 // Associa os botões
 window.addEventListener("load", () => {
     connect();
-    document.getElementById("disconnect").addEventListener("click", disconnect);
+    //document.getElementById("disconnect").addEventListener("click", disconnect);
     document.getElementById("send").addEventListener("click", function (e) {
         e.preventDefault();
         sendMessage();

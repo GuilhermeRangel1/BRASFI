@@ -34,7 +34,9 @@ public class ComunidadeController {
         @SendTo("/topic/comunidade")
         public PostSaida createPost(@Payload PostEntrada postEntrada)
         {
-            PostSaida ps = new PostSaida(postEntrada.getAutor() + ": " + postEntrada.getMensagem());
+            //persistir post
+
+            PostSaida ps = new PostSaida(postEntrada.getMensagem());
             System.out.println(HtmlUtils.htmlEscape(ps.getContent()));
             return ps;
         }
