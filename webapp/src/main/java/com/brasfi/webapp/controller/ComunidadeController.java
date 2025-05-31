@@ -1,11 +1,9 @@
 package com.brasfi.webapp.controller;
 
-import com.brasfi.webapp.entities.Comunidade;
-import com.brasfi.webapp.entities.NivelDePermissaoComunidade;
-import com.brasfi.webapp.entities.PostEntrada;
-import com.brasfi.webapp.entities.PostSaida;
+import com.brasfi.webapp.entities.*;
 import com.brasfi.webapp.repositories.ComunidadeRepository;
 import com.brasfi.webapp.service.ComunidadeService;
+import com.brasfi.webapp.service.PostService;
 import org.springframework.boot.Banner;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -24,17 +22,20 @@ import java.util.Optional;
 public class ComunidadeController {
     private final ComunidadeRepository comunidadeRepository;
     private final ComunidadeService comunidadeService;
+    private final PostService postService;
 
-    public ComunidadeController(ComunidadeRepository comunidadeRepository) {
+    public ComunidadeController(ComunidadeRepository comunidadeRepository, PostService postService) {
         this.comunidadeRepository = comunidadeRepository;
         this.comunidadeService = new ComunidadeService(comunidadeRepository);
+        this.postService = postService;
     }
 
         @MessageMapping("/create-post")
         @SendTo("/topic/comunidade")
         public PostSaida createPost(@Payload PostEntrada postEntrada)
         {
-            //persistir post
+            Post post = new Post(null, postEntrada.getMensagem(), 0, null);
+            postService.incluirPost(post);
 
             PostSaida ps = new PostSaida(postEntrada.getMensagem());
             System.out.println(HtmlUtils.htmlEscape(ps.getContent()));
@@ -51,6 +52,7 @@ public class ComunidadeController {
             mv.addObject("PUBLICA", NivelDePermissaoComunidade.PUBLICA);
             mv.addObject("APENAS_LIDERES", NivelDePermissaoComunidade.APENAS_LIDERES);
             mv.addObject("PERSONALIZADA", NivelDePermissaoComunidade.PERSONALIZADA);
+            mv.addObject("postagens", postService.buscarTodos());
             return mv;
         }
 

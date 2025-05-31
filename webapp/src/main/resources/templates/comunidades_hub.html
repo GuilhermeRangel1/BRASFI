@@ -63,7 +63,10 @@
                     <th th:text="${comunidade.getNome()}"></th>
                 </tr>
                 </thead>
-                <tbody id="livechat">
+                <tbody th:each="post: ${postagens}" id="livechat">
+                    <tr>
+                        <td th:text="${post.getDescricao()}"></td>
+                    </tr>
                 <!-- Messages will be dynamically appended here -->
                 </tbody>
             </table>

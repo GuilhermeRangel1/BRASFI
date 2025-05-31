@@ -9,10 +9,23 @@ public class Post {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column()
     private Long id;
+
+    public Post() {
+
+    }
 
     public String getTitulo() {
         return titulo;
+    }
+
+    public Post(String titulo, String descricao, int contadorDelikes, LocalDateTime dataCriacao) {
+        this.titulo = titulo;
+        this.descricao = descricao;
+        this.contadorDelikes = contadorDelikes;
+        this.dataCriacao = dataCriacao;
+        this.id = null;
     }
 
     public void setTitulo(String titulo) {
