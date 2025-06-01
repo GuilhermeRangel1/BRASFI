@@ -49,7 +49,7 @@
         <li th:each="evento : ${eventos}" class="evento-card">
             <div class="evento-details">
                 <p><strong>Nome do Evento:</strong> <span th:text="${evento.titulo}"></span></p>
-                <p><strong>Data:</strong> <span th:text="${evento.dataEvento}"></span></p>
+                <p><strong>Data:</strong> <span th:text="${#temporals.format(evento.dataEvento, 'dd/MM/yyyy')}"></span></p>
                 <p><strong>Participantes:</strong> <span th:text="${evento.convidados}"></span></p>
                 <p><strong>Categoria:</strong> <span th:text="${evento.categoria}"></span></p>
             </div>
