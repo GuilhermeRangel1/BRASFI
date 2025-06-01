@@ -5,7 +5,7 @@
 }
 body {
   margin: 0;
-  font-family: 'Louis George Cafe', sans-serif; 
+  font-family: 'Louis George Cafe', sans-serif;
   background-color: #f0f0f0;
 }
 
@@ -32,7 +32,7 @@ header {
 }
 
 .brasfi-logo {
-  font-family: 'Louis George Cafe', sans-serif; 
+  font-family: 'Louis George Cafe', sans-serif;
   font-size: 55px;
   font-weight: bold;
   color: white;
@@ -59,7 +59,7 @@ header {
   font-size: 16px;
   transition: background-color 0.3s;
   white-space: nowrap;
-  font-family: 'Louis George Cafe', sans-serif; 
+  font-family: 'Louis George Cafe', sans-serif;
 }
 
 .login-button:hover {
@@ -71,48 +71,44 @@ header {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     z-index: 999;
     position: relative;
-}
-
-.menu-toggle-bar {
     display: flex;
-    justify-content: flex-start;
     align-items: center;
     padding: 10px 40px;
     height: 40px;
     box-sizing: border-box;
-    position: relative;
 }
 
-.menu-toggle-button {
+.menu-toggle-bar {
+    display: flex;
+    align-items: center;
+}
+
+.menu-open-button,
+.menu-close-button {
     background: none;
     border: none;
     cursor: pointer;
     padding: 0;
-    z-index: 2;
-    margin-right: 20px;
-}
-
-.menu-toggle-button .fas {
     font-size: 1.5em;
-    transition: transform 0.3s ease-in-out, font-size 0.3s ease-in-out;
     color: white;
+    transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+    position: absolute;
+    left: 40px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 3;
 }
 
-.menu-toggle-button.rotated .fas {
-    transform: rotate(180deg) translateY(2px);
-    font-size: 1.8em;
+.menu-open-button {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
 }
 
-.menu-toggle-button .menu-icon {
-    width: 1.5em;
-    height: auto;
-    vertical-align: middle;
-    transition: transform 0.3s ease-in-out, width 0.3s ease-in-out;
-}
-
-.menu-toggle-button.rotated .menu-icon {
-    transform: rotate(180deg) translateY(2px);
-    width: 1.8em;
+.menu-close-button {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
 }
 
 .menu {
@@ -120,7 +116,7 @@ header {
     padding: 0;
     margin: 0;
     position: absolute;
-    top: 25%;
+    top: 40px;
     left: 0;
     width: 100%;
     box-sizing: border-box;
@@ -135,23 +131,20 @@ header {
     opacity: 0;
     visibility: hidden;
     pointer-events: none;
-    transition: max-height 0.4s ease-out, opacity 0.3s ease-out;
-}
-
-.menu.menu-hidden-display {
-    display: none;
+    transition: max-height 0.3s ease-out, opacity 0.3s ease-out, top 0.3s ease-out;
+    padding-left: 40px;
+    padding-right: 40px;
 }
 
 .menu.visible {
-    max-height: 220px;
+    max-height: 60px;
     opacity: 1;
     visibility: visible;
     pointer-events: auto;
     padding-top: 10px;
     padding-bottom: 10px;
-    padding-left: 40px;
-    padding-right: 40px;
-    transition: max-height 0.4s ease-out, opacity 0.3s ease-out 0.1s;
+    top: 8px;
+    transition: max-height 0.3s ease-out, opacity 0.3s ease-out 0.1s, top 0.3s ease-out;
 }
 
 .menu li {
@@ -168,11 +161,15 @@ header {
     display: inline-block;
     white-space: nowrap;
     transition: color 0.3s;
-    font-family: 'Louis George Cafe', sans-serif; 
+    font-family: 'Louis George Cafe', sans-serif;
 }
 
 .menu li a:hover {
     color: #8aff8a;
+}
+
+.menu.menu-hidden-display {
+    display: none;
 }
 
 .bottom-logo-section {
@@ -201,9 +198,9 @@ header {
     white-space: nowrap;
 }
 
-.ajuda a { 
+.ajuda a {
     text-decoration: none;
-    color: inherit; 
+    color: inherit;
 	color: #215757
 }
 .ajuda {

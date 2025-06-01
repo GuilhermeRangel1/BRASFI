@@ -22,28 +22,31 @@
     </div>
 
     <div class="menu-container">
-        <div class="menu-toggle-bar" id="menu-toggle-bar">
-            <button class="menu-toggle-button" id="menu-toggle-button">
+        <div class="menu-toggle-bar">
+            <button class="menu-open-button" id="menu-open-button">
                 <i class="fas fa-angle-down"></i>
             </button>
-            <ul class="menu" id="main-menu">
-                <li><a href="/">Home</a></li>
-                <li><a href="/sobre">Sobre a BRASFI</a></li>
-                <li><a href="/agenda">Agenda de Eventos</a></li>
-                <li><a href="/eventosGravados">Eventos Gravados</a></li>
-			    <li><a href="/comunidades">Comunidade</a></li>
-            </ul>
         </div>
+        <ul class="menu" id="main-menu">
+            <button class="menu-close-button" id="menu-close-button">
+                <i class="fas fa-angle-up"></i>
+            </button>
+            <li><a href="/">Home</a></li>
+            <li><a href="/sobre">Sobre a BRASFI</a></li>
+            <li><a href="/agenda">Agenda de Eventos</a></li>
+            <li><a href="/eventosGravados">Eventos Gravados</a></li>
+			    <li><a href="/comunidades">Comunidade</a></li>
+        </ul>
     </div>
   </header>
 
   <div class="eventos">
   	<div class="eventos-header">
-          <h1>Eventos Agendados (Próximos e Atuais)</h1> 
+          <h1>Eventos Agendados (Próximos e Atuais)</h1>
           <div class="header-actions-group"> <div class="filter-group"> <form th:action="@{/agenda/filtro}" method="get" class="filter-form">
                       <select name="categoria" id="categoria-filtro" class="filter-select">
-                          <option value="">Todas as Categorias</option> <option th:each="cat : ${categorias}" 
-                                  th:value="${cat}" 
+                          <option value="">Todas as Categorias</option> <option th:each="cat : ${categorias}"
+                                  th:value="${cat}"
                                   th:text="${cat.displayName}"
                                   th:selected="${categoriaSelecionada != null and categoriaSelecionada.name() == cat.name()}">
                           </option>
