@@ -137,3 +137,27 @@
   transform: translateY(-2px); 
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
 }
+.edit-event-button {
+  display: inline-block;
+  background-color: #007bff; 
+  color: white;
+  padding: 12px 25px;
+  border: none;
+  border-radius: 8px;
+  text-decoration: none; 
+  font-weight: bold;
+  font-size: 1.1em;
+  transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+}
+
+.edit-event-button:hover {
+  background-color: #0056b3; 
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}

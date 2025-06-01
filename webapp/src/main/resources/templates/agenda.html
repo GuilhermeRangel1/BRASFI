@@ -4,8 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>BRASFI</title>
-  <link rel="stylesheet" href="css/agenda.css" />
-  <link rel="stylesheet" href="css/home.css" />
+  <link rel="stylesheet" th:href="@{/css/agenda.css}" />
+  <link rel="stylesheet" th:href="@{/css/home.css}" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
   <link rel="icon" type="image/jpg" href="img/brasfi.jpg">
 </head>
@@ -52,15 +52,19 @@
                 <p><strong>Data:</strong> <span th:text="${#temporals.format(evento.dataEvento, 'dd/MM/yyyy')}"></span></p>
                 <p><strong>Participantes:</strong> <span th:text="${evento.convidados}"></span></p>
                 <p><strong>Categoria:</strong> <span th:text="${evento.categoria}"></span></p>
+                <p><strong>Conteúdo:</strong> <span th:text="${evento.conteudo}"></span></p>
             </div>
             <div class="evento-actions">
+                <a th:href="@{/eventos/editar/{id}(id=${evento.id})}" class="edit-event-button">
+                    <i class="fas fa-edit"></i> Editar
+                </a>
                 <form th:action="@{/eventos/excluir/{id}(id=${evento.id})}" method="post" onsubmit="return confirm('Tem certeza que deseja excluir este evento?');">
                     <input type="hidden" name="_method" value="delete" />
                     <button type="submit" class="delete-event-button">
                         <i class="fas fa-trash-alt"></i> Excluir
                     </button>
                 </form>
-                </div>
+            </div>
         </li>
       </ul>
   </div>
@@ -68,6 +72,5 @@
 <div class="ajuda">
 <a href="/ajuda">Ajuda</a>
 </div>
-<script src="js/inicio.js"></script>
-</body>
+<script th:src="@{/js/inicio.js}"></script> </body>
 </html>

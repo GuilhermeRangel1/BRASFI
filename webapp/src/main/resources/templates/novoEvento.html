@@ -4,8 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>BRASFI</title>
-  <link rel="stylesheet" href="css/novoEvento.css" /> 
-  <link rel="stylesheet" href="css/home.css" /> 
+  <link rel="stylesheet" th:href="@{/css/novoEvento.css}" />
+  <link rel="stylesheet" th:href="@{/css/home.css}" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
   <link rel="icon" type="image/jpg" href="img/brasfi.jpg">
 </head>
@@ -38,8 +38,14 @@
   </header>
 
   <div class="create-event-section">
-      <h1>Criar Novo Evento</h1>
-      <form th:action="@{/evento/salvar}" th:object="${evento}" method="post" class="event-form">
+      <h1><span th:text="${evento.id == null ? 'Criar Novo Evento' : 'Editar Evento'}"></span></h1>
+
+      <p th:if="${error}" class="error-message" th:text="${error}"></p>
+
+      <form th:attr="action=${evento.id == null ? '/evento/salvar' : '/eventos/atualizar/' + evento.id}" th:object="${evento}" method="post" class="event-form">
+
+          <input type="hidden" th:field="*{id}" />
+
           <div class="form-group">
               <label for="titulo">Título:</label>
               <input type="text" id="titulo" th:field="*{titulo}" required>
@@ -78,6 +84,5 @@
 <div class="ajuda">
 <a href="/ajuda">Ajuda</a>
 </div>
-<script src="js/inicio.js"></script>
-</body>
+<script th:src="@{/js/inicio.js}"></script> </body>
 </html>

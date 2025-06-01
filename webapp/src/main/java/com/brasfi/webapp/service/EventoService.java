@@ -29,6 +29,10 @@ public class EventoService {
         return eventoRepository.findByCategoria(categoria);
     }
 
+    public Optional<Evento> findById(Long id) {
+        return eventoRepository.findById(id); 
+    }
+
     public void excluirEvento(Long id) {
         Optional<Evento> eventoExistente = eventoRepository.findById(id);
         if (eventoExistente.isPresent()) {
@@ -37,7 +41,6 @@ public class EventoService {
             throw new IllegalArgumentException("Evento com o ID " + id + " não encontrado para exclusão.");
         }
     }
-
 
     public Evento atualizarEvento(Long id, Evento eventoAtualizado) {
         Optional<Evento> eventoExistente = eventoRepository.findById(id);
@@ -55,11 +58,9 @@ public class EventoService {
 
             return eventoRepository.save(eventoOriginal);
         } else {
-
             throw new IllegalArgumentException("Evento com o ID " + id + " não encontrado para atualização.");
         }
     }
-
 
     public void validarEvento(Evento evento) {
         if (evento.getTitulo() == null || evento.getTitulo().trim().isEmpty()) {
