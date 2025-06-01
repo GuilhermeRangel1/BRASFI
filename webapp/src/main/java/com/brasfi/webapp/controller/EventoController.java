@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDate;
-import java.util.Optional;
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 public class EventoController {
@@ -24,15 +24,17 @@ public class EventoController {
     @GetMapping("/agenda")
     public String eventosAgendados(Model model) {
         model.addAttribute("eventos", eventoService.listarEventosAtuaisOuFuturos());
-        model.addAttribute("categorias", EventoCategoria.values()); 
+        model.addAttribute("categorias", EventoCategoria.values());
+        model.addAttribute("categoriaSelecionada", null);
         return "agenda";
     }
 
     @GetMapping("/eventosGravados")
-    public String eventosPassados(Model model) {
+    public String eventosGravados(Model model) {
         model.addAttribute("eventos", eventoService.listarEventosPassados());
-        model.addAttribute("categorias", EventoCategoria.values()); 
-        return "eventosPassados"; 
+        model.addAttribute("categorias", EventoCategoria.values());
+        model.addAttribute("categoriaSelecionada", null);
+        return "eventosGravados";
     }
 
     @GetMapping("/novoEvento")
@@ -54,20 +56,39 @@ public class EventoController {
             return "novoEvento";
         }
     }
-
     @GetMapping("/agenda/filtro")
-    public String filtrarPorCategoria(@RequestParam("categoria") EventoCategoria categoria, Model model) {
-        model.addAttribute("eventos", eventoService.findByCategoria(categoria));
+    public String filtrarPorCategoria(@RequestParam(value = "categoria", required = false) EventoCategoria categoria, Model model) {
+        List<Evento> eventosFiltrados;
+        if (categoria != null) {
+            eventosFiltrados = eventoService.listarEventosAtuaisOuFuturosPorCategoria(categoria);
+        } else {
+            eventosFiltrados = eventoService.listarEventosAtuaisOuFuturos();
+        }
+        model.addAttribute("eventos", eventosFiltrados);
         model.addAttribute("categorias", EventoCategoria.values());
         model.addAttribute("categoriaSelecionada", categoria);
         return "agenda";
+    }
+
+    @GetMapping("/eventosGravados/filtro")
+    public String filtrarEventosGravadosPorCategoria(@RequestParam(value = "categoria", required = false) EventoCategoria categoria, Model model) {
+        List<Evento> eventosFiltrados;
+        if (categoria != null) {
+            eventosFiltrados = eventoService.listarEventosPassadosPorCategoria(categoria);
+        } else {
+            eventosFiltrados = eventoService.listarEventosPassados();
+        }
+        model.addAttribute("eventos", eventosFiltrados);
+        model.addAttribute("categorias", EventoCategoria.values());
+        model.addAttribute("categoriaSelecionada", categoria);
+        return "eventosGravados";
     }
 
     @PostMapping("/eventos/excluir/{id}")
     public String excluirEvento(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         try {
             eventoService.excluirEvento(id);
-            redirectAttributes.addFlashAttribute("mensagemSucesso", "Evento excluído com sucesso!");
+            return "redirect:/agenda";
         } catch (IllegalArgumentException e) {
             redirectAttributes.addFlashAttribute("mensagemErro", e.getMessage());
         } catch (Exception e) {

@@ -94,6 +94,14 @@ public class EventoService {
     }
 
     public List<Evento> listarEventosAtuaisOuFuturos() {
-        return eventoRepository.findByDataEventoGreaterThanEqual(LocalDate.now()); 
+        return eventoRepository.findByDataEventoGreaterThanEqual(LocalDate.now());
+    }
+
+    public List<Evento> listarEventosAtuaisOuFuturosPorCategoria(EventoCategoria categoria) {
+        return eventoRepository.findByCategoriaAndDataEventoGreaterThanEqual(categoria, LocalDate.now());
+    }
+
+    public List<Evento> listarEventosPassadosPorCategoria(EventoCategoria categoria) {
+        return eventoRepository.findByCategoriaAndDataEventoBefore(categoria, LocalDate.now());
     }
 }

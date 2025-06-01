@@ -5,7 +5,7 @@ import com.brasfi.webapp.entities.EventoCategoria;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDate; 
+import java.time.LocalDate;
 import java.util.List;
 
 @Repository
@@ -18,4 +18,8 @@ public interface EventoRepository extends JpaRepository<Evento, Long> {
     List<Evento> findByDataEventoBefore(LocalDate data);
 
     List<Evento> findByDataEventoGreaterThanEqual(LocalDate data);
+
+    List<Evento> findByCategoriaAndDataEventoGreaterThanEqual(EventoCategoria categoria, LocalDate data);
+
+    List<Evento> findByCategoriaAndDataEventoBefore(EventoCategoria categoria, LocalDate data);
 }
