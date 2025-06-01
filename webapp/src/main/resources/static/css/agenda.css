@@ -53,14 +53,11 @@
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
   color: #333;
-  display: flex;
+  display: flex; 
   align-items: center;
   gap: 20px;
   width: 100%;
   box-sizing: border-box;
-  display: flex; 
-  justify-content: space-between; 
-  align-items: center; 
 }
 
 .evento-card:hover {
@@ -68,20 +65,61 @@
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
 
-.evento-card::before {
-  content: '';
-  display: block;
-  width: 234px;
-  height: 110px;
-  min-width: 100px;
-  background-image: url('../img/brasfi.jpg');
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  border-radius: 8px;
-  opacity: 0.7;
-  flex-shrink: 0;
+.event-image-container {
+    position: relative; 
+    width: 234px; 
+    height: 110px;
+    min-width: 100px;
+    border-radius: 8px;
+    overflow: hidden; 
+    flex-shrink: 0;
 }
+
+.event-image {
+    width: 100%;
+    height: 100%;
+    background-image: url('../img/brasfi.jpg'); 
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    opacity: 0.7; 
+    transition: opacity 0.3s ease; 
+}
+
+.event-image-container:hover .event-image {
+    opacity: 0.5; 
+}
+
+.play-button {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(0, 0, 0, 0.6); 
+    color: white;
+    border-radius: 50%;
+    width: 60px; 
+    height: 60px; 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2em; 
+    text-decoration: none;
+    opacity: 0; 
+    transition: opacity 0.3s ease, transform 0.3s ease; 
+    cursor: pointer;
+    z-index: 10; 
+}
+
+.play-button:hover {
+    background-color: rgba(0, 0, 0, 0.8);
+    transform: translate(-50%, -50%) scale(1.1);
+}
+
+.event-image-container:hover .play-button {
+    opacity: 1; 
+}
+
 
 .evento-details {
     display: flex;
@@ -108,43 +146,43 @@
 
 .evento-actions {
     display: flex;
-    gap: 10px; 
-    flex-shrink: 0; 
-    margin-left: 20px; 
+    gap: 10px;
+    flex-shrink: 0;
+    margin-left: 20px;
 }
 
 .delete-event-button {
-  display: inline-block; 
-  background-color: #dc3545; 
+  display: inline-block;
+  background-color: #dc3545;
   color: white;
-  padding: 12px 25px; 
+  padding: 12px 25px;
   border: none;
-  border-radius: 8px; 
+  border-radius: 8px;
   text-decoration: none;
-  font-weight: bold; 
-  font-size: 1.1em; 
-  transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease; 
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); 
+  font-weight: bold;
+  font-size: 1.1em;
+  transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 8px; 
+  gap: 8px;
   white-space: nowrap;
 }
 
 .delete-event-button:hover {
   background-color: #c82333;
-  transform: translateY(-2px); 
+  transform: translateY(-2px);
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
 }
 .edit-event-button {
   display: inline-block;
-  background-color: #007bff; 
+  background-color: #007bff;
   color: white;
   padding: 12px 25px;
   border: none;
   border-radius: 8px;
-  text-decoration: none; 
+  text-decoration: none;
   font-weight: bold;
   font-size: 1.1em;
   transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
@@ -157,7 +195,7 @@
 }
 
 .edit-event-button:hover {
-  background-color: #0056b3; 
+  background-color: #0056b3;
   transform: translateY(-2px);
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
 }

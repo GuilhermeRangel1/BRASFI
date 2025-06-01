@@ -7,15 +7,13 @@
   <link rel="stylesheet" th:href="@{/css/agenda.css}" />
   <link rel="stylesheet" th:href="@{/css/home.css}" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
-  <link rel="icon" type="image/jpg" href="img/brasfi.jpg">
-</head>
+  <link rel="icon" type="image/jpg" th:href="@{/img/brasfi.jpg}"> </head>
 <body>
   <header>
     <div class="top-bar">
       <div class="logo-section">
         <div class="brasfi-logo">BRASFI</div>
-        <img src="/img/brasfi.jpg" alt="Logo BRASFI" class="brasfi-icon">
-      </div>
+        <img th:src="@{/img/brasfi.jpg}" alt="Logo BRASFI" class="brasfi-icon"> </div>
       <div class="user-section">
         <a href="/login" class="login-button">Login</a>
       </div>
@@ -41,12 +39,17 @@
   	<div class="eventos-header">
           <h1>Eventos Agendados</h1>
           <div class="event-actions">
-              <a href="/novoEvento" class="create-event-button">Criar Novo Evento</a>
+              <a th:href="@{/novoEvento}" class="create-event-button">Criar Novo Evento</a>
           </div>
       </div>
 
       <ul class="eventos-list">
         <li th:each="evento : ${eventos}" class="evento-card">
+            <div class="event-image-container">
+                <div class="event-image"></div>
+                <a href="#" class="play-button"><i class="fas fa-play-circle"></i></a>
+            </div>
+
             <div class="evento-details">
                 <p><strong>Nome do Evento:</strong> <span th:text="${evento.titulo}"></span></p>
                 <p><strong>Data:</strong> <span th:text="${#temporals.format(evento.dataEvento, 'dd/MM/yyyy')}"></span></p>
@@ -72,5 +75,6 @@
 <div class="ajuda">
 <a href="/ajuda">Ajuda</a>
 </div>
-<script th:src="@{/js/inicio.js}"></script> </body>
+<script th:src="@{/js/inicio.js}"></script>
+</body>
 </html>
