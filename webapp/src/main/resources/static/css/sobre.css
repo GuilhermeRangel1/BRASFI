@@ -19,7 +19,7 @@ body::before {
 .sobre-container {
   display: flex;
   justify-content: center;
-  padding: 200px 40px;
+  padding: 10px 40px;
   position: relative;
   z-index: 1;
 }
