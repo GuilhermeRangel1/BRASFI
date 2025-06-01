@@ -53,10 +53,10 @@ public class EventoService {
             eventoOriginal.setConvidados(eventoAtualizado.getConvidados());
             eventoOriginal.setConteudo(eventoAtualizado.getConteudo());
             eventoOriginal.setCategoria(eventoAtualizado.getCategoria());
-            eventoOriginal.setUrlVideo(eventoAtualizado.getUrlVideo()); 
+            eventoOriginal.setUrlVideo(eventoAtualizado.getUrlVideo());
 
-            validarEvento(eventoOriginal); 
-            
+            validarEvento(eventoOriginal);
+
             return eventoRepository.save(eventoOriginal);
         } else {
             throw new IllegalArgumentException("Evento com o ID " + id + " não encontrado para atualização.");
@@ -72,9 +72,6 @@ public class EventoService {
             throw new IllegalArgumentException("A data do evento é obrigatória.");
         }
 
-        if (evento.getDataEvento().isBefore(LocalDate.now())) {
-            throw new IllegalArgumentException("A data do evento não pode ser no passado.");
-        }
         if (evento.getConvidados() == null || evento.getConvidados().trim().isEmpty()) {
             throw new IllegalArgumentException("Os convidados do evento são obrigatórios.");
         }
@@ -86,9 +83,17 @@ public class EventoService {
         if (evento.getCategoria() == null) {
             throw new IllegalArgumentException("A categoria do evento é obrigatória.");
         }
-        
+
         if (evento.getUrlVideo() == null || evento.getUrlVideo().trim().isEmpty()) {
             throw new IllegalArgumentException("A URL do vídeo do evento é obrigatória.");
         }
+    }
+
+    public List<Evento> listarEventosPassados() {
+        return eventoRepository.findByDataEventoBefore(LocalDate.now());
+    }
+
+    public List<Evento> listarEventosAtuaisOuFuturos() {
+        return eventoRepository.findByDataEventoGreaterThanEqual(LocalDate.now()); 
     }
 }

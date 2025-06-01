@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>BRASFI - Agenda de Eventos</title>
+  <title>BRASFI - Eventos Passados</title>
   <link rel="stylesheet" th:href="@{/css/agenda.css}" />
   <link rel="stylesheet" th:href="@{/css/home.css}" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
@@ -30,7 +30,7 @@
                 <li><a href="/">Home</a></li>
                 <li><a href="/sobre">Sobre a BRASFI</a></li>
                 <li><a href="/agenda">Agenda de Eventos</a></li>
-                <li><a href="/eventosGravados">Eventos Gravados</a></li> <li><a href="#">Comunidade</a></li>
+                <li><a href="/eventosPassados">Eventos Gravados</a></li> <li><a href="#">Comunidade</a></li>
             </ul>
         </div>
     </div>
@@ -38,10 +38,8 @@
 
   <div class="eventos">
   	<div class="eventos-header">
-          <h1>Eventos Agendados (Próximos e Atuais)</h1> <div class="event-actions">
-              <a th:href="@{/novoEvento}" class="create-event-button">Criar Novo Evento</a>
+          <h1>Eventos Passados</h1>
           </div>
-      </div>
 
       <ul class="eventos-list">
         <li th:each="evento : ${eventos}" class="evento-card">
@@ -70,7 +68,8 @@
             </div>
         </li>
       </ul>
-      <p th:if="${#lists.isEmpty(eventos)}" class="no-events-message">Nenhum evento agendado ou atual encontrado.</p>
+      <p th:if="${#lists.isEmpty(eventos)}" class="no-events-message">Nenhum evento passado encontrado.</p>
+
   </div>
 
 <div class="ajuda">
