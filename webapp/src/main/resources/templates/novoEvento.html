@@ -1,48 +1,83 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>BRASFI</title>
-	<link rel="icon" type="image/jpg" href="img/brasfi.jpg">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>BRASFI</title>
+  <link rel="stylesheet" href="css/novoEvento.css" /> 
+  <link rel="stylesheet" href="css/home.css" /> 
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+  <link rel="icon" type="image/jpg" href="img/brasfi.jpg">
 </head>
 <body>
-    <h1>Cadastrar Novo Evento</h1>
+  <header>
+    <div class="top-bar">
+      <div class="logo-section">
+        <div class="brasfi-logo">BRASFI</div>
+        <img src="/img/brasfi.jpg" alt="Logo BRASFI" class="brasfi-icon">
+      </div>
+      <div class="user-section">
+        <a href="/login" class="login-button">Login</a>
+      </div>
+    </div>
 
-    <form th:action="@{/evento/salvar}" th:object="${evento}" method="post">
-        
-        <div>
-            <label for="titulo">Título:</label>
-            <input type="text" id="titulo" th:field="*{titulo}" />
+    <div class="menu-container">
+        <div class="menu-toggle-bar" id="menu-toggle-bar">
+            <button class="menu-toggle-button" id="menu-toggle-button">
+                <i class="fas fa-angle-down"></i>
+            </button>
+            <ul class="menu" id="main-menu">
+                <li><a href="/">Home</a></li>
+                <li><a href="/sobre">Sobre a BRASFI</a></li>
+                <li><a href="/agenda">Agenda de Eventos</a></li>
+                <li><a href="#">Eventos Gravados</a></li>
+                <li><a href="#">Comunidade</a></li>
+            </ul>
         </div>
+    </div>
+  </header>
 
-        <div>
-            <label for="dataEvento">Data do Evento:</label>
-            <input type="date" id="dataEvento" th:field="*{dataEvento}" />
-        </div>
+  <div class="create-event-section">
+      <h1>Criar Novo Evento</h1>
+      <form th:action="@{/evento/salvar}" th:object="${evento}" method="post" class="event-form">
+          <div class="form-group">
+              <label for="titulo">Título:</label>
+              <input type="text" id="titulo" th:field="*{titulo}" required>
+          </div>
 
-		<div>
-		    <label for="convidados">Convidados (separados por vírgula):</label>
-		    <input type="text" id="convidados" th:field="*{convidados}" />
-		</div>
-        <div>
-            <label for="conteudo">Conteúdo:</label>
-            <textarea id="conteudo" th:field="*{conteudo}"></textarea>
-        </div>
+          <div class="form-group">
+              <label for="dataEvento">Data do Evento:</label>
+              <input type="date" id="dataEvento" th:field="*{dataEvento}" required>
+          </div>
 
-        <div>
-            <label for="categoria">Categoria:</label>
-            <select id="categoria" th:field="*{categoria}">
-                <option th:each="cat : ${categorias}" th:value="${cat}" th:text="${cat}">Categoria</option>
-            </select>
-        </div>
+          <div class="form-group">
+              <label for="convidados">Convidados:</label>
+              <input type="text" id="convidados" th:field="*{convidados}">
+          </div>
 
-        <div>
-            <button type="submit">Salvar Evento</button>
-        </div>
+          <div class="form-group">
+              <label for="conteudo">Conteúdo:</label>
+              <textarea id="conteudo" th:field="*{conteudo}" rows="5"></textarea>
+          </div>
 
-        <div th:if="${error != null}">
-            <p style="color: red;" th:text="${error}"></p>
-        </div>
-    </form>
+          <div class="form-group">
+              <label for="categoria">Categoria:</label>
+              <select id="categoria" th:field="*{categoria}" required>
+                  <option value="">Selecione uma categoria</option>
+                  <option th:each="cat : ${categorias}" th:value="${cat}" th:text="${cat}">Categoria</option>
+              </select>
+          </div>
 
+          <div class="form-actions">
+              <button type="submit" class="submit-button">Salvar Evento</button>
+              <a th:href="@{/agenda}" class="cancel-button">Cancelar</a>
+          </div>
+      </form>
+  </div>
+
+<div class="ajuda">
+<a href="/ajuda">Ajuda</a>
+</div>
+<script src="js/inicio.js"></script>
 </body>
 </html>

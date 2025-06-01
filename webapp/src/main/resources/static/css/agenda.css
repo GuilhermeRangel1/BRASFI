@@ -1,0 +1,104 @@
+.eventos {
+    margin-top: 35px;
+    padding: 20px;
+}
+
+.eventos-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding: 0 10px;
+}
+
+.eventos h1 {
+    margin: 0;
+    color: #333;
+}
+
+.event-actions {
+    padding-right: 10px;
+}
+
+.create-event-button {
+  display: inline-block;
+  background-color: #007bff;
+  color: white;
+  padding: 12px 25px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 1.1em;
+  transition: background-color 0.3s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.create-event-button:hover {
+  background-color: #0056b3;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+.eventos-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.evento-card {
+  background-color: #DAEAE8;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 15px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  color: #333;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.evento-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.evento-card::before {
+  content: '';
+  display: block;
+  width: 234px;
+  height: 110px;
+  min-width: 100px;
+  background-image: url('../img/brasfi.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  border-radius: 8px;
+  opacity: 0.7;
+  flex-shrink: 0;
+}
+
+.evento-details {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    flex-grow: 1;
+    min-width: 0;
+}
+
+.evento-card p {
+  margin: 0;
+  line-height: 1.4;
+  white-space: normal;
+  overflow-wrap: break-word;
+}
+
+.evento-card p:not(:last-child) {
+  margin-bottom: 5px;
+}
+
+.evento-card strong {
+  color: #555;
+}

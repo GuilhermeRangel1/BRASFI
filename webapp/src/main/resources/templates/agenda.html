@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>BRASFI</title>
+  <link rel="stylesheet" href="css/agenda.css" />
   <link rel="stylesheet" href="css/home.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
   <link rel="icon" type="image/jpg" href="img/brasfi.jpg">
@@ -35,14 +36,27 @@
         </div>
     </div>
   </header>
-<h1>Eventos Agendados</h1>
-<ul th:each="evento : ${eventos}">
-  <li th:text=" 'Nome: ' + ${evento.titulo}"></li>
-  <li th:text=" 'Data: ' + ${evento.dataEvento}"></li>
-  <li th:text=" 'Convidados: ' + ${evento.convidados}"></li>
-  <li th:text=" 'Categoria: ' + ${evento.categoria}"></li>
-  <br>
-</ul>
+
+  <div class="eventos">
+  	<div class="eventos-header">
+          <h1>Eventos Agendados</h1>
+          <div class="event-actions">
+              <a href="/novoEvento" class="create-event-button">Criar Novo Evento</a>
+          </div>
+      </div>
+
+      <ul class="eventos-list">
+        <li th:each="evento : ${eventos}" class="evento-card">
+            <div class="evento-details">
+                <p><strong>Nome do Evento:</strong> <span th:text="${evento.titulo}"></span></p>
+                <p><strong>Data:</strong> <span th:text="${evento.dataEvento}"></span></p>
+                <p><strong>Participantes:</strong> <span th:text="${evento.convidados}"></span></p>
+                <p><strong>Categoria:</strong> <span th:text="${evento.categoria}"></span></p>
+            </div>
+        </li>
+      </ul>
+  </div>
+
 <div class="ajuda">
 <a href="/ajuda">Ajuda</a>
 </div>

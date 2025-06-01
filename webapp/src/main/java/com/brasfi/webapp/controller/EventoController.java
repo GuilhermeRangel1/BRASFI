@@ -21,7 +21,7 @@ public class EventoController {
         return "agenda";
     }
 
-    @GetMapping("/evento/novo")
+    @GetMapping("/novoEvento")
     public String novoEventoForm(Model model) {
         model.addAttribute("evento", new Evento());
         model.addAttribute("categorias", EventoCategoria.values());
@@ -32,19 +32,19 @@ public class EventoController {
     public String salvarEvento(@ModelAttribute Evento evento, Model model) {
         try {
             eventoService.salvarEvento(evento);
-            return "redirect:/eventos-agendados";
+            return "redirect:/agenda";
         } catch (IllegalArgumentException e) {
             model.addAttribute("error", e.getMessage());
             model.addAttribute("categorias", EventoCategoria.values());
             return "novoEvento";
         }
     }
-    @GetMapping("/eventos-agendados/filtro")
+    @GetMapping("/agenda/filtro")
     public String filtrarPorCategoria(@RequestParam("categoria") EventoCategoria categoria, Model model) {
         model.addAttribute("eventos", eventoService.findByCategoria(categoria));
         model.addAttribute("categorias", EventoCategoria.values());
         model.addAttribute("categoriaSelecionada", categoria);
-        return "eventos_agendados";
+        return "agenda";
     }
 
 }
