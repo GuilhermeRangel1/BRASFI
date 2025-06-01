@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class EventoService {
@@ -23,8 +24,40 @@ public class EventoService {
         validarEvento(evento);
         eventoRepository.save(evento);
     }
+
     public List<Evento> findByCategoria(EventoCategoria categoria) {
         return eventoRepository.findByCategoria(categoria);
+    }
+
+    public void excluirEvento(Long id) {
+        Optional<Evento> eventoExistente = eventoRepository.findById(id);
+        if (eventoExistente.isPresent()) {
+            eventoRepository.deleteById(id);
+        } else {
+            throw new IllegalArgumentException("Evento com o ID " + id + " não encontrado para exclusão.");
+        }
+    }
+
+
+    public Evento atualizarEvento(Long id, Evento eventoAtualizado) {
+        Optional<Evento> eventoExistente = eventoRepository.findById(id);
+
+        if (eventoExistente.isPresent()) {
+            Evento eventoOriginal = eventoExistente.get();
+
+            eventoOriginal.setTitulo(eventoAtualizado.getTitulo());
+            eventoOriginal.setDataEvento(eventoAtualizado.getDataEvento());
+            eventoOriginal.setConvidados(eventoAtualizado.getConvidados());
+            eventoOriginal.setConteudo(eventoAtualizado.getConteudo());
+            eventoOriginal.setCategoria(eventoAtualizado.getCategoria());
+
+            validarEvento(eventoOriginal);
+
+            return eventoRepository.save(eventoOriginal);
+        } else {
+
+            throw new IllegalArgumentException("Evento com o ID " + id + " não encontrado para atualização.");
+        }
     }
 
 

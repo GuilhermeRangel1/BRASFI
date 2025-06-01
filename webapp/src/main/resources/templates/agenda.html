@@ -53,6 +53,14 @@
                 <p><strong>Participantes:</strong> <span th:text="${evento.convidados}"></span></p>
                 <p><strong>Categoria:</strong> <span th:text="${evento.categoria}"></span></p>
             </div>
+            <div class="evento-actions">
+                <form th:action="@{/eventos/excluir/{id}(id=${evento.id})}" method="post" onsubmit="return confirm('Tem certeza que deseja excluir este evento?');">
+                    <input type="hidden" name="_method" value="delete" />
+                    <button type="submit" class="delete-event-button">
+                        <i class="fas fa-trash-alt"></i> Excluir
+                    </button>
+                </form>
+                </div>
         </li>
       </ul>
   </div>

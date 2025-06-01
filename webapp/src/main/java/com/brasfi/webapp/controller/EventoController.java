@@ -6,11 +6,13 @@ import com.brasfi.webapp.service.EventoService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 public class EventoController {
 
     private final EventoService eventoService;
+
     public EventoController(EventoService eventoService) {
         this.eventoService = eventoService;
     }
@@ -39,6 +41,7 @@ public class EventoController {
             return "novoEvento";
         }
     }
+
     @GetMapping("/agenda/filtro")
     public String filtrarPorCategoria(@RequestParam("categoria") EventoCategoria categoria, Model model) {
         model.addAttribute("eventos", eventoService.findByCategoria(categoria));
@@ -47,4 +50,16 @@ public class EventoController {
         return "agenda";
     }
 
+    @PostMapping("/eventos/excluir/{id}") 
+    public String excluirEvento(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        try {
+            eventoService.excluirEvento(id);
+            redirectAttributes.addFlashAttribute("mensagemSucesso", "Evento excluído com sucesso!");
+        } catch (IllegalArgumentException e) {
+            redirectAttributes.addFlashAttribute("mensagemErro", e.getMessage());
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("mensagemErro", "Erro ao excluir evento: " + e.getMessage());
+        }
+        return "redirect:/agenda";
+    }
 }

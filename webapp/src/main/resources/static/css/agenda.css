@@ -58,6 +58,9 @@
   gap: 20px;
   width: 100%;
   box-sizing: border-box;
+  display: flex; 
+  justify-content: space-between; 
+  align-items: center; 
 }
 
 .evento-card:hover {
@@ -101,4 +104,36 @@
 
 .evento-card strong {
   color: #555;
+}
+
+.evento-actions {
+    display: flex;
+    gap: 10px; 
+    flex-shrink: 0; 
+    margin-left: 20px; 
+}
+
+.delete-event-button {
+  display: inline-block; 
+  background-color: #dc3545; 
+  color: white;
+  padding: 12px 25px; 
+  border: none;
+  border-radius: 8px; 
+  text-decoration: none;
+  font-weight: bold; 
+  font-size: 1.1em; 
+  transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease; 
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); 
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px; 
+  white-space: nowrap;
+}
+
+.delete-event-button:hover {
+  background-color: #c82333;
+  transform: translateY(-2px); 
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
 }
