@@ -49,21 +49,25 @@
           <div class="form-group">
               <label for="titulo">Título:</label>
               <input type="text" id="titulo" th:field="*{titulo}" required>
+              <div th:if="${#fields.hasErrors('titulo')}" th:errors="*{titulo}" class="text-danger"></div>
           </div>
 
           <div class="form-group">
               <label for="dataEvento">Data do Evento:</label>
               <input type="date" id="dataEvento" th:field="*{dataEvento}" required>
+              <div th:if="${#fields.hasErrors('dataEvento')}" th:errors="*{dataEvento}" class="text-danger"></div>
           </div>
 
           <div class="form-group">
               <label for="convidados">Convidados:</label>
               <input type="text" id="convidados" th:field="*{convidados}">
+              <div th:if="${#fields.hasErrors('convidados')}" th:errors="*{convidados}" class="text-danger"></div>
           </div>
 
           <div class="form-group">
               <label for="conteudo">Conteúdo:</label>
               <textarea id="conteudo" th:field="*{conteudo}" rows="5"></textarea>
+              <div th:if="${#fields.hasErrors('conteudo')}" th:errors="*{conteudo}" class="text-danger"></div>
           </div>
 
           <div class="form-group">
@@ -72,6 +76,13 @@
                   <option value="">Selecione uma categoria</option>
                   <option th:each="cat : ${categorias}" th:value="${cat}" th:text="${cat}">Categoria</option>
               </select>
+              <div th:if="${#fields.hasErrors('categoria')}" th:errors="*{categoria}" class="text-danger"></div>
+          </div>
+
+          <div class="form-group">
+              <label for="urlVideo">URL do Vídeo:</label>
+              <input type="url" id="urlVideo" th:field="*{urlVideo}" required>
+              <div th:if="${#fields.hasErrors('urlVideo')}" th:errors="*{urlVideo}" class="text-danger"></div>
           </div>
 
           <div class="form-actions">

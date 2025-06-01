@@ -40,7 +40,7 @@ public class EventoController {
         } catch (IllegalArgumentException e) {
             model.addAttribute("error", e.getMessage());
             model.addAttribute("categorias", EventoCategoria.values());
-            return "novoEvento";
+            return "agenda"; 
         }
     }
 

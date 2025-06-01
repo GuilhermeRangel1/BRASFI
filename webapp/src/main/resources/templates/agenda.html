@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -7,13 +7,15 @@
   <link rel="stylesheet" th:href="@{/css/agenda.css}" />
   <link rel="stylesheet" th:href="@{/css/home.css}" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
-  <link rel="icon" type="image/jpg" th:href="@{/img/brasfi.jpg}"> </head>
+  <link rel="icon" type="image/jpg" th:href="@{/img/brasfi.jpg}">
+</head>
 <body>
   <header>
     <div class="top-bar">
       <div class="logo-section">
         <div class="brasfi-logo">BRASFI</div>
-        <img th:src="@{/img/brasfi.jpg}" alt="Logo BRASFI" class="brasfi-icon"> </div>
+        <img th:src="@{/img/brasfi.jpg}" alt="Logo BRASFI" class="brasfi-icon">
+      </div>
       <div class="user-section">
         <a href="/login" class="login-button">Login</a>
       </div>
@@ -47,7 +49,7 @@
         <li th:each="evento : ${eventos}" class="evento-card">
             <div class="event-image-container">
                 <div class="event-image"></div>
-                <a href="#" class="play-button"><i class="fas fa-play-circle"></i></a>
+                <a th:href="${evento.urlVideo}" target="_blank" class="play-button"><i class="fas fa-play-circle"></i></a>
             </div>
 
             <div class="evento-details">

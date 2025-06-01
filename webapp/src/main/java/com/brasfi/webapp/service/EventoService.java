@@ -30,7 +30,7 @@ public class EventoService {
     }
 
     public Optional<Evento> findById(Long id) {
-        return eventoRepository.findById(id); 
+        return eventoRepository.findById(id);
     }
 
     public void excluirEvento(Long id) {
@@ -53,9 +53,10 @@ public class EventoService {
             eventoOriginal.setConvidados(eventoAtualizado.getConvidados());
             eventoOriginal.setConteudo(eventoAtualizado.getConteudo());
             eventoOriginal.setCategoria(eventoAtualizado.getCategoria());
+            eventoOriginal.setUrlVideo(eventoAtualizado.getUrlVideo()); 
 
-            validarEvento(eventoOriginal);
-
+            validarEvento(eventoOriginal); 
+            
             return eventoRepository.save(eventoOriginal);
         } else {
             throw new IllegalArgumentException("Evento com o ID " + id + " não encontrado para atualização.");
@@ -84,6 +85,10 @@ public class EventoService {
 
         if (evento.getCategoria() == null) {
             throw new IllegalArgumentException("A categoria do evento é obrigatória.");
+        }
+        
+        if (evento.getUrlVideo() == null || evento.getUrlVideo().trim().isEmpty()) {
+            throw new IllegalArgumentException("A URL do vídeo do evento é obrigatória.");
         }
     }
 }
