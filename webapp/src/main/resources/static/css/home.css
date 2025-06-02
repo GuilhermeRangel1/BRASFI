@@ -249,6 +249,74 @@ header {
     color: #215757;
     white-space: nowrap;
 }
+.main-content-text {
+    width: 80%;
+    max-width: 900px;
+    margin: 50px auto;
+    padding: 30px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    line-height: 1.8;
+    color: #333;
+    font-size: 1.1em;
+    text-align: justify; 
+}
+
+.main-content-text p {
+    margin-bottom: 1em;
+}
+
+.main-content-text p:last-child {
+    margin-bottom: 0;
+}
+
+.main-content-text .contact-section { 
+    margin-top: 40px; 
+    padding-top: 30px;
+    border-top: 1px solid #eee;
+    background-color: #f9f9f9; 
+    border-bottom-left-radius: 10px; 
+    border-bottom-right-radius: 10px;
+    padding-bottom: 20px;
+}
+
+.main-content-text .contact-section p {
+    text-align: center; 
+    margin-bottom: 0.8em; 
+    font-size: 1.1em;
+}
+
+.main-content-text h3.contact-heading { 
+    text-align: center;
+    font-size: 1.5em;
+    color: #215757; 
+    margin-bottom: 25px;
+    font-weight: bold;
+}
+
+.main-content-text .whatsapp-info {
+    font-weight: bold;
+    color: #28a745; 
+    text-align: center;
+    font-size: 1.3em; 
+    margin-top: 15px; 
+    text-decoration: none; 
+}
+.main-content-text .whatsapp-info:hover {
+    text-decoration: underline; 
+}
+
+
+.main-content-text .slogan {
+    font-style: italic;
+    color: #007bff;
+    text-align: center;
+    margin-top: 20px;
+    font-size: 1.2em; /* Deixa o slogan um pouco maior */
+    line-height: 1.5; /* Espaçamento para o slogan */
+}
+
 
 .ajuda a {
     text-decoration: none;
