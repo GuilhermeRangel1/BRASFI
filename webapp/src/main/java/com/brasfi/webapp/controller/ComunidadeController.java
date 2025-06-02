@@ -2,12 +2,14 @@ package com.brasfi.webapp.controller;
 
 import com.brasfi.webapp.entities.*;
 import com.brasfi.webapp.repositories.ComunidadeRepository;
+import com.brasfi.webapp.security.CustomUserDetails;
 import com.brasfi.webapp.service.ComunidadeService;
 import com.brasfi.webapp.service.PostService;
 import org.springframework.boot.Banner;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -50,9 +52,16 @@ public class ComunidadeController {
         }
 
         @GetMapping("/comunidades/{id}")
-        public ModelAndView getComunidades(@PathVariable Long id) {
-            ModelAndView mv = new ModelAndView("comunidades_hub");
+        public ModelAndView getComunidades(@PathVariable Long id, @AuthenticationPrincipal CustomUserDetails currentUser) {
+            ModelAndView mv = new ModelAndView();
+
             Optional<Comunidade> comunidade = comunidadeRepository.findById(id);
+
+            if (currentUser != null && comunidade.isPresent()) {
+                boolean podeAcessar = comunidadeService.validarMudanca(comunidade.get().getNivelDePermissao(), currentUser.getUserEntity());
+                if (podeAcessar) mv.setViewName("comunidades_hub");
+                else mv.setViewName("inicio");
+            }
 
             comunidade.ifPresent(value -> mv.addObject("comunidade", value));
             mv.addObject("comunidades", comunidadeRepository.findAll());
@@ -64,8 +73,11 @@ public class ComunidadeController {
         }
 
     @PostMapping("/mudar-de-comunidade")
-    public ModelAndView mudarDeComunidade(@RequestParam("comunidade-atual") Long comunidadeId) {
+    public ModelAndView mudarDeComunidade(
+            @RequestParam("comunidade-atual") Long comunidadeId
+            ) {
         ModelAndView mv = new ModelAndView();
+
         comunidadeRepository.findById(comunidadeId).ifPresent(
                 comunidade -> mv.setViewName("redirect:/comunidades/" + comunidade.getId())
         );
