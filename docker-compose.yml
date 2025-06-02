@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: admin123
+      MYSQL_DATABASE: BRASFI
+    ports:
+      - "3307:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+
+  webapp:
+    build: ./webapp
+    depends_on:
+      - mysql
+    environment:
+      BD_PASSWORD: admin123
+    ports:
+      - "8080:8080"
+    container_name: webapp
+
+volumes:
+  db_data:

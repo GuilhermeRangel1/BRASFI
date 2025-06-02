@@ -30,21 +30,28 @@ public class Evento implements Serializable {
     @Column(nullable = false)
     private EventoCategoria categoria;
 
+    @Column(length = 500, nullable =false) 
+    private String urlVideo;
+
     public Evento() {
     }
 
-    public Evento(Long id, String titulo, LocalDate dataEvento, String convidados, String conteudo, EventoCategoria categoria) {
+    public Evento(Long id, String titulo, LocalDate dataEvento, String convidados, String conteudo, EventoCategoria categoria, String urlVideo) {
         this.id = id;
         this.titulo = titulo;
         this.dataEvento = dataEvento;
         this.convidados = convidados;
         this.conteudo = conteudo;
         this.categoria = categoria;
+        this.urlVideo = urlVideo; 
     }
 
     public Long getId() {
         return id;
     }
+	public void setId(Long id) {
+		this.id = id;
+	}
 
     public String getTitulo() {
         return titulo;
@@ -86,6 +93,14 @@ public class Evento implements Serializable {
         this.categoria = categoria;
     }
 
+    public String getUrlVideo() {
+        return urlVideo;
+    }
+
+    public void setUrlVideo(String urlVideo) {
+        this.urlVideo = urlVideo;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -108,6 +123,8 @@ public class Evento implements Serializable {
                 ", convidados=" + convidados +
                 ", conteudo='" + conteudo + '\'' +
                 ", categoria=" + categoria +
+                ", urlVideo='" + urlVideo + '\'' + 
                 '}';
     }
+
 }

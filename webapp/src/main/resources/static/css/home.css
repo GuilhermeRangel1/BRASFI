@@ -5,7 +5,7 @@
 }
 body {
   margin: 0;
-  font-family: 'Louis George Cafe', sans-serif; 
+  font-family: 'Louis George Cafe', sans-serif;
   background-color: #f0f0f0;
 }
 
@@ -32,7 +32,7 @@ header {
 }
 
 .brasfi-logo {
-  font-family: 'Louis George Cafe', sans-serif; 
+  font-family: 'Louis George Cafe', sans-serif;
   font-size: 55px;
   font-weight: bold;
   color: white;
@@ -50,6 +50,58 @@ header {
   gap: 14px;
 }
 
+.logged-in-container {
+  display: flex;
+  align-items: center;
+}
+
+.logged-in-username {
+  background-color: #ddd; 
+  color: #333;
+  padding: 8px 16px;
+  border-radius: 20px; 
+  font-size: 16px;
+  font-weight: bold;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.logged-in-username i {
+  font-size: 1em;
+}
+
+.user-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px; 
+  height: 30px;
+  border-radius: 50%; 
+  background-color: #ccc;
+  color: #777; 
+  font-size: 1.2em;
+  margin-left: 8px;
+}
+
+.logout-button {
+  color: white;
+  text-decoration: none;
+  background-color: #d9534f;
+  padding: 8px 16px;
+  border-radius: 5px;
+  font-size: 16px;
+  transition: background-color 0.3s;
+  white-space: nowrap;
+  font-family: 'Louis George Cafe', sans-serif;
+  margin-left: 10px; 
+}
+
+.logout-button:hover {
+  background-color: #c9302c;
+}
+
 .login-button {
   color: white;
   text-decoration: none;
@@ -59,7 +111,7 @@ header {
   font-size: 16px;
   transition: background-color 0.3s;
   white-space: nowrap;
-  font-family: 'Louis George Cafe', sans-serif; 
+  font-family: 'Louis George Cafe', sans-serif;
 }
 
 .login-button:hover {
@@ -71,48 +123,44 @@ header {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     z-index: 999;
     position: relative;
-}
-
-.menu-toggle-bar {
     display: flex;
-    justify-content: flex-start;
     align-items: center;
     padding: 10px 40px;
     height: 40px;
     box-sizing: border-box;
-    position: relative;
 }
 
-.menu-toggle-button {
+.menu-toggle-bar {
+    display: flex;
+    align-items: center;
+}
+
+.menu-open-button,
+.menu-close-button {
     background: none;
     border: none;
     cursor: pointer;
     padding: 0;
-    z-index: 2;
-    margin-right: 20px;
-}
-
-.menu-toggle-button .fas {
     font-size: 1.5em;
-    transition: transform 0.3s ease-in-out, font-size 0.3s ease-in-out;
     color: white;
+    transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+    position: absolute;
+    left: 40px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 3;
 }
 
-.menu-toggle-button.rotated .fas {
-    transform: rotate(180deg) translateY(2px);
-    font-size: 1.8em;
+.menu-open-button {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
 }
 
-.menu-toggle-button .menu-icon {
-    width: 1.5em;
-    height: auto;
-    vertical-align: middle;
-    transition: transform 0.3s ease-in-out, width 0.3s ease-in-out;
-}
-
-.menu-toggle-button.rotated .menu-icon {
-    transform: rotate(180deg) translateY(2px);
-    width: 1.8em;
+.menu-close-button {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
 }
 
 .menu {
@@ -120,7 +168,7 @@ header {
     padding: 0;
     margin: 0;
     position: absolute;
-    top: 25%;
+    top: 40px;
     left: 0;
     width: 100%;
     box-sizing: border-box;
@@ -135,23 +183,20 @@ header {
     opacity: 0;
     visibility: hidden;
     pointer-events: none;
-    transition: max-height 0.4s ease-out, opacity 0.3s ease-out;
-}
-
-.menu.menu-hidden-display {
-    display: none;
+    transition: max-height 0.3s ease-out, opacity 0.3s ease-out, top 0.3s ease-out;
+    padding-left: 40px;
+    padding-right: 40px;
 }
 
 .menu.visible {
-    max-height: 220px;
+    max-height: 60px;
     opacity: 1;
     visibility: visible;
     pointer-events: auto;
     padding-top: 10px;
     padding-bottom: 10px;
-    padding-left: 40px;
-    padding-right: 40px;
-    transition: max-height 0.4s ease-out, opacity 0.3s ease-out 0.1s;
+    top: 8px;
+    transition: max-height 0.3s ease-out, opacity 0.3s ease-out 0.1s, top 0.3s ease-out;
 }
 
 .menu li {
@@ -168,11 +213,15 @@ header {
     display: inline-block;
     white-space: nowrap;
     transition: color 0.3s;
-    font-family: 'Louis George Cafe', sans-serif; 
+    font-family: 'Louis George Cafe', sans-serif;
 }
 
 .menu li a:hover {
     color: #8aff8a;
+}
+
+.menu.menu-hidden-display {
+    display: none;
 }
 
 .bottom-logo-section {
@@ -199,4 +248,87 @@ header {
     font-weight: bold;
     color: #215757;
     white-space: nowrap;
+}
+.main-content-text {
+    width: 80%;
+    max-width: 900px;
+    margin: 50px auto;
+    padding: 30px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    line-height: 1.8;
+    color: #333;
+    font-size: 1.1em;
+    text-align: justify; 
+}
+
+.main-content-text p {
+    margin-bottom: 1em;
+}
+
+.main-content-text p:last-child {
+    margin-bottom: 0;
+}
+
+.main-content-text .contact-section { 
+    margin-top: 40px; 
+    padding-top: 30px;
+    border-top: 1px solid #eee;
+    background-color: #f9f9f9; 
+    border-bottom-left-radius: 10px; 
+    border-bottom-right-radius: 10px;
+    padding-bottom: 20px;
+}
+
+.main-content-text .contact-section p {
+    text-align: center; 
+    margin-bottom: 0.8em; 
+    font-size: 1.1em;
+}
+
+.main-content-text h3.contact-heading { 
+    text-align: center;
+    font-size: 1.5em;
+    color: #215757; 
+    margin-bottom: 25px;
+    font-weight: bold;
+}
+
+.main-content-text .whatsapp-info {
+    font-weight: bold;
+    color: #28a745; 
+    text-align: center;
+    font-size: 1.3em; 
+    margin-top: 15px; 
+    text-decoration: none; 
+}
+.main-content-text .whatsapp-info:hover {
+    text-decoration: underline; 
+}
+
+
+.main-content-text .slogan {
+    font-style: italic;
+    color: #007bff;
+    text-align: center;
+    margin-top: 20px;
+    font-size: 1.2em; /* Deixa o slogan um pouco maior */
+    line-height: 1.5; /* Espaçamento para o slogan */
+}
+
+
+.ajuda a {
+    text-decoration: none;
+    color: inherit;
+	color: #215757
+}
+.ajuda {
+    position: fixed;
+    bottom: 25px;
+    right: 2em;
+	font-size: 1.5em;
+    z-index: 1001;
+    text-align: center;
+    font-family: 'Louis George Cafe', sans-serif;
 }

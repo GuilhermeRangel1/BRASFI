@@ -1,20 +1,21 @@
 <!DOCTYPE html>
-<html lang="pt-br">
-<head>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org"> <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BRASFI</title>
-    <link rel="stylesheet" href="css/loginRegister.css">	  
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-</head>
+    <link rel="stylesheet" th:href="@{/css/loginRegister.css}"> <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link rel="icon" type="image/jpg" th:href="@{/img/brasfi.jpg}"> </head>
 <body>
-        <div class="form-container">
-		<div class="login-container">
-		    <h2>Login</h2>
-            <form action="/login" method="POST">
+    <div class="form-container">
+        <div class="login-container">
+            <h2>Login</h2>
+            <form th:action="@{/login}" method="POST">
+                <div th:if="${param.error}" class="error-message">
+                    Email ou senha inválidos.
+                </div>
                 <div class="input-group">
                     <label for="email">Email</label>
-                    <input type="email" id="email" name="email" required placeholder="Digite seu email">
+                    <input type="email" id="email" name="username" required placeholder="Digite seu email">
                 </div>
                 <div class="input-group">
                     <label for="password">Senha</label>
@@ -26,8 +27,7 @@
                 <a href="#">Esqueceu a senha?</a>
             </div>
             <div class="register-link">
-                <p>Ainda não tem uma conta? <a href="/register">Registre-se aqui</a></p>
-            </div>
+                <p>Ainda não tem uma conta? <a th:href="@{/register}">Registre-se aqui</a></p> </div>
         </div>
     </div>
 </body>
