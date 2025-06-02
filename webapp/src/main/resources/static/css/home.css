@@ -50,6 +50,58 @@ header {
   gap: 14px;
 }
 
+.logged-in-container {
+  display: flex;
+  align-items: center;
+}
+
+.logged-in-username {
+  background-color: #ddd; 
+  color: #333;
+  padding: 8px 16px;
+  border-radius: 20px; 
+  font-size: 16px;
+  font-weight: bold;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.logged-in-username i {
+  font-size: 1em;
+}
+
+.user-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px; 
+  height: 30px;
+  border-radius: 50%; 
+  background-color: #ccc;
+  color: #777; 
+  font-size: 1.2em;
+  margin-left: 8px;
+}
+
+.logout-button {
+  color: white;
+  text-decoration: none;
+  background-color: #d9534f;
+  padding: 8px 16px;
+  border-radius: 5px;
+  font-size: 16px;
+  transition: background-color 0.3s;
+  white-space: nowrap;
+  font-family: 'Louis George Cafe', sans-serif;
+  margin-left: 10px; 
+}
+
+.logout-button:hover {
+  background-color: #c9302c;
+}
+
 .login-button {
   color: white;
   text-decoration: none;

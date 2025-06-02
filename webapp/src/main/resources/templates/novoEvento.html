@@ -14,10 +14,14 @@
     <div class="top-bar">
       <div class="logo-section">
         <div class="brasfi-logo">BRASFI</div>
-        <img src="/img/brasfi.jpg" alt="Logo BRASFI" class="brasfi-icon">
+        <img th:src="@{/img/brasfi.jpg}" alt="Logo BRASFI" class="brasfi-icon">
       </div>
       <div class="user-section">
-        <a href="/login" class="login-button">Login</a>
+        <div th:if="${loggedInUser}" class="logged-in-container">
+          <span class="logged-in-username"><i class="fas fa-star"></i> <span th:text="${loggedInUser}">Nome do Usuário</span> <span class="user-icon"><i class="fas fa-user-circle"></i></span></span>
+          <a href="/logout" class="logout-button">Sair</a>
+        </div>
+        <a th:unless="${loggedInUser}" href="/login" class="login-button">Login</a>
       </div>
     </div>
 

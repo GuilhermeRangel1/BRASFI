@@ -1,7 +1,9 @@
 package com.brasfi.webapp.controller;
 
+import jakarta.servlet.http.HttpSession; 
 import com.brasfi.webapp.entities.Evento;
 import com.brasfi.webapp.entities.EventoCategoria;
+import com.brasfi.webapp.entities.User; 
 import com.brasfi.webapp.service.EventoService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -21,8 +23,17 @@ public class EventoController {
         this.eventoService = eventoService;
     }
 
+
+    private void addLoggedInUserToModel(HttpSession session, Model model) {
+        User user = (User) session.getAttribute("user");
+        if (user != null) {
+            model.addAttribute("loggedInUser", user.getName());
+        }
+    }
+
     @GetMapping("/agenda")
-    public String eventosAgendados(Model model) {
+    public String eventosAgendados(Model model, HttpSession session) { 
+        addLoggedInUserToModel(session, model); 
         model.addAttribute("eventos", eventoService.listarEventosAtuaisOuFuturos());
         model.addAttribute("categorias", EventoCategoria.values());
         model.addAttribute("categoriaSelecionada", null);
@@ -30,7 +41,8 @@ public class EventoController {
     }
 
     @GetMapping("/eventosGravados")
-    public String eventosGravados(Model model) {
+    public String eventosGravados(Model model, HttpSession session) { 
+        addLoggedInUserToModel(session, model); 
         model.addAttribute("eventos", eventoService.listarEventosPassados());
         model.addAttribute("categorias", EventoCategoria.values());
         model.addAttribute("categoriaSelecionada", null);
@@ -38,14 +50,16 @@ public class EventoController {
     }
 
     @GetMapping("/novoEvento")
-    public String novoEventoForm(Model model) {
+    public String novoEventoForm(Model model, HttpSession session) { 
+        addLoggedInUserToModel(session, model); 
         model.addAttribute("evento", new Evento());
         model.addAttribute("categorias", EventoCategoria.values());
         return "novoEvento";
     }
 
     @PostMapping("/evento/salvar")
-    public String salvarEvento(@ModelAttribute Evento evento, Model model) {
+    public String salvarEvento(@ModelAttribute Evento evento, Model model, HttpSession session) { 
+        addLoggedInUserToModel(session, model);
         try {
             eventoService.salvarEvento(evento);
             return "redirect:/agenda";
@@ -56,8 +70,10 @@ public class EventoController {
             return "novoEvento";
         }
     }
+
     @GetMapping("/agenda/filtro")
-    public String filtrarPorCategoria(@RequestParam(value = "categoria", required = false) EventoCategoria categoria, Model model) {
+    public String filtrarPorCategoria(@RequestParam(value = "categoria", required = false) EventoCategoria categoria, Model model, HttpSession session) { // Adicionado HttpSession
+        addLoggedInUserToModel(session, model); 
         List<Evento> eventosFiltrados;
         if (categoria != null) {
             eventosFiltrados = eventoService.listarEventosAtuaisOuFuturosPorCategoria(categoria);
@@ -71,7 +87,8 @@ public class EventoController {
     }
 
     @GetMapping("/eventosGravados/filtro")
-    public String filtrarEventosGravadosPorCategoria(@RequestParam(value = "categoria", required = false) EventoCategoria categoria, Model model) {
+    public String filtrarEventosGravadosPorCategoria(@RequestParam(value = "categoria", required = false) EventoCategoria categoria, Model model, HttpSession session) { // Adicionado HttpSession
+        addLoggedInUserToModel(session, model);
         List<Evento> eventosFiltrados;
         if (categoria != null) {
             eventosFiltrados = eventoService.listarEventosPassadosPorCategoria(categoria);
@@ -98,7 +115,8 @@ public class EventoController {
     }
 
     @GetMapping("/eventos/editar/{id}")
-    public String editarEventoForm(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
+    public String editarEventoForm(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes, HttpSession session) { // Adicionado HttpSession
+        addLoggedInUserToModel(session, model); 
         Optional<Evento> eventoOptional = eventoService.findById(id);
 
         if (eventoOptional.isPresent()) {
@@ -112,8 +130,8 @@ public class EventoController {
     }
 
     @PostMapping("/eventos/atualizar/{id}")
-    public String atualizarEvento(@PathVariable Long id, @ModelAttribute Evento evento, Model model, RedirectAttributes redirectAttributes) {
-
+    public String atualizarEvento(@PathVariable Long id, @ModelAttribute Evento evento, Model model, RedirectAttributes redirectAttributes, HttpSession session) { // Adicionado HttpSession
+        addLoggedInUserToModel(session, model); 
         evento.setId(id);
 
         try {

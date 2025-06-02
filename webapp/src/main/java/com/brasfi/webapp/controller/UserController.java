@@ -1,12 +1,17 @@
 package com.brasfi.webapp.controller;
-import jakarta.servlet.http.HttpSession; 
+
+import jakarta.servlet.http.HttpSession;
 import com.brasfi.webapp.entities.User;
-import com.brasfi.webapp.repositories.UserRepository;
+import com.brasfi.webapp.repositories.UserRepository; 
+import com.brasfi.webapp.service.UserService; 
+import com.brasfi.webapp.exception.CpfAlreadyExistsException;
+import com.brasfi.webapp.exception.EmailAlreadyExistsException;
+import com.brasfi.webapp.exception.InvalidCpfFormatException;
+import com.brasfi.webapp.exception.MissingRequiredFieldsException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 public class UserController {
@@ -14,21 +19,36 @@ public class UserController {
     @Autowired
     private UserRepository userRepository;
     
-    @GetMapping("/")
-    public String home() {
-        return "inicio"; 
+    @Autowired 
+    private UserService userService;
+
+    private void addLoggedInUserToModel(HttpSession session, Model model) {
+        User user = (User) session.getAttribute("user");
+        if (user != null) {
+            model.addAttribute("loggedInUser", user.getName());
+        }
     }
+
+    @GetMapping("/")
+    public String home(HttpSession session, Model model) {
+        addLoggedInUserToModel(session, model);
+        return "inicio";
+    }
+
     @GetMapping("/login")
     public String login() {
-        return "login"; 
+        return "login";
     }
+
     @GetMapping("/sobre")
-    public ModelAndView sobre() {
-        return new ModelAndView("sobre");
+    public String sobre(HttpSession session, Model model) {
+        addLoggedInUserToModel(session, model);
+        return "sobre";
     }
+
     @GetMapping("/register")
     public String register() {
-        return "register"; 
+        return "register";
     }
 
     @PostMapping("/register")
@@ -40,28 +60,17 @@ public class UserController {
         @RequestParam("idade") int idade,
         Model model
     ) {
-        if (nome.isEmpty() || email.isEmpty() || cpf.isEmpty() || senha.isEmpty() || idade <= 0) {
-            model.addAttribute("error", "Todos os campos devem ser preenchidos.");
+        try {
+            userService.registerUser(nome, email, cpf, senha, idade);
+            return "redirect:/login";
+        } catch (MissingRequiredFieldsException | EmailAlreadyExistsException | CpfAlreadyExistsException | InvalidCpfFormatException e) {
+            model.addAttribute("error", e.getMessage());
+            model.addAttribute("nome", nome);
+            model.addAttribute("email", email);
+            model.addAttribute("cpf", cpf);
+            model.addAttribute("idade", idade);
             return "register";
         }
-        if (userRepository.findByEmail(email) != null) {
-            model.addAttribute("error", "Este e-mail já está cadastrado.");
-            return "register";
-        }
-
-        if (userRepository.findByCpf(cpf) != null) {
-            model.addAttribute("error", "Este CPF já está cadastrado.");
-            return "register";
-        }
-
-        if (!cpf.matches("\\d{11}")) {
-            model.addAttribute("error", "O CPF deve conter exatamente 11 números.");
-            return "register";
-        }
-
-        User user = new User(null, nome, email, cpf, senha, idade);
-        userRepository.save(user);
-        return "redirect:/login";
     }
 
     @PostMapping("/login")
@@ -77,6 +86,12 @@ public class UserController {
             return "login";
         }
         session.setAttribute("user", user);
-        return "redirect:/"; 
+        return "redirect:/";
+    }
+
+    @GetMapping("/logout")
+    public String logout(HttpSession session) {
+        session.invalidate();
+        return "redirect:/";
     }
 }

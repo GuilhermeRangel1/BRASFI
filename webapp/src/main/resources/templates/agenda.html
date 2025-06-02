@@ -17,7 +17,11 @@
         <img th:src="@{/img/brasfi.jpg}" alt="Logo BRASFI" class="brasfi-icon">
       </div>
       <div class="user-section">
-        <a href="/login" class="login-button">Login</a>
+        <div th:if="${loggedInUser}" class="logged-in-container">
+          <span class="logged-in-username"><i class="fas fa-star"></i> <span th:text="${loggedInUser}">Nome do Usuário</span> <span class="user-icon"><i class="fas fa-user-circle"></i></span></span>
+          <a href="/logout" class="logout-button">Sair</a>
+        </div>
+        <a th:unless="${loggedInUser}" href="/login" class="login-button">Login</a>
       </div>
     </div>
 
@@ -43,9 +47,12 @@
   <div class="eventos">
   	<div class="eventos-header">
           <h1>Eventos Agendados (Próximos e Atuais)</h1>
-          <div class="header-actions-group"> <div class="filter-group"> <form th:action="@{/agenda/filtro}" method="get" class="filter-form">
+          <div class="header-actions-group">
+              <div class="filter-group">
+                  <form th:action="@{/agenda/filtro}" method="get" class="filter-form">
                       <select name="categoria" id="categoria-filtro" class="filter-select">
-                          <option value="">Todas as Categorias</option> <option th:each="cat : ${categorias}"
+                          <option value="">Todas as Categorias</option>
+                          <option th:each="cat : ${categorias}"
                                   th:value="${cat}"
                                   th:text="${cat.displayName}"
                                   th:selected="${categoriaSelecionada != null and categoriaSelecionada.name() == cat.name()}">
@@ -55,10 +62,12 @@
                           <i class="fas fa-filter"></i> Filtrar
                       </button>
                   </form>
-              </div> <div class="event-actions">
+              </div>
+              <div class="event-actions">
                   <a th:href="@{/novoEvento}" class="create-event-button">Criar Novo Evento</a>
               </div>
-          </div> </div>
+          </div>
+      </div>
 
       <ul class="eventos-list">
         <li th:each="evento : ${eventos}" class="evento-card">

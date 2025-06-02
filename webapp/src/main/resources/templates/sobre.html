@@ -1,23 +1,27 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>BRASFI</title>
-  <link rel="stylesheet" href="/css/sobre.css" />
-  <link rel="stylesheet" href="/css/home.css" />
+  <link rel="stylesheet" th:href="@{/css/sobre.css}" />
+  <link rel="stylesheet" th:href="@{/css/home.css}" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-  <link rel="icon" type="image/jpg" href="img/brasfi.jpg">
+  <link rel="icon" type="image/jpg" th:href="@{/img/brasfi.jpg}">
 </head>
 <body>
   <header>
     <div class="top-bar">
       <div class="logo-section">
         <div class="brasfi-logo">BRASFI</div>
-        <img src="/img/brasfi.jpg" alt="Logo BRASFI" class="brasfi-icon" />
+        <img th:src="@{/img/brasfi.jpg}" alt="Logo BRASFI" class="brasfi-icon" />
       </div>
       <div class="user-section">
-        <a href="/login" class="login-button">Login</a>
+        <div th:if="${loggedInUser}" class="logged-in-container">
+          <span class="logged-in-username"><i class="fas fa-star"></i> <span th:text="${loggedInUser}">Nome do Usuário</span> <span class="user-icon"><i class="fas fa-user-circle"></i></span></span>
+          <a href="/logout" class="logout-button">Sair</a>
+        </div>
+        <a th:unless="${loggedInUser}" href="/login" class="login-button">Login</a>
       </div>
     </div>
 
@@ -83,6 +87,6 @@
     </section>
   </main>
 
-  <script src="/js/inicio.js"></script>
+  <script th:src="@{/js/inicio.js}"></script>
 </body>
 </html>
