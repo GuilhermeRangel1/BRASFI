@@ -1,17 +1,15 @@
 <!DOCTYPE html>
 <html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
 <head>
-
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BRASFI</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/css/home.css">
     <link rel="stylesheet" href="/css/comunidade.css"/>
     <link rel="stylesheet" href="/webjars/bootstrap/5.3.3/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-    <link rel="icon" type="image/jpg" href="img/brasfi.jpg">
+    <link rel="icon" type="image/jpg" href="/img/brasfi.jpg">
     <script th:inline="javascript">
         /*<![CDATA[*/
         let comunidadeId = /*[[${comunidade.id}]]*/ 0;
@@ -23,25 +21,118 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 
-    <script>
+    <script th:inline="javascript">
         function OpenForm()
         {
             document.getElementById("criar-comunidade").style.display = "block";
         }
+        // Novo script para o pop-up de acesso negado
+        document.addEventListener('DOMContentLoaded', function() {
+            // Verifica se o atributo 'acessoNegado' foi passado pelo modelo do Spring
+
+            /*<![CDATA[*/
+                const acessoNegado = /*[[${acessoNegado}]]*/ false; // Thymeaf injeta o valor aqui
+            /*]]>*/
+
+            if (acessoNegado) {
+                document.getElementById('acesso-negado-overlay').style.display = 'flex';
+                document.getElementById('acesso-negado-popup').style.display = 'block';
+            }
+        });
+
+        function fecharPopupAcessoNegado() {
+            document.getElementById('acesso-negado-overlay').style.display = 'none';
+            document.getElementById('acesso-negado-popup').style.display = 'none';
+            // Opcional: Redirecionar para uma página de onde o usuário possa solicitar acesso
+            // window.location.href = '/minhas-comunidades';
+        }
     </script>
 
-
     <style>
+        /* Estilos existentes */
         .top-bar {
-            margin-top: 20px; /* distanciamento do topo da tela */
+            margin-top: 20px;
         }
-
-        .comunidade-nome {
-        }
-
-        /* Espaçamento individual entre radios (já incluso com .mb-2) */
+        .comunidade-nome {}
         #comunidadesList .form-check {
             margin-bottom: 300px;
+        }
+
+        /* --- NOVOS ESTILOS PARA O POP-UP DE ACESSO NEGADO --- */
+        .acesso-negado-overlay {
+            position: fixed; /* Fixa na tela */
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7); /* Fundo escuro semi-transparente */
+            display: none; /* Inicialmente escondido */
+            justify-content: center; /* Centraliza horizontalmente */
+            align-items: center; /* Centraliza verticalmente */
+            z-index: 1000; /* Garante que fique acima de outros elementos */
+        }
+
+        .acesso-negado-popup {
+            background-color: #f0f0f0; /* Cor de fundo do pop-up */
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+            z-index: 1001; /* Acima do overlay */
+            display: none; /* Inicialmente escondido */
+            position: relative; /* Para posicionar o botão de fechar */
+            color: #333; /* Cor do texto */
+            border: 1px solid #ccc; /* Borda leve */
+        }
+
+        .acesso-negado-popup h3 {
+            color: #cc0000; /* Cor vermelha para "ATENÇÃO" */
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        .acesso-negado-popup p {
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
+
+        .acesso-negado-popup textarea {
+            width: calc(100% - 20px); /* Ajusta a largura com padding */
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            resize: vertical; /* Permite redimensionamento vertical */
+            min-height: 80px;
+        }
+
+        .acesso-negado-popup button {
+            background-color: #007bff; /* Cor do botão de enviar */
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .acesso-negado-popup button:hover {
+            background-color: #0056b3;
+        }
+
+        /* Botão de fechar (opcional, pode ser uma âncora) */
+        .close-popup {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 24px;
+            cursor: pointer;
+            color: #888;
+        }
+        .close-popup:hover {
+            color: #333;
         }
 
     </style>
@@ -49,86 +140,91 @@
 </head>
 <body>
 
-    <h3 th:text="${usuariostring}"></h3>
+<div id="acesso-negado-overlay" class="acesso-negado-overlay">
+    <div id="acesso-negado-popup" class="acesso-negado-popup">
+        <h3>ATENÇÃO</h3>
+        <p th:text="${mensagemAcessoNegado}"></p>
+        <textarea placeholder="Escreva aqui sua solicitação..."></textarea>
+        <button>Enviar Solicitação</button>
+    </div>
+</div>
 
-    <form style="margin-left: 1250px; margin-top: 100px" id="mudar-de-comunidade-form" action="/mudar-de-comunidade" method="post">
-        <div id="comunidadesList" th:each="com : ${comunidades}" class="form-check mb-2">
-            <input class="form-check-input"
-                   type="radio"
-                   name="comunidade-atual"
-                   th:checked="${com != null} and (${com.id} == ${comunidade.id})"
-                   th:value="${com.getId()}"
-                   onchange="document.getElementById('mudar-de-comunidade-form').submit()">
-            <label class="form-check-label" th:text="${com.nome}"></label>
-        </div>
-    </form>
+<form style="margin-left: 1250px; margin-top: 100px" id="mudar-de-comunidade-form" action="/mudar-de-comunidade" method="post">
+    <div id="comunidadesList" th:each="com : ${comunidades}" class="form-check mb-2">
+        <input class="form-check-input"
+               type="radio"
+               name="comunidade-atual"
+               th:checked="${com != null} and (${com.id} == ${comunidade.id})"
+               th:value="${com.getId()}"
+               onchange="document.getElementById('mudar-de-comunidade-form').submit()">
+        <label class="form-check-label" th:text="${com.nome}"></label>
+    </div>
+</form>
 
-    <div class="row">
-        <div class="col-md-5">
-            <table id="conversation" class="table table-striped">
-                <thead>
-                <tr>
-                    <th th:text="${comunidade.getNome()}"></th>
-                </tr>
-                </thead>
-                <tbody th:each="post: ${postagens}" id="livechat">
-                    <tr>
-                        <td th:text="${post.getDescricao()}"></td>
-                    </tr>
-                <!-- Messages will be dynamically appended here -->
-                </tbody>
-            </table>
-        </div>
+<div class="row">
+    <div class="col-md-5">
+        <table id="conversation" class="table table-striped">
+            <thead>
+            <tr>
+                <th th:text="${comunidade.getNome()}"></th>
+            </tr>
+            </thead>
+            <tbody th:each="post: ${postagens}" id="livechat">
+            <tr>
+                <td th:text="${post.getDescricao()}"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<form class="form-inline">
+    <div class="form-group">
+        <label for="message">Message:</label>
+        <input type="text" id="message" class="form-control" placeholder="Type your message...">
     </div>
 
-    <form class="form-inline">
-        <div class="form-group">
-            <label for="message">Message:</label>
-            <input type="text" id="message" class="form-control" placeholder="Type your message...">
-        </div>
-
-        <div class="form-group">
-            <button id="send" class="btn btn-primary" type="submit">Send</button>
-        </div>
-    </form>
-
-    <button onclick="OpenForm()" id="open-criar-comunidade">Criar nova comunidade</button>
-
-    <div id="criar-comunidade" style="display: none">
-        <div style="margin-bottom: 200px" class="d-flex justify-content-center align-items-center vh-100">
-            <form action="/criar-comunidade" method="post" id="criar-comunidade-form" class="p-4 border rounded bg-light shadow" style="min-width: 350px;">
-                <div class="mb-3">
-                    <label for="nome" class="form-label">Nome</label>
-                    <input type="text" class="form-control" id="nome" name="nome" placeholder="Digite o nome" required>
-                </div>
-
-                <div class="mb-3">
-                    <label for="descricao" class="form-label">Descrição</label>
-                    <textarea class="form-control" id="descricao" name="descricao" rows="4" placeholder="Descreva a comunidade"></textarea>
-                </div>
-                <label class="form-label" style="align-self: center">Integrantes da comunidade</label>
-                <div class="mb-3">
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" id="Publica" name="Nivel de Permissao" th:value="${PUBLICA}">
-                        <label class="form-check-label" for="Publica">Pública</label>
-                    </div>
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" id="Lideres" name="Nivel de Permissao" th:value="${APENAS_LIDERES}">
-                        <label class="form-check-label" for="Lideres">Apenas líderes</label>
-                    </div>
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" id="Personalizada" name="Nivel de Permissao" th:value="${PERSONALIZADA}">
-                        <label class="form-check-label" for="Personalizada">Personalizada</label>
-                    </div>
-                </div>
-
-                <button type="submit" class="btn btn-primary w-100">Criar</button>
-            </form>
-        </div>
-
+    <div class="form-group">
+        <button id="send" class="btn btn-primary" type="submit">Send</button>
     </div>
+</form>
 
-    <script src="/webjars/jquery/3.7.1/jquery.min.js"></script>
-    <script src="/webjars/bootstrap/5.3.3/js/bootstrap.min.js"></script>
+<button onclick="OpenForm()" id="open-criar-comunidade">Criar nova comunidade</button>
+
+<div id="criar-comunidade" style="display: none">
+    <div style="margin-bottom: 200px" class="d-flex justify-content-center align-items-center vh-100">
+        <form action="/criar-comunidade" method="post" id="criar-comunidade-form" class="p-4 border rounded bg-light shadow" style="min-width: 350px;">
+            <div class="mb-3">
+                <label for="nome" class="form-label">Nome</label>
+                <input type="text" class="form-control" id="nome" name="nome" placeholder="Digite o nome" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="descricao" class="form-label">Descrição</label>
+                <textarea class="form-control" id="descricao" name="descricao" rows="4" placeholder="Descreva a comunidade"></textarea>
+            </div>
+            <label class="form-label" style="align-self: center">Integrantes da comunidade</label>
+            <div class="mb-3">
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" id="Publica" name="Nivel de Permissao" th:value="${PUBLICA}">
+                    <label class="form-check-label" for="Publica">Pública</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" id="Lideres" name="Nivel de Permissao" th:value="${APENAS_LIDERES}">
+                    <label class="form-check-label" for="Lideres">Apenas líderes</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" id="Personalizada" name="Nivel de Permissao" th:value="${PERSONALIZADA}">
+                    <label class="form-check-label" for="Personalizada">Personalizada</label>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100">Criar</button>
+        </form>
+    </div>
+</div>
+
+<script src="/webjars/jquery/3.7.1/jquery.min.js"></script>
+<script src="/webjars/bootstrap/5.3.3/js/bootstrap.min.js"></script>
 </body>
 </html>

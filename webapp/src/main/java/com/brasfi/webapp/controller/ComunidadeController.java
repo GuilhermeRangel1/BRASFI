@@ -35,6 +35,9 @@ public class ComunidadeController {
         this.messagingTemplate = messagingTemplate;
     }
 
+        String mensagemAcessoNegado = "Você não tem acesso a esta página. Por favor\n mande uma solicitacao" +
+                " para nossa secretaria,\n para lhe dar acesso a esta pagina";
+
         @MessageMapping("/create-post")
         public void createPost(@Payload PostEntrada postEntrada)
         {
@@ -53,22 +56,23 @@ public class ComunidadeController {
 
         @GetMapping("/comunidades/{id}")
         public ModelAndView getComunidades(@PathVariable Long id, @AuthenticationPrincipal CustomUserDetails currentUser) {
-            ModelAndView mv = new ModelAndView();
+            ModelAndView mv = new ModelAndView("comunidades_hub");
 
             Optional<Comunidade> comunidade = comunidadeRepository.findById(id);
+            boolean podeAcessar = false;
 
             if (currentUser != null && comunidade.isPresent()) {
-                boolean podeAcessar = comunidadeService.validarMudanca(comunidade.get().getNivelDePermissao(), currentUser.getUserEntity());
-                if (podeAcessar) mv.setViewName("comunidades_hub");
-                else mv.setViewName("inicio");
+                podeAcessar = comunidadeService.validarAcesso(comunidade.get().getNivelDePermissao(), currentUser.getUserEntity());
             }
 
             comunidade.ifPresent(value -> mv.addObject("comunidade", value));
+            mv.addObject("mensagemAcessoNegado", mensagemAcessoNegado);
             mv.addObject("comunidades", comunidadeRepository.findAll());
             mv.addObject("PUBLICA", NivelDePermissaoComunidade.PUBLICA);
             mv.addObject("APENAS_LIDERES", NivelDePermissaoComunidade.APENAS_LIDERES);
             mv.addObject("PERSONALIZADA", NivelDePermissaoComunidade.PERSONALIZADA);
             comunidade.ifPresent(value -> mv.addObject("postagens", postService.buscarPorComunidade(value)));
+            mv.addObject("acessoNegado", podeAcessar);
             return mv;
         }
 

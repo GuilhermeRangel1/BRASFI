@@ -15,7 +15,7 @@ public class ComunidadeService {
         this.comunidadeRepository = comunidadeRepository;
     }
 
-    public boolean validarMudanca(NivelDePermissaoComunidade nivelDePermissaoComunidade, User user)
+    public boolean validarAcesso(NivelDePermissaoComunidade nivelDePermissaoComunidade, User user)
     {
         switch (nivelDePermissaoComunidade)
         {
