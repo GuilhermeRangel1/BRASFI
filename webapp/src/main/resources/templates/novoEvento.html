@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -17,11 +17,11 @@
         <img th:src="@{/img/brasfi.jpg}" alt="Logo BRASFI" class="brasfi-icon">
       </div>
       <div class="user-section">
-        <div th:if="${loggedInUser}" class="logged-in-container">
-          <span class="logged-in-username"><i class="fas fa-star"></i> <span th:text="${loggedInUser}">Nome do Usuário</span> <span class="user-icon"><i class="fas fa-user-circle"></i></span></span>
-          <a href="/logout" class="logout-button">Sair</a>
+        <div sec:authorize="isAuthenticated()" class="logged-in-container">
+          <span class="logged-in-username"><i class="fas fa-star"></i> <span sec:authentication="principal.name">Nome do Usuário</span> <span class="user-icon"><i class="fas fa-user-circle"></i></span></span>
+          <a th:href="@{/logout}" class="logout-button">Sair</a>
         </div>
-        <a th:unless="${loggedInUser}" href="/login" class="login-button">Login</a>
+        <a sec:authorize="!isAuthenticated()" th:href="@{/login}" class="login-button">Login</a>
       </div>
     </div>
 
@@ -35,11 +35,11 @@
             <button class="menu-close-button" id="menu-close-button">
                 <i class="fas fa-angle-up"></i>
             </button>
-            <li><a href="/">Home</a></li>
-            <li><a href="/sobre">Sobre a BRASFI</a></li>
-            <li><a href="/agenda">Agenda de Eventos</a></li>
-            <li><a href="/eventosGravados">Eventos Gravados</a></li>
-            <li><a href="/comunidades">Comunidade</a></li>
+            <li><a th:href="@{/}">Home</a></li>
+            <li><a th:href="@{/sobre}">Sobre a BRASFI</a></li>
+            <li><a th:href="@{/agenda}">Agenda de Eventos</a></li>
+            <li><a th:href="@{/eventosGravados}">Eventos Gravados</a></li>
+            <li><a th:href="@{/comunidades}">Comunidade</a></li>
         </ul>
     </div>
   </header>
@@ -100,7 +100,7 @@
   </div>
 
 <div class="ajuda">
-<a href="/ajuda">Ajuda</a>
+<a th:href="@{/ajuda}">Ajuda</a>
 </div>
 <script th:src="@{/js/inicio.js}"></script>
 </body>
