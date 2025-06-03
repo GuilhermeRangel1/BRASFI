@@ -33,35 +33,35 @@ public class ComunidadeController {
         this.messagingTemplate = messagingTemplate;
     }
 
-        @MessageMapping("/create-post")
-        public void createPost(@Payload PostEntrada postEntrada)
-        {
-            Comunidade comunidade = comunidadeRepository.findById(postEntrada.getComunidadeId()).orElse(null);
+    @MessageMapping("/create-post")
+    public void createPost(@Payload PostEntrada postEntrada)
+    {
+        Comunidade comunidade = comunidadeRepository.findById(postEntrada.getComunidadeId()).orElse(null);
 
-            Post post = new Post(null, null, postEntrada.getMensagem(), 0, null ,comunidade);
-            postService.incluirPost(post);
+        Post post = new Post(null, null, postEntrada.getMensagem(), 0, null ,comunidade);
+        postService.incluirPost(post);
 
-            PostSaida ps = new PostSaida(postEntrada.getMensagem());
-            System.out.println(HtmlUtils.htmlEscape(ps.getContent()));
+        PostSaida ps = new PostSaida(postEntrada.getMensagem());
+        System.out.println(HtmlUtils.htmlEscape(ps.getContent()));
 
-            String destino = "/topic/" + postEntrada.getComunidadeId();
-            System.out.println(destino);
-            messagingTemplate.convertAndSend(destino, ps);
-        }
+        String destino = "/topic/" + postEntrada.getComunidadeId();
+        System.out.println(destino);
+        messagingTemplate.convertAndSend(destino, ps);
+    }
 
-        @GetMapping("/comunidades/{id}")
-        public ModelAndView getComunidades(@PathVariable Long id) {
-            ModelAndView mv = new ModelAndView("comunidades_hub");
-            Optional<Comunidade> comunidade = comunidadeRepository.findById(id);
+    @GetMapping("/comunidades/{id}")
+    public ModelAndView getComunidades(@PathVariable Long id) {
+        ModelAndView mv = new ModelAndView("comunidades_hub");
+        Optional<Comunidade> comunidade = comunidadeRepository.findById(id);
 
-            comunidade.ifPresent(value -> mv.addObject("comunidade", value));
-            mv.addObject("comunidades", comunidadeRepository.findAll());
-            mv.addObject("PUBLICA", NivelDePermissaoComunidade.PUBLICA);
-            mv.addObject("APENAS_LIDERES", NivelDePermissaoComunidade.APENAS_LIDERES);
-            mv.addObject("PERSONALIZADA", NivelDePermissaoComunidade.PERSONALIZADA);
-            comunidade.ifPresent(value -> mv.addObject("postagens", postService.buscarPorComunidade(value)));
-            return mv;
-        }
+        comunidade.ifPresent(value -> mv.addObject("comunidade", value));
+        mv.addObject("comunidades", comunidadeRepository.findAll());
+        mv.addObject("PUBLICA", NivelDePermissaoComunidade.PUBLICA);
+        mv.addObject("APENAS_LIDERES", NivelDePermissaoComunidade.APENAS_LIDERES);
+        mv.addObject("PERSONALIZADA", NivelDePermissaoComunidade.PERSONALIZADA);
+        comunidade.ifPresent(value -> mv.addObject("postagens", postService.buscarPorComunidade(value)));
+        return mv;
+    }
 
     @PostMapping("/mudar-de-comunidade")
     public ModelAndView mudarDeComunidade(@RequestParam("comunidade-atual") Long comunidadeId) {
@@ -84,11 +84,13 @@ public class ComunidadeController {
         Comunidade comunidadeAdicionada  = comunidadeService.incluirComunidade(new Comunidade(nome, descricao, nivelDePermissao));
         if (comunidadeAdicionada != null)
         {
-            ModelAndView mv = new ModelAndView("redirect:/comunidades/" + comunidadeAdicionada.getId());
+            ModelAndView mv = new ModelAndView("redirect:/comunidades"); 
             mv.addObject("criado-com-sucesso", "Comunidade criada com sucesso!");
             return mv;
         }
-        return null; //jogar exceção
+        ModelAndView mv = new ModelAndView("criarComunidade");
+        mv.addObject("erro-criacao", "Não foi possível criar a comunidade. Tente novamente.");
+        return mv;
     }
 
     @GetMapping("/comunidades")
@@ -97,7 +99,15 @@ public class ComunidadeController {
                 .stream()
                 .findFirst()
                 .map(comunidade -> "redirect:/comunidades/" + comunidade.getId())
-                .orElse("redirect:/erro-sem-comunidades"); // Ou redirecione para uma página com mensagem apropriada
+                .orElse("redirect:/criarComunidade");
     }
 
+    @GetMapping("/criarComunidade")
+    public String exibirFormularioCriarComunidade(Model model) {
+        model.addAttribute("comunidade", new Comunidade()); 
+        model.addAttribute("PUBLICA", NivelDePermissaoComunidade.PUBLICA);
+        model.addAttribute("APENAS_LIDERES", NivelDePermissaoComunidade.APENAS_LIDERES);
+        model.addAttribute("PERSONALIZADA", NivelDePermissaoComunidade.PERSONALIZADA);
+        return "criarComunidade"; 
+    }
 }

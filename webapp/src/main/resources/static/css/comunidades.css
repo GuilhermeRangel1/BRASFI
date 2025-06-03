@@ -1,0 +1,407 @@
+body {
+    margin: 0;
+    font-family: 'Louis George Cafe', sans-serif;
+    line-height: 1.6;
+}
+
+.chat-layout-container {
+    display: flex;
+    min-height: calc(100vh - 90px); 
+    margin-top: 0; 
+    background-color: #E0F2F1; 
+    padding-top: 30px; 
+    box-sizing: border-box; 
+}
+
+.left-sidebar {
+    width: 200px;
+    flex-shrink: 0; 
+    padding-top: 20px; 
+    padding-bottom: 20px; 
+    background-color: #E0F2F1; 
+}
+
+.sidebar-header-left { 
+    background-color: transparent; 
+    padding: 0 20px 0 20px; 
+    margin-bottom: 0; 
+}
+
+.sidebar-header-left h3 {
+    margin-top: 0;
+    color: #386D6B; 
+    font-size: 1.5em; 
+    font-weight: bold; 
+    text-transform: uppercase; 
+    border-bottom: none; 
+    padding-bottom: 0;
+    margin-bottom: 0;
+}
+
+.chat-main-content {
+    flex-grow: 1; 
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 90px; 
+    background-color: #E0F2F1; 
+}
+
+.chat-header-area {
+    padding: 0; 
+    border-bottom: none; 
+    background-color: transparent; 
+}
+
+
+.chat-messages-area {
+    flex-grow: 1;
+    padding: 20px 25px; 
+    overflow-y: auto;
+    background-color: transparent; 
+    display: flex;
+    flex-direction: column;
+    padding-top: 20px; 
+}
+
+.right-sidebar {
+    width: 250px; 
+    flex-shrink: 0; 
+    padding-top: 20px; 
+    padding-bottom: 20px; 
+    padding-left: 20px; 
+    padding-right: 20px; 
+    border-left: 1px solid rgba(0,0,0,0.1); 
+    background-color: #E0F2F1; 
+}
+
+.edit-section {
+    padding-bottom: 15px; 
+    text-align: right; 
+}
+
+.edit-communities-button {
+    color: #386D6B !important; 
+    font-weight: bold;
+    text-decoration: none;
+    background-color: #ffffff; 
+    padding: 5px 12px;
+    border-radius: 4px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+.edit-communities-button:hover {
+    background-color: #f0f0f0;
+    text-decoration: none !important;
+}
+
+.community-list-section {
+    padding-top: 0; 
+}
+
+.community-list-header h4 {
+    display: none; 
+}
+
+.community-list { 
+    list-style: none;
+    padding: 0; 
+    margin: 0;
+}
+
+.community-list li {
+    margin-bottom: 5px;
+}
+
+.community-list li a {
+    display: block;
+    padding: 5px 10px;
+    text-decoration: none;
+    color: #555;
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
+    font-size: 0.95em;
+}
+
+.community-list li a:hover {
+    background-color: #d8e6e5; 
+}
+
+.community-list .active-community a {
+    background-color: #5F9EA0; 
+    color: white;
+    font-weight: bold;
+}
+
+.community-list .active-community a:hover {
+    background-color: #4A7A78;
+}
+
+.message-bubble {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 15px;
+}
+
+.message-bubble .user-avatar {
+    font-size: 2.2em;
+    color: #999;
+    margin-right: 10px;
+    flex-shrink: 0;
+}
+
+.message-bubble .message-content {
+    background-color: #e9e9eb;
+    padding: 10px 15px;
+    border-radius: 18px;
+    max-width: 70%;
+    word-wrap: break-word;
+}
+
+.message-bubble.my-message {
+    justify-content: flex-end;
+}
+
+.message-bubble.my-message .message-content {
+    background-color: #dcf8c6;
+    color: #333;
+}
+
+.message-bubble.my-message .user-avatar {
+    order: 1;
+    margin-right: 0;
+    margin-left: 10px;
+}
+
+.chat-input-area {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: #79B8B3; 
+    padding: 25px 20px; 
+    display: flex;
+    justify-content: flex-start; 
+    align-items: center; 
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    box-sizing: border-box;
+    min-height: 90px; 
+}
+
+.input-and-button-container {
+    position: relative;
+    width: calc(55% - 40px);
+    max-width: 580px;
+    display: flex;
+    align-items: center;
+    background-color: #ffffff;
+    border-radius: 8px;
+    padding-right: 50px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    margin-left: 20px;
+    flex-grow: 1;
+}
+
+.chat-input-area #message {
+    flex-grow: 1;
+    border: none;
+    outline: none;
+    padding: 15px 20px;
+    border-radius: 8px;
+    font-size: 1.2em;
+    background-color: transparent;
+    box-shadow: none;
+    height: auto;
+    min-height: 40px;
+    box-sizing: border-box;
+}
+
+.chat-input-area #send {
+    position: absolute;
+    right: 10px;
+    background-color: transparent;
+    border: none;
+    padding: 0;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+    box-shadow: none;
+    border-radius: 0; 
+    overflow: hidden;
+}
+
+.chat-input-area #send i.fas.fa-play {
+    display: none;
+}
+
+.chat-input-area #send::before {
+    content: '';
+    width: 0;
+    height: 0;
+    border-top: 10px solid transparent;
+    border-bottom: 10px solid transparent;
+    border-left: 15px solid #386D6B;
+    display: block;
+    transition: border-left-color 0.2s ease;
+}
+
+.chat-input-area #send:hover::before {
+    border-left-color: #2F5957;
+    transform: translateX(1px);
+}
+
+.chat-input-area #send:active::before {
+    border-left-color: #1F3F3E;
+    transform: translateX(2px);
+}
+
+.main-content-container {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    padding: 30px 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+#mudar-de-comunidade-form {
+    background-color: #ffffff;
+    padding: 25px;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    flex: 1;
+    min-width: 280px;
+    max-width: 350px;
+}
+
+#comunidadesList .form-check {
+    margin-bottom: 12px;
+}
+
+#comunidadesList .form-check-label {
+    font-weight: normal;
+    color: #333;
+    font-size: 1.05em;
+}
+
+#comunidadesList .form-check-input[type="radio"]:checked + .form-check-label {
+    font-weight: bold;
+    color: #007bff;
+}
+
+.conversation-table-wrapper {
+    flex: 2;
+    min-width: 450px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    overflow: hidden;
+}
+
+#conversation {
+    width: 100%;
+    margin-bottom: 0;
+    border-collapse: collapse;
+}
+
+#conversation tbody td {
+    padding: 12px 20px;
+    border-bottom: 1px solid #ecf0f1;
+    color: #555;
+    font-size: 1.05em;
+}
+
+#conversation tbody tr:last-child td {
+    border-bottom: none;
+}
+
+#open-criar-comunidade {
+    display: block;
+    width: fit-content;
+    margin: 40px auto;
+    background-color: #007bff;
+    color: white;
+    padding: 15px 30px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.2em;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.1s ease;
+    text-align: center;
+    box-shadow: 0 4px 10px rgba(0,123,255,0.2);
+}
+
+#open-criar-comunidade:hover {
+    background-color: #0056b3;
+    transform: translateY(-2px);
+}
+
+#open-criar-comunidade:active {
+    transform: translateY(0);
+}
+
+#criar-comunidade {
+    background-color: #f8f9fa;
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: 0 5px 25px rgba(0,0,0,0.2);
+    max-width: 650px;
+    margin: 50px auto;
+}
+
+#criar-comunidade-form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+#criar-comunidade-form .form-label {
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 5px;
+}
+
+#criar-comunidade-form input[type="text"],
+#criar-comunidade-form textarea,
+#criar-comunidade-form select {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ced4da;
+    border-radius: 5px;
+    font-size: 1em;
+}
+
+#criar-comunidade-form textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+#criar-comunidade-form .form-check-inline {
+    margin-right: 20px;
+}
+
+#criar-comunidade-form button[type="submit"] {
+    background-color: #17a2b8;
+    color: white;
+    padding: 12px 25px;
+    border: none;
+    border-radius: 5px;
+    font-size: 1.1em;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.1s ease;
+    width: 100%;
+    box-shadow: 0 3px 8px rgba(23,162,184,0.3);
+}
+
+#criar-comunidade-form button[type="submit"]:hover {
+    background-color: #138496;
+    transform: translateY(-1px);
+}
+
+.vh-100 {
+    min-height: auto !important;
+}
