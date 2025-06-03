@@ -1,6 +1,7 @@
 package com.brasfi.webapp.security;
 
 import com.brasfi.webapp.entities.User;
+import com.brasfi.webapp.entities.GerenteComunidade;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -19,11 +20,12 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-
-
-        if (user instanceof com.brasfi.webapp.entities.Administrador) { 
+        if (user instanceof com.brasfi.webapp.entities.Administrador) {
             return Collections.singleton(new SimpleGrantedAuthority("ROLE_ADMIN"));
+        } else if (user instanceof com.brasfi.webapp.entities.GerenteComunidade) {
+            return Collections.singleton(new SimpleGrantedAuthority("ROLE_GERENTE_COMUNIDADE"));
         } else {
+
             return Collections.singleton(new SimpleGrantedAuthority("ROLE_USER"));
         }
     }

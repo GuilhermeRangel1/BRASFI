@@ -51,6 +51,8 @@ public class UserController {
         try {
             if ("ADMIN".equals(tipoConta)) {
                 userService.registerAdmin(nome, email, cpf, senha, idade);
+            } else if ("GERENTE_COMUNIDADE".equals(tipoConta)) {
+                userService.registerGerenteComunidade(nome, email, cpf, senha, idade);
             } else {
                 userService.registerUser(nome, email, cpf, senha, idade);
             }

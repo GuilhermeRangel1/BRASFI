@@ -36,6 +36,7 @@
                     <select id="tipoConta" name="tipoConta">
                         <option value="USER" th:selected="${tipoConta == 'USER' || tipoConta == null}">Usuário Comum</option>
                         <option value="ADMIN" th:selected="${tipoConta == 'ADMIN'}">Administrador</option>
+                        <option value="GERENTE_COMUNIDADE" th:selected="${tipoConta == 'GERENTE_COMUNIDADE'}">Gerente de Comunidade</option>
                     </select>
                 </div>
                 <button type="submit">Cadastrar</button>
