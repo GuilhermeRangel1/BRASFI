@@ -5,7 +5,10 @@ import com.brasfi.webapp.entities.Comunidade;
 import com.brasfi.webapp.entities.NivelDePermissaoComunidade;
 import com.brasfi.webapp.entities.User;
 import com.brasfi.webapp.repositories.ComunidadeRepository;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class ComunidadeService {
@@ -15,16 +18,20 @@ public class ComunidadeService {
         this.comunidadeRepository = comunidadeRepository;
     }
 
-    public boolean validarAcesso(NivelDePermissaoComunidade nivelDePermissaoComunidade, User user)
+    public boolean validarAcesso(NivelDePermissaoComunidade nivelDePermissaoComunidade, User user,
+                                 List<User> usuariosComunidade)
     {
         switch (nivelDePermissaoComunidade)
         {
             case APENAS_LIDERES:
-                return user instanceof Administrador;
+                return usuariosComunidade.contains(user);
 
-            case PUBLICA, PERSONALIZADA:
+            case PUBLICA:
                 return true;
 
+            case PERSONALIZADA:
+                System.out.println(usuariosComunidade);
+                return usuariosComunidade.contains(user);
             default:
 
         }

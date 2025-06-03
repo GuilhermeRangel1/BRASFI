@@ -62,7 +62,8 @@ public class ComunidadeController {
             boolean podeAcessar = false;
 
             if (currentUser != null && comunidade.isPresent()) {
-                podeAcessar = comunidadeService.validarAcesso(comunidade.get().getNivelDePermissao(), currentUser.getUserEntity());
+                podeAcessar = comunidadeService.validarAcesso(comunidade.get().getNivelDePermissao(), currentUser.getUserEntity(),
+                        comunidade.get().getUsuarios());
             }
 
             comunidade.ifPresent(value -> mv.addObject("comunidade", value));
@@ -97,7 +98,7 @@ public class ComunidadeController {
     )
     {
         System.out.println(nivelDePermissao.getDescricaoDeAcesso());
-        Comunidade comunidadeAdicionada  = comunidadeService.incluirComunidade(new Comunidade(nome, descricao, nivelDePermissao));
+        Comunidade comunidadeAdicionada  = comunidadeService.incluirComunidade(new Comunidade(nome, descricao, nivelDePermissao, null));
         if (comunidadeAdicionada != null)
         {
             ModelAndView mv = new ModelAndView("redirect:/comunidades/" + comunidadeAdicionada.getId());

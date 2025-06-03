@@ -3,6 +3,7 @@ package com.brasfi.webapp.entities;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 public class Comunidade {
@@ -10,10 +11,11 @@ public class Comunidade {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    public Comunidade(String nome, String descricao, NivelDePermissaoComunidade nivelDePermissao) {
+    public Comunidade(String nome, String descricao, NivelDePermissaoComunidade nivelDePermissao, List<User> usuarios) {
         this.nome = nome;
         this.descricao = descricao;
         this.nivelDePermissao = nivelDePermissao;
+        this.usuarios = usuarios;
     }
 
     public Comunidade() {
@@ -52,6 +54,22 @@ public class Comunidade {
 
     @Column(nullable = false)
     private String descricao;
+
+    public List<User> getUsuarios() {
+        return usuarios;
+    }
+
+    public void setUsuarios(List<User> usuarios) {
+        this.usuarios = usuarios;
+    }
+
+
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinTable(name = "comunidade_usuarios",
+    joinColumns = @JoinColumn(name = "comunidade_id"),
+    inverseJoinColumns = @JoinColumn(name = "usuarios_id")
+    )
+    private List<User> usuarios = new ArrayList<>();
 
     public void setId(Long id) {
         this.id = id;
