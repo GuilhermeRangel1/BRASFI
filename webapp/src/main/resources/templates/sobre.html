@@ -26,21 +26,21 @@
     </div>
 
     <div class="menu-container">
-        <div class="menu-toggle-bar">
-            <button class="menu-open-button" id="menu-open-button">
-                <i class="fas fa-angle-down"></i>
-            </button>
-        </div>
-        <ul class="menu" id="main-menu">
-            <button class="menu-close-button" id="menu-close-button">
-                <i class="fas fa-angle-up"></i>
-            </button>
-            <li><a th:href="@{/}">Home</a></li>
-            <li><a th:href="@{/sobre}">Sobre a BRASFI</a></li>
-            <li><a th:href="@{/agenda}">Agenda de Eventos</a></li>
-            <li><a th:href="@{/eventosGravados}">Eventos Gravados</a></li>
-            <li><a th:href="@{/comunidades}">Comunidade</a></li>
-        </ul>
+      <div class="menu-toggle-bar">
+        <button class="menu-open-button" id="menu-open-button">
+          <i class="fas fa-angle-down"></i>
+        </button>
+        <button class="menu-close-button" id="menu-close-button">
+          <i class="fas fa-angle-up"></i>
+        </button>
+      </div>
+      <ul class="menu" id="main-menu">
+        <li><a th:href="@{/}">Home</a></li>
+        <li><a th:href="@{/sobre}">Sobre a BRASFI</a></li>
+        <li><a th:href="@{/agenda}">Agenda de Eventos</a></li>
+        <li><a th:href="@{/eventosGravados}">Eventos Gravados</a></li>
+        <li><a th:href="@{/comunidades}">Comunidade</a></li>
+      </ul>
     </div>
   </header>
 
@@ -49,16 +49,10 @@
       <h1><span class="bold">Sobre a</span> <span class="green">BRASFI</span></h1>
 
       <p>
-        A BRASFI – Financiamentos Sustentáveis é uma empresa brasileira voltada para o fomento de projetos que integram inovação, impacto social e responsabilidade ambiental. Atuamos como uma ponte entre o capital e as causas que realmente importam, oferecendo soluções financeiras sob medida para quem quer crescer de forma consciente, ética e duradoura.
+        A BRASFI – Financiamentos Sustentáveis é uma empresa brasileira voltada para o fomento de projetos que integram inovação, impacto social e responsabilidade ambiental.
       </p>
       <p>
-        Nosso propósito é claro: financiar o futuro sem comprometer o presente. Por isso, apoiamos iniciativas voltadas à geração de energia limpa, construção civil sustentável, agricultura regenerativa, mobilidade elétrica, eficiência hídrica e projetos de inclusão social. Todos os nossos produtos financeiros seguem os critérios ESG (ambiental, social e governança), atendendo às exigências do mercado moderno e dos consumidores conscientes.
-      </p>
-      <p>
-        A BRASFI nasceu da necessidade de unir o setor financeiro aos desafios globais da sustentabilidade. Entendemos que o capital tem um papel fundamental na transformação do mundo — e é por isso que acreditamos em um modelo de negócios em que o lucro anda lado a lado com o impacto positivo.
-      </p>
-      <p>
-        Nossos diferenciais incluem:
+        Nosso propósito é claro: financiar o futuro sem comprometer o presente. Por isso, apoiamos iniciativas voltadas à geração de energia limpa, construção civil sustentável, agricultura regenerativa, mobilidade elétrica, eficiência hídrica e projetos de inclusão social.
       </p>
       <ul>
         <li>Avaliação técnica e ambiental dos projetos financiados</li>
@@ -67,26 +61,109 @@
         <li>Acompanhamento contínuo do impacto gerado</li>
       </ul>
       <p>
-        Com uma equipe especializada e apaixonada por inovação sustentável, a BRASFI trabalha para que cada financiamento seja também uma contribuição real para um planeta mais equilibrado e uma sociedade mais justa.
-      </p>
-      <p>
         Entre em contato com a gente<br>
         WhatsApp/Telefone: (81) 99999-9999<br>
-		Email de contato: contato@brasfi.com.br
+        Email: contato@brasfi.com.br
       </p>
 
       <div class="redes-sociais">
         <a href="https://www.instagram.com/brasfi_/" target="_blank"><i class="fab fa-instagram"></i></a>
         <a href="https://www.linkedin.com/company/brasfi" target="_blank"><i class="fab fa-linkedin"></i></a>
         <a href="https://open.spotify.com/show/5rtlL3dVTPE5B3zzW9Ltu5?si=6c079fd18269451e" target="_blank"><i class="fab fa-spotify"></i></a>
-        <a href="https://www.youtube.com/channel/UCCN4DtzVfGLxUrIaP8p7tgA/sub_confirmation%3D1" target="_blank"><i class="fab fa-youtube"></i></a>
+        <a href="https://www.youtube.com/channel/UCCN4DtzVfGLxUrIaP8p7tgA" target="_blank"><i class="fab fa-youtube"></i></a>
       </div>
-	  <div class="ajuda">
-		<a th:href="@{/ajuda}">Ajuda</a>
-	  </div>
+
+      <div class="ajuda">
+        <a href="#" id="abrirAjuda">Ajuda</a>
+      </div>
     </section>
   </main>
 
-  <script th:src="@{/js/inicio.js}"></script>
+  <!-- Caixa de Ajuda -->
+  <div class="overlay-ajuda" id="overlayAjuda" onclick="fecharAjuda()"></div>
+
+  <div class="caixa-ajuda" id="caixaAjuda">
+    <h2><i class="fas fa-question-circle"></i> Dúvidas Frequentes</h2>
+
+    <div class="duvida" onclick="mostrarResposta(0)">
+      <i class="fas fa-sign-in-alt"></i> <span>Dificuldade com login</span>
+    </div>
+    <div class="resposta">Verifique seu e-mail e senha. Caso tenha esquecido, clique em “Esqueci minha senha”.</div>
+
+    <div class="duvida" onclick="mostrarResposta(1)">
+      <i class="fas fa-user-plus"></i> <span>Como se cadastrar?</span>
+    </div>
+    <div class="resposta">Clique em "Cadastro" no menu superior e preencha o formulário.</div>
+
+    <div class="duvida" onclick="mostrarResposta(2)">
+      <i class="fas fa-lock"></i> <span>Troca de senha</span>
+    </div>
+    <div class="resposta">Acesse seu perfil e clique em “Alterar senha”.</div>
+
+    <div class="duvida" onclick="mostrarResposta(3)">
+      <i class="fas fa-leaf"></i> <span>Projetos sustentáveis (ESG)</span>
+    </div>
+    <div class="resposta">Acesse a aba "Sobre" ou entre em contato conosco para saber mais.</div>
+
+    <div class="duvida" onclick="mostrarResposta(4)">
+      <i class="fas fa-calendar-alt"></i> <span>Agenda de eventos</span>
+    </div>
+    <div class="resposta">Confira a seção "Agenda de Eventos" no menu principal.</div>
+  </div>
+
+  <!-- Scripts -->
+  <script>
+    const respostas = document.querySelectorAll('.resposta');
+
+    function mostrarResposta(index) {
+      respostas.forEach((r, i) => {
+        r.style.display = (i === index && r.style.display !== 'block') ? 'block' : 'none';
+      });
+    }
+
+    document.getElementById('abrirAjuda').addEventListener('click', function (e) {
+      e.preventDefault();
+      document.getElementById('overlayAjuda').style.display = 'block';
+      document.getElementById('caixaAjuda').style.display = 'block';
+    });
+
+    function fecharAjuda() {
+      document.getElementById('overlayAjuda').style.display = 'none';
+      document.getElementById('caixaAjuda').style.display = 'none';
+      respostas.forEach(r => r.style.display = 'none');
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+      const mainMenu = document.getElementById('main-menu');
+      const openBtn = document.getElementById('menu-open-button');
+      const closeBtn = document.getElementById('menu-close-button');
+
+      openBtn.addEventListener('click', () => {
+        mainMenu.classList.add('visible');
+        openBtn.style.opacity = 0;
+        openBtn.style.visibility = 'hidden';
+        openBtn.style.pointerEvents = 'none';
+        closeBtn.style.opacity = 1;
+        closeBtn.style.visibility = 'visible';
+        closeBtn.style.pointerEvents = 'auto';
+      });
+
+      closeBtn.addEventListener('click', () => {
+        mainMenu.classList.remove('visible');
+        openBtn.style.opacity = 1;
+        openBtn.style.visibility = 'visible';
+        openBtn.style.pointerEvents = 'auto';
+        closeBtn.style.opacity = 0;
+        closeBtn.style.visibility = 'hidden';
+        closeBtn.style.pointerEvents = 'none';
+      });
+    });
+  </script>
 </body>
 </html>
+
+
+
+
+
+

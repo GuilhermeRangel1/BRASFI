@@ -1,5 +1,5 @@
+/* Fundo com logo transparente */
 body::before {
-
   content: "";
   position: fixed;
   top: 0;
@@ -16,6 +16,7 @@ body::before {
   pointer-events: none;
 }
 
+/* Container centralizado */
 .sobre-container {
   display: flex;
   justify-content: center;
@@ -24,6 +25,7 @@ body::before {
   z-index: 1;
 }
 
+/* Conteúdo da página */
 .sobre-content {
   max-width: 900px;
   color: #111;
@@ -45,6 +47,7 @@ body::before {
   margin-bottom: 20px;
 }
 
+/* Redes sociais */
 .redes-sociais {
   position: fixed;
   bottom: 20px;
@@ -75,27 +78,160 @@ body::before {
   color: #4CAF50;
 }
 
-.ajuda a { 
-    text-decoration: none;
-    color: inherit; 
-	color: #215757
-}
-
+/* Botão de ajuda */
 .ajuda {
-    position: fixed;
-    bottom: 25px;
-    right: 2em;
-	font-size: 1.5em;
-    z-index: 1001;
-    text-align: center;
-    font-family: 'Louis George Cafe', sans-serif;
+  position: fixed;
+  bottom: 25px;
+  right: 2em;
+  font-size: 1.5em;
+  z-index: 1001;
+  text-align: center;
+  font-family: 'Louis George Cafe', sans-serif;
 }
 
+.ajuda a {
+  text-decoration: none;
+  color: #215757;
+}
 
+/* Caixa de Ajuda Expandida */
+.overlay-ajuda {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.7);
+  z-index: 1000;
+  display: none;
+}
 
+.caixa-ajuda {
+  position: fixed;
+  bottom: 100px;
+  right: 40px;
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  max-width: 400px;
+  font-family: 'Louis George Cafe', sans-serif;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+  z-index: 1001;
+  display: none;
+  animation: fadeIn 0.3s ease-in-out;
+}
 
+.caixa-ajuda h2 {
+  margin-top: 0;
+  font-size: 22px;
+  color: #215757;
+}
 
+.duvida {
+  display: flex;
+  align-items: center;
+  margin: 10px 0;
+  cursor: pointer;
+  transition: background 0.3s;
+  padding: 5px;
+  border-radius: 6px;
+}
 
+.duvida:hover {
+  background-color: #f0f0f0;
+}
 
+.duvida i {
+  margin-right: 10px;
+  color: #215757;
+}
 
+.duvida:hover span {
+  color: #4CAF50;
+}
 
+.resposta {
+  display: none;
+  margin: 10px 0 15px 30px;
+  color: #333;
+  font-size: 15px;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Menu suspenso funcional */
+.menu-container {
+  background-color: #121f1a;
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 10px 40px;
+  height: 50px;
+  box-sizing: border-box;
+  z-index: 1000;
+}
+
+.menu-toggle-bar {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.menu-open-button,
+.menu-close-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.6em;
+  color: white;
+  position: relative;
+  z-index: 1001;
+  margin-right: 15px;
+}
+
+.menu-open-button {
+  display: inline;
+}
+
+.menu-close-button {
+  display: none;
+}
+
+.menu {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  background-color: #121f1a;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  z-index: 999;
+}
+
+.menu.visible {
+  display: flex;
+}
+
+.menu li {
+  padding: 10px;
+}
+
+.menu li a {
+  color: white;
+  font-weight: bold;
+  font-size: 18px;
+  text-decoration: none;
+  font-family: 'Louis George Cafe', sans-serif;
+}
+
+.menu li a:hover {
+  color: #8aff8a;
+}

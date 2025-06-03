@@ -332,3 +332,175 @@ header {
     text-align: center;
     font-family: 'Louis George Cafe', sans-serif;
 }
+
+/* Fundo escurecido ao abrir ajuda */
+.overlay-ajuda {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.7);
+  z-index: 1000;
+  display: none;
+}
+
+/* Caixa branca com sombra e botões de dúvida */
+.caixa-ajuda {
+  position: fixed;
+  bottom: 100px;
+  right: 40px;
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  max-width: 400px;
+  font-family: 'Louis George Cafe', sans-serif;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  z-index: 1001;
+  display: none;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.caixa-ajuda h2 {
+  margin-top: 0;
+  font-size: 22px;
+  color: #215757;
+  margin-bottom: 15px;
+}
+
+.duvida {
+  display: flex;
+  align-items: center;
+  margin: 10px 0;
+  cursor: pointer;
+  padding: 10px;
+  border: 1px solid #215757;
+  border-radius: 6px;
+  transition: background 0.3s, color 0.3s;
+  font-size: 15px;
+}
+
+.duvida:hover {
+  background-color: #f4fef4;
+}
+
+.duvida i {
+  margin-right: 10px;
+  color: #215757;
+}
+
+.duvida:hover span {
+  color: #4CAF50;
+}
+
+.resposta {
+  display: none;
+  margin: 10px 0 15px 30px;
+  color: #333;
+  font-size: 15px;
+}
+
+/* Suaviza entrada da caixa de ajuda */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.eventos {
+    margin-top: 35px;
+    padding: 20px;
+    position: relative;
+    z-index: 1;
+}
+
+.escurecer-fundo {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    z-index: 1000;
+    display: none;
+}
+
+.caixa-ajuda {
+    position: fixed;
+    bottom: 80px;
+    right: 2em;
+    background-color: white;
+    padding: 30px;
+    border-radius: 15px;
+    width: 300px;
+    max-width: 90%;
+    z-index: 1001;
+    display: none;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    font-family: 'Louis George Cafe', sans-serif;
+    animation: aparecerAjuda 0.3s ease-in-out forwards;
+}
+
+.caixa-ajuda h3 {
+    margin-top: 0;
+    font-size: 1.4em;
+    color: #215757;
+    text-align: center;
+}
+
+.caixa-ajuda button.duvida {
+    display: block;
+    width: 100%;
+    background-color: transparent;
+    border: 1px solid #215757;
+    color: #215757;
+    font-weight: bold;
+    padding: 10px;
+    margin: 8px 0;
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: 'Louis George Cafe', sans-serif;
+    text-align: left;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.caixa-ajuda button.duvida:hover {
+    background-color: #e6f3f3;
+    color: #2effb7;
+}
+
+.resposta-duvida {
+    margin-top: 10px;
+    background-color: #f9f9f9;
+    padding: 10px;
+    border-radius: 5px;
+    display: none;
+    color: #333;
+    font-size: 0.95em;
+}
+
+@keyframes aparecerAjuda {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.ajuda a {
+    text-decoration: none;
+    color: inherit;
+    color: #215757;
+}
+
+.ajuda {
+    position: fixed;
+    bottom: 25px;
+    right: 2em;
+    font-size: 1.5em;
+    z-index: 1001;
+    text-align: center;
+    font-family: 'Louis George Cafe', sans-serif;
+}

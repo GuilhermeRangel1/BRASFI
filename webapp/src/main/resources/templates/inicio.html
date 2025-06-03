@@ -18,33 +18,30 @@
       <div class="user-section">
         <div sec:authorize="isAuthenticated()" class="logged-in-container">
           <span class="logged-in-username"><i class="fas fa-star"></i> <span sec:authentication="principal.name">Nome do Usuário</span> <span class="user-icon"><i class="fas fa-user-circle"></i></span></span>
-          <a th:href="@{/logout}" class="logout-button">Sair</a> </div>
+          <a th:href="@{/logout}" class="logout-button">Sair</a>
+        </div>
         <a sec:authorize="!isAuthenticated()" th:href="@{/login}" class="login-button">Login</a>
       </div>
     </div>
 
     <div class="menu-container">
-        <div class="menu-toggle-bar">
-            <button class="menu-open-button" id="menu-open-button">
-                <i class="fas fa-angle-down"></i>
-            </button>
-        </div>
-        <ul class="menu" id="main-menu">
-            <button class="menu-close-button" id="menu-close-button">
-                <i class="fas fa-angle-up"></i>
-            </button>
-            <li><a th:href="@{/}">Home</a></li>
-            <li><a th:href="@{/sobre}">Sobre a BRASFI</a></li>
-            <li><a th:href="@{/agenda}">Agenda de Eventos</a></li>
-            <li><a th:href="@{/eventosGravados}">Eventos Gravados</a></li>
-            <li><a th:href="@{/comunidades}">Comunidade</a></li>
-        </ul>
+      <div class="menu-toggle-bar">
+        <button class="menu-open-button" id="menu-open-button"><i class="fas fa-angle-down"></i></button>
+        <button class="menu-close-button" id="menu-close-button"><i class="fas fa-angle-up"></i></button>
+      </div>
+      <ul class="menu" id="main-menu">
+        <li><a th:href="@{/}">Home</a></li>
+        <li><a th:href="@{/sobre}">Sobre a BRASFI</a></li>
+        <li><a th:href="@{/agenda}">Agenda de Eventos</a></li>
+        <li><a th:href="@{/eventosGravados}">Eventos Gravados</a></li>
+        <li><a th:href="@{/comunidades}">Comunidade</a></li>
+      </ul>
     </div>
   </header>
 
   <div class="bottom-logo-section">
-      <div class="bottom-brasfi-logo">BRASFI</div>
-      <img th:src="@{/img/brasfi.jpg}" alt="Logo BRASFI" class="bottom-brasfi-icon">
+    <div class="bottom-brasfi-logo">BRASFI</div>
+    <img th:src="@{/img/brasfi.jpg}" alt="Logo BRASFI" class="bottom-brasfi-icon">
   </div>
 
   <div class="main-content-text">
@@ -54,14 +51,83 @@
     <p>Na BRASFI, cada investimento é uma oportunidade de transformar comunidades, preservar recursos naturais e construir um futuro melhor para todos.</p>
 
     <div class="contact-section">
-        <h3 class="contact-heading">Fale com a gente!</h3>
-        <p class="whatsapp-info">WhatsApp: <a href="https://wa.me/5581999999999" target="_blank">(81) 99999-9999</a></p>
-        <p class="slogan">BRASFI – Financiamentos Sustentáveis. Porque é possível crescer fazendo o bem.</p>
+      <h3 class="contact-heading">Fale com a gente!</h3>
+      <p class="whatsapp-info">WhatsApp: <a href="https://wa.me/5581999999999" target="_blank">(81) 99999-9999</a></p>
+      <p class="slogan">BRASFI – Financiamentos Sustentáveis. Porque é possível crescer fazendo o bem.</p>
     </div>
-    </div>
-	<div class="ajuda">
-	<a th:href="@{/ajuda}">Ajuda</a>
-	</div>
-  <script th:src="@{/js/inicio.js}"></script>
+  </div>
+
+  <div class="ajuda">
+    <a href="#" id="abrirAjuda">Ajuda</a>
+  </div>
+
+  <div class="overlay-ajuda" id="overlayAjuda" onclick="fecharAjuda()"></div>
+
+  <div class="caixa-ajuda" id="caixaAjuda">
+    <h2><i class="fas fa-question-circle"></i> Dúvidas Frequentes</h2>
+
+    <div class="duvida" onclick="mostrarResposta(0)"><i class="fas fa-sign-in-alt"></i> <span>Dificuldade com login</span></div>
+    <div class="resposta">Verifique seu e-mail e senha. Caso tenha esquecido, clique em “Esqueci minha senha”.</div>
+
+    <div class="duvida" onclick="mostrarResposta(1)"><i class="fas fa-user-plus"></i> <span>Como se cadastrar?</span></div>
+    <div class="resposta">Clique em "Cadastro" no menu superior e preencha o formulário.</div>
+
+    <div class="duvida" onclick="mostrarResposta(2)"><i class="fas fa-lock"></i> <span>Troca de senha</span></div>
+    <div class="resposta">Acesse seu perfil e clique em “Alterar senha”.</div>
+
+    <div class="duvida" onclick="mostrarResposta(3)"><i class="fas fa-leaf"></i> <span>Projetos sustentáveis (ESG)</span></div>
+    <div class="resposta">Acesse a aba "Sobre" ou entre em contato conosco para saber mais.</div>
+
+    <div class="duvida" onclick="mostrarResposta(4)"><i class="fas fa-calendar-alt"></i> <span>Agenda de eventos</span></div>
+    <div class="resposta">Confira a seção "Agenda de Eventos" no menu principal.</div>
+  </div>
+
+  <script>
+    const respostas = document.querySelectorAll('.resposta');
+
+    function mostrarResposta(index) {
+      respostas.forEach((r, i) => {
+        r.style.display = (i === index && r.style.display !== 'block') ? 'block' : 'none';
+      });
+    }
+
+    document.getElementById('abrirAjuda').addEventListener('click', function (e) {
+      e.preventDefault();
+      document.getElementById('overlayAjuda').style.display = 'block';
+      document.getElementById('caixaAjuda').style.display = 'block';
+    });
+
+    function fecharAjuda() {
+      document.getElementById('overlayAjuda').style.display = 'none';
+      document.getElementById('caixaAjuda').style.display = 'none';
+      respostas.forEach(r => r.style.display = 'none');
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+      const mainMenu = document.getElementById('main-menu');
+      const openBtn = document.getElementById('menu-open-button');
+      const closeBtn = document.getElementById('menu-close-button');
+
+      openBtn.addEventListener('click', () => {
+        mainMenu.classList.add('visible');
+        openBtn.style.opacity = 0;
+        openBtn.style.visibility = 'hidden';
+        openBtn.style.pointerEvents = 'none';
+        closeBtn.style.opacity = 1;
+        closeBtn.style.visibility = 'visible';
+        closeBtn.style.pointerEvents = 'auto';
+      });
+
+      closeBtn.addEventListener('click', () => {
+        mainMenu.classList.remove('visible');
+        openBtn.style.opacity = 1;
+        openBtn.style.visibility = 'visible';
+        openBtn.style.pointerEvents = 'auto';
+        closeBtn.style.opacity = 0;
+        closeBtn.style.visibility = 'hidden';
+        closeBtn.style.pointerEvents = 'none';
+      });
+    });
+  </script>
 </body>
 </html>
