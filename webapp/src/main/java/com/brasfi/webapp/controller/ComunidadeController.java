@@ -4,7 +4,8 @@ import com.brasfi.webapp.entities.*;
 import com.brasfi.webapp.repositories.ComunidadeRepository;
 import com.brasfi.webapp.service.ComunidadeService;
 import com.brasfi.webapp.service.PostService;
-import org.springframework.boot.Banner;
+import org.springframework.http.HttpStatus; // Importe HttpStatus
+import org.springframework.http.ResponseEntity; // Importe ResponseEntity
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
@@ -28,7 +29,7 @@ public class ComunidadeController {
 
     public ComunidadeController(ComunidadeRepository comunidadeRepository, PostService postService, ComunidadeService comunidadeService, SimpMessagingTemplate messagingTemplate ) {
         this.comunidadeRepository = comunidadeRepository;
-        this.comunidadeService = new ComunidadeService(comunidadeRepository);
+        this.comunidadeService = comunidadeService; // injeta o service, sem new
         this.postService = postService;
         this.messagingTemplate = messagingTemplate;
     }
@@ -81,10 +82,10 @@ public class ComunidadeController {
     )
     {
         System.out.println(nivelDePermissao.getDescricaoDeAcesso());
-        Comunidade comunidadeAdicionada  = comunidadeService.incluirComunidade(new Comunidade(nome, descricao, nivelDePermissao));
+        Comunidade comunidadeAdicionada = comunidadeService.incluirComunidade(new Comunidade(nome, descricao, nivelDePermissao));
         if (comunidadeAdicionada != null)
         {
-            ModelAndView mv = new ModelAndView("redirect:/comunidades"); 
+            ModelAndView mv = new ModelAndView("redirect:/comunidades");
             mv.addObject("criado-com-sucesso", "Comunidade criada com sucesso!");
             return mv;
         }
@@ -104,10 +105,28 @@ public class ComunidadeController {
 
     @GetMapping("/criarComunidade")
     public String exibirFormularioCriarComunidade(Model model) {
-        model.addAttribute("comunidade", new Comunidade()); 
+        model.addAttribute("comunidade", new Comunidade());
         model.addAttribute("PUBLICA", NivelDePermissaoComunidade.PUBLICA);
         model.addAttribute("APENAS_LIDERES", NivelDePermissaoComunidade.APENAS_LIDERES);
         model.addAttribute("PERSONALIZADA", NivelDePermissaoComunidade.PERSONALIZADA);
-        return "criarComunidade"; 
+        return "criarComunidade";
+    }
+
+    @GetMapping("/api/comunidades")
+    @ResponseBody // Indica que o retorno deve ser o corpo da resposta HTTP (JSON por padrão com Spring Boot)
+    public List<Comunidade> getAllComunidadesApi() {
+        return comunidadeService.listarTodasComunidades(); // Chame o método do service
+    }
+
+    // Endpoint para apagar comunidade VIA REST - AGORA USANDO O SERVIÇO e ResponseEntity
+    @DeleteMapping("/comunidades/{id}")
+    @ResponseBody
+    public ResponseEntity<String> deleteComunidadeApi(@PathVariable Long id) {
+        boolean deleted = comunidadeService.excluirComunidade(id);
+        if (deleted) {
+            return new ResponseEntity<>("Comunidade com ID " + id + " apagada com sucesso!", HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("Comunidade não encontrada com ID: " + id, HttpStatus.NOT_FOUND);
+        }
     }
 }
