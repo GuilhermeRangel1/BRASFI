@@ -15,16 +15,25 @@ body {
     padding-left: 200px;
 }
 
+/* left-sidebar: Mantenha seus estilos originais para o título "COMUNIDADES" */
+.left-sidebar {
+    width: 200px; /* Mantenha a largura original */
+    flex-shrink: 0;
+    background-color: #E0F2F1;
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
 .communities-title-standalone {
-    position: fixed;
-    top: 140px;
+    position: fixed; /* Mantenha-o fixo na esquerda como antes */
+    top: 140px; /* Posição do topo */
     left: 0;
-    width: 200px;
+    width: 200px; /* Largura para o título */
     z-index: 950;
     background-color: #E0F2F1;
     padding: 20px 20px 0 20px;
     box-sizing: border-box;
-    bottom: 90px;
+    bottom: 90px; /* Mantenha se for necessário para preenchimento inferior */
 }
 
 .communities-title-standalone h3 {
@@ -34,14 +43,6 @@ body {
     font-weight: bold;
     text-transform: uppercase;
     font-family: 'Louis George Cafe', sans-serif;
-}
-
-.left-sidebar {
-    width: 200px;
-    flex-shrink: 0;
-    background-color: #E0F2F1;
-    padding-top: 0;
-    padding-bottom: 0;
 }
 
 .chat-main-content {
@@ -70,9 +71,11 @@ body {
     display: flex;
     flex-direction: column;
     padding-top: 20px;
-	z-index: 3000;
+    /* AJUSTE AQUI: z-index reduzido para não sobrepor modais */
+    z-index: 1; /* Valor baixo, ele não precisa sobrepor modais */
 }
 
+/* right-sidebar: Ajustes para a lista de comunidades */
 .right-sidebar {
     width: 250px;
     flex-shrink: 0;
@@ -81,15 +84,20 @@ body {
     top: 120px;
     right: 0;
     bottom: 0px;
-    z-index: 1001;
-    padding: 50px 20px 20px 20px;
+    z-index: 1001; /* Z-index para a barra lateral */
+    padding: 20px 20px 20px 20px; /* Padding para o conteúdo da right-sidebar */
     box-sizing: border-box;
     border-left: none;
+    display: flex; /* Habilita flexbox para organizar os elementos */
+    flex-direction: column; /* Organiza os elementos em coluna */
 }
 
 .edit-section {
-    padding-bottom: 5px;
+    margin-top: 10px; /* Ajuste este valor para abaixar mais ou menos */
+    padding-bottom: 15px; /* Adiciona espaço abaixo do botão "Editar" */
     text-align: right;
+    position: relative; /* Mantém a posição relativa para o popup */
+    z-index: 1010; /* Z-index para o botão e o popup */
 }
 
 .edit-communities-button {
@@ -139,28 +147,33 @@ body {
     background-color: rgba(255, 255, 255, 0.2);
 }
 
-.community-list-section {
-    padding-top: 0;
+/* Estilos para a lista de comunidades (GERAL e as outras) dentro da right-sidebar */
+#communityListSection {
+    flex-grow: 1; /* Faz a lista de comunidades ocupar o espaço restante */
+    overflow-y: auto; /* Adiciona rolagem se a lista for muito longa */
+    padding-top: 0; /* Remove padding superior extra se houver */
+    padding-bottom: 0; /* Remove padding inferior extra se houver */
+    margin-top: 10px; /* Adiciona um pequeno espaço entre o botão "Editar" e a lista */
 }
 
-.community-list-header h4 {
-    display: none;
+#communityListSection .community-list-header h4 {
+    display: none; /* Mantém oculto se não for mais usado */
 }
 
-.community-list {
+#communityListSection .community-list {
     list-style: none;
     padding: 0;
     margin: 0;
 }
 
-.community-list li {
+#communityListSection .community-list li {
     margin-bottom: 5px;
     list-style-type: none;
     position: relative;
     padding-left: 15px;
 }
 
-.community-list li::before {
+#communityListSection .community-list li::before {
     content: '\25EF';
     color: #ffffff;
     font-size: 0.8em;
@@ -170,11 +183,11 @@ body {
     transform: translateY(-50%);
 }
 
-.community-list li.active-community::before {
+#communityListSection .community-list li.active-community::before {
     content: '\25CF';
 }
 
-.community-list li a {
+#communityListSection .community-list li a {
     display: block;
     padding: 5px 10px;
     text-decoration: none;
@@ -185,13 +198,13 @@ body {
     font-family: 'Louis George Cafe', sans-serif;
 }
 
-.community-list li a:hover {
+#communityListSection .community-list li a:hover {
     background-color: rgba(255, 255, 255, 0.1);
     color: #ffffff;
 }
 
-.community-list li.active-community a,
-.community-list li:first-child a {
+#communityListSection .community-list li.active-community a,
+#communityListSection .community-list li:first-child a {
     background-color: rgba(255, 255, 255, 0.2);
     color: #ffffff;
     font-weight: bold;
@@ -199,8 +212,8 @@ body {
     font-family: 'Louis George Cafe', sans-serif;
 }
 
-.community-list li.active-community a:hover,
-.community-list li:first-child a:hover {
+#communityListSection .community-list li.active-community a:hover,
+#communityListSection .community-list li:first-child a:hover {
     background-color: rgba(255, 255, 255, 0.3);
 }
 
@@ -426,7 +439,8 @@ body {
     display: flex; /* Para centralizar o conteúdo do modal */
     justify-content: center; /* Centraliza horizontalmente */
     align-items: center; /* Centraliza verticalmente */
-    z-index: 2000; /* Garante que o modal esteja acima de outros elementos */
+    /* Z-index alto para garantir que fique sobre todo o conteúdo */
+    z-index: 9999; 
     padding: 20px; /* Adiciona um pouco de padding para telas menores */
     box-sizing: border-box; /* Inclui padding na largura/altura total */
 }
@@ -438,9 +452,10 @@ body {
     box-shadow: 0 8px 25px rgba(0,0,0,0.4); /* Sombra mais pronunciada */
     max-width: 500px; /* Largura máxima do formulário */
     width: 100%;
-    margin: auto; /* Centraliza o formulário dentro do modal */
     position: relative; /* Para posicionar o botão de fechar */
     border: 1px solid #79B8B3; /* Borda sutil para dar um toque */
+    /* Z-index ainda maior para garantir que o formulário fique acima do background do modal */
+    z-index: 10000; 
 }
 
 /* Adicione um botão de fechar (opcional, mas recomendado para modais) */
@@ -454,6 +469,7 @@ body {
     color: #555; /* Cor do tema */
     cursor: pointer;
     transition: color 0.2s ease;
+    z-index: 10001; /* Garante que o 'X' esteja acima de TUDO no modal */
 }
 
 .close-modal-button:hover {
@@ -538,7 +554,6 @@ body {
 
 /* Estilos para o Modal de Apagar Comunidade */
 #apagar-comunidade-modal {
-    /* Assegure-se que estas propriedades estão ativas e não sendo sobrescritas */
     display: none; /* Inicie oculto. O JS vai mudar para 'flex' quando abrir. */
     position: fixed; /* Essencial para que ele flutue sobre o conteúdo */
     top: 0;
@@ -549,7 +564,8 @@ body {
     display: flex; /* Para centralizar o conteúdo do modal */
     justify-content: center; /* Centraliza horizontalmente */
     align-items: center; /* Centraliza verticalmente */
-    z-index: 2000; /* Garante que o modal esteja acima de outros elementos */
+    /* Z-index alto para garantir que fique sobre todo o conteúdo */
+    z-index: 9999; 
     padding: 20px; /* Adiciona um pouco de padding para telas menores */
     box-sizing: border-box; /* Inclui padding na largura/altura total */
 }
@@ -561,9 +577,10 @@ body {
     box-shadow: 0 8px 25px rgba(0,0,0,0.4);
     max-width: 500px;
     width: 100%;
-    margin: auto; /* Para garantir centralização dentro do flex container */
     position: relative; /* Para posicionar o botão de fechar */
     border: 1px solid #79B8B3;
+    /* Z-index ainda maior para garantir que o formulário fique acima do background do modal */
+    z-index: 10000;
 }
 
 #apagar-comunidade-form-container h1 {
@@ -648,4 +665,31 @@ body {
 /* A regra vh-100 continua sendo usada em outro lugar, então manter */
 .vh-100 {
     min-height: auto !important;
+}
+
+/* NOVO: Estilos para o popup de gerenciamento (Criar, Apagar, Voltar) */
+.community-management-popup {
+    position: absolute; /* Posição absoluta em relação ao seu pai (.edit-section) */
+    top: 0px; /* Alinha o topo do popup com o topo do botão + Editar */
+    right: 0; /* Alinha o popup à direita do botão + Editar */
+    background-color: #386D6B; /* Cor de fundo do tema */
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    padding: 15px;
+    z-index: 1010; /* Garante que ele esteja acima da lista de comunidades e outros elementos próximos */
+    min-width: 200px; /* Garante que as opções não fiquem muito apertadas */
+    text-align: left; /* Alinha o texto das opções à esquerda */
+}
+
+.community-management-popup p {
+    margin: 0 0 10px 0; /* Espaçamento entre as opções */
+}
+
+.community-management-popup p:last-child {
+    margin-bottom: 0; /* Remove margem inferior da última opção */
+}
+
+/* Garante que o link de edição de comunidades esteja visível */
+.edit-communities-button {
+    position: relative; /* Garante que o popup posicione-se em relação a ele */
 }
