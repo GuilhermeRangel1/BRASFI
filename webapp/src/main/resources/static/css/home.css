@@ -6,12 +6,11 @@
 body {
   margin: 0;
   font-family: 'Louis George Cafe', sans-serif;
-  background-color: #f0f0f0;
+  background-color: #E0F2F1; 
+  padding-top: 0; 
 }
 
 header {
-    position: relative;
-    z-index: 1000;
 }
 
 .top-bar {
@@ -22,7 +21,7 @@ header {
   color: white;
   padding: 20px 40px;
   height: 80px;
-  z-index: 1001;
+  z-index: 1002; 
 }
 
 .logo-section {
@@ -121,8 +120,8 @@ header {
 .menu-container {
     background-color: #444;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    z-index: 999;
-    position: relative;
+    z-index: 1002; 
+    position: relative; 
     display: flex;
     align-items: center;
     padding: 10px 40px;
@@ -148,7 +147,7 @@ header {
     left: 40px;
     top: 50%;
     transform: translateY(-50%);
-    z-index: 3;
+    z-index: 3; 
 }
 
 .menu-open-button {
@@ -313,8 +312,8 @@ header {
     color: #007bff;
     text-align: center;
     margin-top: 20px;
-    font-size: 1.2em; /* Deixa o slogan um pouco maior */
-    line-height: 1.5; /* Espaçamento para o slogan */
+    font-size: 1.2em; 
+    line-height: 1.5; 
 }
 
 
