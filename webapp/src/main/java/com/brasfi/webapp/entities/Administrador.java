@@ -5,7 +5,7 @@ import jakarta.persistence.DiscriminatorValue;
 
 @Entity
 @DiscriminatorValue("ADMIN")
-public class Administrador extends User {
+public class Administrador extends GerenteComunidade {
 
 	private static final long serialVersionUID = 1L;
 
