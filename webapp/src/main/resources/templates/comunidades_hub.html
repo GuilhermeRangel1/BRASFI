@@ -140,14 +140,19 @@
 </head>
 <body>
 
-<div id="acesso-negado-overlay" class="acesso-negado-overlay">
+
+<form action=/processar-solicitacao method="post">
+    <div id="acesso-negado-overlay" class="acesso-negado-overlay">
     <div id="acesso-negado-popup" class="acesso-negado-popup">
         <h3>ATENÇÃO</h3>
         <p th:text="${mensagemAcessoNegado}"></p>
-        <textarea placeholder="Escreva aqui sua solicitação..."></textarea>
-        <button>Enviar Solicitação</button>
+        <input style="display: none" type="text" name="comunidadeId-solicitada" th:value="${comunidade.getId()}">
+        <textarea name="solicitacao-usuario" placeholder="Escreva aqui sua solicitação..."></textarea>
+        <button type="submit">Enviar Solicitação</button>
     </div>
-</div>
+    </div>
+</form>
+
 
 <form style="margin-left: 1250px; margin-top: 100px" id="mudar-de-comunidade-form" action="/mudar-de-comunidade" method="post">
     <div id="comunidadesList" th:each="com : ${comunidades}" class="form-check mb-2">
