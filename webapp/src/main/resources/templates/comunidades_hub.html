@@ -14,12 +14,12 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <link rel="icon" type="image/jpg" href="img/brasfi.jpg">
 
-    <script th:inline="javascript">
-        /*<![CDATA[*/
-            let comunidadeId = /*[[${comunidade.id}]]*/ 0;
-            let usuarioId = /*[[${usuario.id}]]*/ 0;
-        /*]]>*/
-    </script>
+	<script th:inline="javascript">
+	    /*<![CDATA[*/
+	        let comunidadeId = /*[[${comunidade != null ? comunidade.id : 0}]]*/ 0;
+	        let usuarioId = /*[[${usuario != null ? usuario.id : 0}]]*/ 0;
+	    /*]]>*/
+	</script>
     <script type="module" src="/js/comunidade.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1.6.1/dist/sockjs.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@stomp/stompjs@7.0.0/bundles/stomp.umd.min.js"></script>
@@ -108,11 +108,7 @@
                     </li>
                     </ul>
             </div>
-
-            </div>
-    </div>
-
-    <button onclick="OpenForm()" id="open-criar-comunidade" style="display: none;">Criar nova comunidade</button>
+        </div> </div> <button onclick="OpenForm()" id="open-criar-comunidade" style="display: none;">Criar nova comunidade</button>
 
     <div id="criar-comunidade" style="display: none">
         <form action="/criar-comunidade" method="post" id="criar-comunidade-form" class="p-4 border rounded bg-light shadow">

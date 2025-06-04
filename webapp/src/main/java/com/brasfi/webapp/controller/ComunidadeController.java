@@ -59,19 +59,29 @@ public class ComunidadeController {
     @GetMapping("/comunidades/{id}")
     public ModelAndView getComunidades(@PathVariable Long id, @AuthenticationPrincipal CustomUserDetails currentUser) {
         ModelAndView mv = new ModelAndView("comunidades_hub");
-        Optional<Comunidade> comunidade = comunidadeRepository.findById(id);
+        Optional<Comunidade> comunidadeOpt = comunidadeRepository.findById(id); 
 
-        if (currentUser != null) {
-            mv.addObject("usuario", currentUser.getUserEntity());
+        if (comunidadeOpt.isPresent()) {
+            Comunidade comunidade = comunidadeOpt.get(); 
+
+            if (currentUser != null) {
+                mv.addObject("usuario", currentUser.getUserEntity());
+            }
+
+            mv.addObject("comunidade", comunidade);
+            mv.addObject("comunidades", comunidadeRepository.findAll()); 
+
+            mv.addObject("PUBLICA", NivelDePermissaoComunidade.PUBLICA);
+            mv.addObject("APENAS_LIDERES", NivelDePermissaoComunidade.APENAS_LIDERES);
+            mv.addObject("PERSONALIZADA", NivelDePermissaoComunidade.PERSONALIZADA);
+
+            mv.addObject("postagens", postService.buscarPorComunidade(comunidade)); 
+
+            return mv;
+        } else {
+            System.out.println("DEBUG: Comunidade com ID " + id + " não encontrada. Redirecionando para /comunidades.");
+            return new ModelAndView("redirect:/comunidades"); 
         }
-
-        comunidade.ifPresent(value -> mv.addObject("comunidade", value));
-        mv.addObject("comunidades", comunidadeRepository.findAll());
-        mv.addObject("PUBLICA", NivelDePermissaoComunidade.PUBLICA);
-        mv.addObject("APENAS_LIDERES", NivelDePermissaoComunidade.APENAS_LIDERES);
-        mv.addObject("PERSONALIZADA", NivelDePermissaoComunidade.PERSONALIZADA);
-        comunidade.ifPresent(value -> mv.addObject("postagens", postService.buscarPorComunidade(value)));
-        return mv;
     }
 
     @PostMapping("/mudar-de-comunidade")
