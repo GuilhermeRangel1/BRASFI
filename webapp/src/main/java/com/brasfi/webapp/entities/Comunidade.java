@@ -1,12 +1,15 @@
 package com.brasfi.webapp.entities;
 
 import jakarta.persistence.*;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import com.fasterxml.jackson.annotation.JsonManagedReference; 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
-public class Comunidade {
+public class Comunidade implements Serializable { 
+    private static final long serialVersionUID = 1L; 
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -21,7 +24,7 @@ public class Comunidade {
     private String descricao;
 
     @OneToMany(mappedBy = "comunidade", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference 
+    @JsonManagedReference
     private List<Post> posts = new ArrayList<>();
 
     public Comunidade(String nome, String descricao, NivelDePermissaoComunidade nivelDePermissao) {
