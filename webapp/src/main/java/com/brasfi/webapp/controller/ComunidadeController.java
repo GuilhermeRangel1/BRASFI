@@ -37,6 +37,9 @@ public class ComunidadeController {
         this.userRepository = userRepository;
     }
 
+    String mensagemAcessoNegado = "Você não tem acesso a esta página. Por favor\n mande uma solicitacao" +
+            " para nossa secretaria,\n para lhe dar acesso a esta pagina";
+
     @MessageMapping("/create-post")
     public void createPost(@Payload PostEntrada postEntrada) {
         Comunidade comunidade = comunidadeRepository.findById(postEntrada.getComunidadeId()).orElse(null);
@@ -60,17 +63,22 @@ public class ComunidadeController {
     public ModelAndView getComunidades(@PathVariable Long id, @AuthenticationPrincipal CustomUserDetails currentUser) {
         ModelAndView mv = new ModelAndView("comunidades_hub");
         Optional<Comunidade> comunidade = comunidadeRepository.findById(id);
+        boolean podeAcessar = true;
 
-        if (currentUser != null) {
-            mv.addObject("usuario", currentUser.getUserEntity());
+        if (currentUser != null && comunidade.isPresent()) {
+            podeAcessar = comunidadeService.validarAcesso(comunidade.get().getNivelDePermissao(), currentUser.getUserEntity(),
+                    comunidade.get().getUsuarios());
+            mv.addObject("usuario",currentUser.getUserEntity());
         }
 
         comunidade.ifPresent(value -> mv.addObject("comunidade", value));
+        mv.addObject("mensagemAcessoNegado", mensagemAcessoNegado);
         mv.addObject("comunidades", comunidadeRepository.findAll());
         mv.addObject("PUBLICA", NivelDePermissaoComunidade.PUBLICA);
         mv.addObject("APENAS_LIDERES", NivelDePermissaoComunidade.APENAS_LIDERES);
         mv.addObject("PERSONALIZADA", NivelDePermissaoComunidade.PERSONALIZADA);
         comunidade.ifPresent(value -> mv.addObject("postagens", postService.buscarPorComunidade(value)));
+        mv.addObject("podeAcessar", podeAcessar);
         return mv;
     }
 
@@ -91,7 +99,7 @@ public class ComunidadeController {
             Model model
     ) {
         System.out.println(nivelDePermissao.getDescricaoDeAcesso());
-        Comunidade comunidadeAdicionada = comunidadeService.incluirComunidade(new Comunidade(nome, descricao, nivelDePermissao));
+        Comunidade comunidadeAdicionada = comunidadeService.incluirComunidade(new Comunidade(nome, descricao, nivelDePermissao, null));
         if (comunidadeAdicionada != null && comunidadeAdicionada.getId() != null) {
             return new ModelAndView("redirect:/comunidades/" + comunidadeAdicionada.getId());
         }

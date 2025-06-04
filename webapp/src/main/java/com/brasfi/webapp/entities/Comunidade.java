@@ -3,7 +3,7 @@ package com.brasfi.webapp.entities;
 import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
-import com.fasterxml.jackson.annotation.JsonManagedReference; 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
 public class Comunidade {
@@ -21,10 +21,25 @@ public class Comunidade {
     private String descricao;
 
     @OneToMany(mappedBy = "comunidade", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference 
+    @JsonManagedReference
     private List<Post> posts = new ArrayList<>();
 
-    public Comunidade(String nome, String descricao, NivelDePermissaoComunidade nivelDePermissao) {
+    public List<User> getUsuarios() {
+        return usuarios;
+    }
+
+    public void setUsuarios(List<User> usuarios) {
+        this.usuarios = usuarios;
+    }
+
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinTable(name = "comunidade_usuarios",
+            joinColumns = @JoinColumn(name = "comunidade_id"),
+            inverseJoinColumns = @JoinColumn(name = "usuarios_id")
+    )
+    private List<User> usuarios = new ArrayList<>();
+
+    public Comunidade(String nome, String descricao, NivelDePermissaoComunidade nivelDePermissao, List<User> usuarios) {
         this.nome = nome;
         this.descricao = descricao;
         this.nivelDePermissao = nivelDePermissao;

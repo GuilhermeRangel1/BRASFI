@@ -1,0 +1,114 @@
+
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BRASFI</title>
+    <link rel="stylesheet" href="/css/home.css">
+    <link rel="stylesheet" href="/css/comunidades.css"/>
+    <link rel="stylesheet" href="/webjars/bootstrap/5.3.3/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link rel="icon" type="image/jpg" href="/img/brasfi.jpg">
+
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        let mostrarPopup = /*[[${mostrarPopup}]]*/ false;
+        /*]]>*/
+    </script>
+
+</head>
+<body>
+
+<div class="container mt-4">
+    <h2>Solicitações Pendentes</h2>
+
+    <ul style="list-style: none; padding: 0;">
+        <li th:each="solicitacao : ${solicitacoes}" style="margin-bottom: 20px;">
+            <form th:action="@{/processar-solicitacao-acao}" method="post">
+                <button type="submit"
+                        class="btn btn-light"
+                        style="display: block; width: 100%; padding: 15px; border: 1px solid #ddd;
+                               border-radius: 8px; text-align: left; cursor: pointer;
+                               background-color: #f9f9f9; box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                               transition: background-color 0.3s ease;">
+
+                    <input type="hidden" name="solicitacaoId" th:value="${solicitacao.id}" />
+
+                    <h3 style="margin-top: 0; margin-bottom: 10px; color: #333;">Detalhes da Solicitação</h3>
+
+                    <p th:if="${solicitacao.usuarioSolicitante != null}" style="margin-bottom: 5px;">
+                        <strong>Usuário:</strong> <span th:text="${solicitacao.usuarioSolicitante.name}"></span>
+                    </p>
+                    <p th:unless="${solicitacao.usuarioSolicitante != null}" style="margin-bottom: 5px;">
+                        <strong>Usuário:</strong> Desconhecido
+                    </p>
+
+                    <p th:if="${solicitacao.comunidadeSolicitada != null}" style="margin-bottom: 5px;">
+                        <strong>Comunidade:</strong> <span th:text="${solicitacao.comunidadeSolicitada.nome}"></span>
+                    </p>
+                    <p th:unless="${solicitacao.comunidadeSolicitada != null}" style="margin-bottom: 5px;">
+                        <strong>Comunidade:</strong> Não especificada
+                    </p>
+
+                    <p style="margin-bottom: 0;">
+                        <strong>Data da Solicitação:</strong> <span th:text="${solicitacao.dataDeSolicitacao}"></span>
+                    </p>
+                </button>
+            </form>
+        </li>
+    </ul>
+
+    <div class="modal fade" id="solicitacaoModal" tabindex="-1" aria-labelledby="solicitacaoModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="solicitacaoModalLabel">Processar Solicitação</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div th:if="${solicitacaoSelecionada != null}">
+                        <p><strong>Usuário Solicitante:</strong>
+                            <span th:text="${solicitacaoSelecionada.usuarioSolicitante != null ? solicitacaoSelecionada.usuarioSolicitante.name : 'Desconhecido'}"></span>
+                        </p>
+                        <p><strong>Comunidade Desejada:</strong>
+                            <span th:text="${solicitacaoSelecionada.comunidadeSolicitada != null ? solicitacaoSelecionada.comunidadeSolicitada.nome : 'Não especificada'}"></span>
+                        </p>
+                        <p><strong>Data da Solicitação:</strong>
+                            <span th:text="${solicitacaoSelecionada.dataDeSolicitacao}"></span>
+                        </p>
+
+                        <form th:action="@{/adicionar-usuario-na-comunidade}" method="post">
+                            <input type="hidden" name="solicitacaoId" th:value="${solicitacaoSelecionada.id}" />
+
+                            <p class="mt-3">Deseja adicionar este usuário à comunidade?</p>
+                            <button type="submit" class="btn btn-success">Adicionar Usuário na Comunidade</button>
+                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
+                        </form>
+                    </div>
+                    <div th:unless="${solicitacaoSelecionada != null}">
+                        <p th:if="${erroMensagem}" th:text="${erroMensagem}" class="text-danger"></p>
+                        <p th:unless="${erroMensagem}">Nenhuma solicitação selecionada.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="/webjars/jquery/3.7.1/jquery.min.js"></script>
+<script src="/webjars/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    // JavaScript to show the modal if 'mostrarPopup' is true
+    $(document).ready(function() {
+        if (mostrarPopup) {
+            var myModal = new bootstrap.Modal(document.getElementById('solicitacaoModal'), {});
+            myModal.show();
+        }
+    });
+    /*]]>*/
+</script>
+
+</body>
+</html>
