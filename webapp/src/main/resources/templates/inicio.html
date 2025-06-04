@@ -87,46 +87,47 @@
         <a href="javascript:void(0);" onclick="abrirAjuda()">Ajuda</a>
     </div>
 
-    <div id="help-overlay" onclick="fecharAjuda()">
-        <div id="help-box" onclick="event.stopPropagation()">
-            <span class="close-help" onclick="fecharAjuda()">&times;</span>
-            <h2>Dúvidas Frequentes</h2>
+	<div id="help-overlay" onclick="fecharAjuda()">
+	    <div id="help-box" onclick="event.stopPropagation()">
+	        <span class="close-help" onclick="fecharAjuda()">×</span>
+	        <h2>Dúvidas Frequentes</h2>
 
-            <button class="help-question" onclick="mostrarResposta(0)">
-                <i class="fas fa-sign-in-alt"></i> Dificuldade com login
-            </button>
-            <div class="help-answer">
-                Verifique seu e-mail e senha. Caso tenha esquecido, clique em "Esqueci minha senha".
-            </div>
+	        <button class="help-question" onclick="mostrarResposta(0)">
+	            <i class="fas fa-sign-in-alt"></i> Dificuldade com login
+	        </button>
+	        <div class="help-answer">
+	            Verifique seu e-mail e senha. Caso tenha esquecido, entre em contato via contato@brasfi.com
+	        </div>
 
-            <button class="help-question" onclick="mostrarResposta(1)">
-                <i class="fas fa-user-plus"></i> Como se cadastrar?
-            </button>
-            <div class="help-answer">
-                Clique em "Login" no canto superior e selecione "Criar conta". Preencha os dados obrigatórios e confirme.
-            </div>
+	        <button class="help-question" onclick="mostrarResposta(1)">
+	            <i class="fas fa-user-plus"></i> Como se cadastrar?
+	        </button>
+	        <div class="help-answer">
+	            Para criar uma conta é necessário ser um membro BRASFI, entre em contato diretamente com a gente
+	        </div>
 
-            <button class="help-question" onclick="mostrarResposta(2)">
-                <i class="fas fa-lock"></i> Troca de senha
-            </button>
-            <div class="help-answer">
-                Acesse seu perfil e clique em "Alterar Senha" para redefinir sua senha atual.
-            </div>
+	        <button class="help-question" onclick="mostrarResposta(2)">
+	            <i class="fas fa-comments"></i> Comunidade
+	        </button>
+	        <div class="help-answer">
+	           Nós temos um meio de comunicação interno para membros
+	        </div>
 
-            <button class="help-question" onclick="mostrarResposta(3)">
-                <i class="fas fa-seedling"></i> Projetos sustentáveis (ESG)
-            </button>
-            <div class="help-answer">
-                Financiamos projetos de energia limpa, mobilidade, agricultura regenerativa e mais.
-            </div>
+	        <button class="help-question" onclick="mostrarResposta(3)">
+	            <i class="fas fa-seedling"></i> Projetos sustentáveis (ESG)
+	        </button>
+	        <div class="help-answer">
+	            Nossos projetos estão relacionados diretamente no ensino de finanças sustentáveis
+	        </div>
 
-            <button class="help-question" onclick="mostrarResposta(4)">
-                <i class="fas fa-calendar-alt"></i> Agenda de eventos
-            </button>
-            <div class="help-answer">
-                Visite a página de eventos para visualizar as próximas datas e conteúdos gravados.
-            </div>
-        </div>
+	        <button class="help-question" onclick="mostrarResposta(4)">
+	            <i class="fas fa-calendar-alt"></i> Agenda de eventos
+	        </button>
+	        <div class="help-answer">
+	            Visite a página de eventos para visualizar as próximas datas e conteúdos gravados.
+	        </div>
+	    </div>
+	</div>
     </div>
     <script th:src="@{/js/inicio.js}"></script>
   <script>
