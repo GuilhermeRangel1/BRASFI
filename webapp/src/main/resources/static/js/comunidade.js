@@ -54,7 +54,7 @@ function sendMessage() {
     if (stompClient && connected && content) {
         stompClient.publish({
             destination: "/app/create-post",
-            body: JSON.stringify({'autor': "", 'mensagem': $("#message").val(), 'comunidadeId': comunidadeId})
+            body: JSON.stringify({'mensagem': $("#message").val(), 'comunidadeId': comunidadeId, 'usuarioId' : usuarioId})
         });
 
         document.getElementById("message").value = ""; // Limpa campo

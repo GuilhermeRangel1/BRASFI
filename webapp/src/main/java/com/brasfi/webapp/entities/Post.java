@@ -20,13 +20,14 @@ public class Post {
         return titulo;
     }
 
-    public Post(Long id, String titulo, String descricao, int contadorDelikes, LocalDateTime dataCriacao, Comunidade comunidade) {
+    public Post(Long id, String titulo, String descricao, int contadorDelikes, LocalDateTime dataCriacao, Comunidade comunidade, User publicador) {
         this.id = id;
         this.titulo = titulo;
         this.descricao = descricao;
         this.contadorDelikes = contadorDelikes;
         this.dataCriacao = dataCriacao;
         this.comunidade = comunidade;
+        this.autor = publicador;
     }
 
     public void setTitulo(String titulo) {
@@ -71,6 +72,17 @@ public class Post {
 
     @ManyToOne
     private Comunidade comunidade;
+
+    public User getAutor() {
+        return autor;
+    }
+
+    public void setAutor(User autor) {
+        this.autor = autor;
+    }
+
+    @ManyToOne
+    private User autor;
 
     public void setId(Long id) {
         this.id = id;

@@ -2,6 +2,8 @@ package com.brasfi.webapp.controller;
 
 import com.brasfi.webapp.entities.*;
 import com.brasfi.webapp.repositories.ComunidadeRepository;
+import com.brasfi.webapp.repositories.UserRepository;
+import com.brasfi.webapp.security.CustomUserDetails;
 import com.brasfi.webapp.service.ComunidadeService;
 import com.brasfi.webapp.service.PostService;
 import org.springframework.http.HttpStatus; // Importe HttpStatus
@@ -9,6 +11,7 @@ import org.springframework.http.ResponseEntity; // Importe ResponseEntity
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -26,23 +29,29 @@ public class ComunidadeController {
     private final ComunidadeService comunidadeService;
     private final PostService postService;
     private final SimpMessagingTemplate messagingTemplate;
+    private final UserRepository userRepository;
 
-    public ComunidadeController(ComunidadeRepository comunidadeRepository, PostService postService, ComunidadeService comunidadeService, SimpMessagingTemplate messagingTemplate ) {
+    public ComunidadeController(ComunidadeRepository comunidadeRepository, PostService postService, ComunidadeService comunidadeService, SimpMessagingTemplate messagingTemplate, UserRepository userRepository) {
         this.comunidadeRepository = comunidadeRepository;
         this.comunidadeService = comunidadeService; // injeta o service, sem new
         this.postService = postService;
         this.messagingTemplate = messagingTemplate;
+        this.userRepository = userRepository;
     }
 
     @MessageMapping("/create-post")
     public void createPost(@Payload PostEntrada postEntrada)
     {
         Comunidade comunidade = comunidadeRepository.findById(postEntrada.getComunidadeId()).orElse(null);
+        User autor = userRepository.findById(postEntrada.getUsuarioId()).orElse(null);
 
-        Post post = new Post(null, null, postEntrada.getMensagem(), 0, null ,comunidade);
+        Post post = new Post(null, null, postEntrada.getMensagem(), 0, null ,comunidade, autor);
         postService.incluirPost(post);
 
-        PostSaida ps = new PostSaida(postEntrada.getMensagem());
+        assert autor != null;
+        String conteudo = autor.getName() + "\n" + postEntrada.getMensagem();
+
+        PostSaida ps = new PostSaida(conteudo);
         System.out.println(HtmlUtils.htmlEscape(ps.getContent()));
 
         String destino = "/topic/" + postEntrada.getComunidadeId();
@@ -51,9 +60,13 @@ public class ComunidadeController {
     }
 
     @GetMapping("/comunidades/{id}")
-    public ModelAndView getComunidades(@PathVariable Long id) {
+    public ModelAndView getComunidades(@PathVariable Long id, @AuthenticationPrincipal CustomUserDetails currentUser) {
         ModelAndView mv = new ModelAndView("comunidades_hub");
         Optional<Comunidade> comunidade = comunidadeRepository.findById(id);
+
+        if (currentUser != null) {
+            mv.addObject("usuario", currentUser.getUserEntity());
+        }
 
         comunidade.ifPresent(value -> mv.addObject("comunidade", value));
         mv.addObject("comunidades", comunidadeRepository.findAll());

@@ -2,9 +2,17 @@ package com.brasfi.webapp.entities;
 
 
 public class PostEntrada {
-    private String autor;
     private String mensagem;
     private Long comunidadeId;
+    private Long usuarioId;
+
+    public Long getUsuarioId() {
+        return usuarioId;
+    }
+
+    public void setUsuarioId(Long usuarioId) {
+        this.usuarioId = usuarioId;
+    }
 
     public Long getComunidadeId() {
         return comunidadeId;
@@ -14,18 +22,10 @@ public class PostEntrada {
         this.comunidadeId = comunidadeId;
     }
 
-    public PostEntrada(String id, String autor, String mensagem, Long comunidadeId) {
-        this.autor = autor;
+    public PostEntrada(String id, String mensagem, Long comunidadeId, Long usuarioId) {
         this.mensagem = mensagem;
         this.comunidadeId = comunidadeId;
-    }
-
-    public String getAutor() {
-        return autor;
-    }
-
-    public void setAutor(String autor) {
-        this.autor = autor;
+        this.usuarioId = usuarioId;
     }
 
     public String getMensagem() {
