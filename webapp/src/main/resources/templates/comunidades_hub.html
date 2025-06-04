@@ -12,7 +12,7 @@
     <link rel="stylesheet" href="/webjars/bootstrap/5.3.3/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-    <link rel="icon" type="image/jpg" href="img/brasfi.jpg">
+    <link rel="icon" type="image/jpg" th:href="@{/img/brasfi.jpg}">
 
 	<script th:inline="javascript">
 	    /*<![CDATA[*/
@@ -77,10 +77,11 @@
                         <i class="fas fa-user-circle"></i>
                     </div>
                     <div class="message-content">
-                        <p th:text="${post.getAutor().getName() + ' ' + post.getDescricao()}"></p>
+                        <span class="message-author" th:text="${post.getAutor().getName()}"></span>
+                        <p class="message-text" th:text="${post.getDescricao()}"></p>
                     </div>
                 </div>
-            </div>
+                </div>
 
             <div class="chat-input-area">
                 <div class="input-and-button-container">
@@ -157,7 +158,9 @@
             <button type="button" class="btn btn-danger w-100 mt-3" id="confirmDeleteCommunityButton">Apagar Selecionada</button>
         </div>
     </div>
-
+	<div class="ajuda">
+	<a th:href="@{/ajuda}">Ajuda</a>
+	</div>
     <script src="/webjars/jquery/3.7.1/jquery.min.js"></script>
     <script src="/webjars/bootstrap/5.3.3/js/bootstrap.min.js"></script>
     <script th:src="@{/js/inicio.js}"></script>

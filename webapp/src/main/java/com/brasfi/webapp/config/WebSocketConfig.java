@@ -19,9 +19,9 @@ public class WebSocketConfig  implements WebSocketMessageBrokerConfigurer {
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/brasfi-webapp-websocket")
-                .setAllowedOriginPatterns("*")  // Permite todas as origens (ajuste para produção)
-                .withSockJS()  // Habilita fallback SockJS
-                .setHeartbeatTime(25000)  // Intervalo de heartbeat (ms)
-                .setDisconnectDelay(5000);  // Atraso para desconexão
+                .setAllowedOriginPatterns("*")  
+                .withSockJS() 
+                .setHeartbeatTime(25000) 
+                .setDisconnectDelay(5000);
     }
 }

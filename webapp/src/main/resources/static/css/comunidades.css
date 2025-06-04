@@ -4,36 +4,37 @@ body {
     line-height: 1.6;
 }
 
+header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: #f8f9fa; 
+    z-index: 1050;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
 .chat-layout-container {
     display: flex;
     min-height: calc(100vh - 90px);
     margin-top: 0;
     background-color: #E0F2F1;
-    padding-top: 120px;
     box-sizing: border-box;
-    padding-right: 200px;
+    padding-right: 350px;
     padding-left: 200px;
 }
 
-/* left-sidebar: Mantenha seus estilos originais para o título "COMUNIDADES" */
-.left-sidebar {
-    width: 200px; /* Mantenha a largura original */
-    flex-shrink: 0;
-    background-color: #E0F2F1;
-    padding-top: 0;
-    padding-bottom: 0;
-}
 
 .communities-title-standalone {
-    position: fixed; /* Mantenha-o fixo na esquerda como antes */
-    top: 140px; /* Posição do topo */
+    position: fixed;
+    top: 140px;
     left: 0;
-    width: 200px; /* Largura para o título */
+    width: 200px;
     z-index: 950;
     background-color: #E0F2F1;
     padding: 20px 20px 0 20px;
     box-sizing: border-box;
-    bottom: 90px; /* Mantenha se for necessário para preenchimento inferior */
+    bottom: 90px;
 }
 
 .communities-title-standalone h3 {
@@ -71,33 +72,34 @@ body {
     display: flex;
     flex-direction: column;
     padding-top: 20px;
-    /* AJUSTE AQUI: z-index reduzido para não sobrepor modais */
-    z-index: 1; /* Valor baixo, ele não precisa sobrepor modais */
+    z-index: 1;
 }
 
-/* right-sidebar: Ajustes para a lista de comunidades */
 .right-sidebar {
     width: 250px;
     flex-shrink: 0;
     background-color: #386D6B;
     position: fixed;
-    top: 120px;
+    top: 80px; 
     right: 0;
     bottom: 0px;
-    z-index: 1001; /* Z-index para a barra lateral */
-    padding: 20px 20px 20px 20px; /* Padding para o conteúdo da right-sidebar */
+    z-index: 1001; 
+    padding-top: 80px; 
+    padding-right: 20px;
+    padding-bottom: 20px;
+    padding-left: 20px;
     box-sizing: border-box;
     border-left: none;
-    display: flex; /* Habilita flexbox para organizar os elementos */
-    flex-direction: column; /* Organiza os elementos em coluna */
+    display: flex;
+    flex-direction: column;
 }
 
 .edit-section {
-    margin-top: 10px; /* Ajuste este valor para abaixar mais ou menos */
-    padding-bottom: 15px; /* Adiciona espaço abaixo do botão "Editar" */
+    margin-top: 10px; 
+    padding-bottom: 15px;
     text-align: right;
-    position: relative; /* Mantém a posição relativa para o popup */
-    z-index: 1010; /* Z-index para o botão e o popup */
+    position: relative;
+    z-index: auto; 
 }
 
 .edit-communities-button {
@@ -149,15 +151,15 @@ body {
 
 /* Estilos para a lista de comunidades (GERAL e as outras) dentro da right-sidebar */
 #communityListSection {
-    flex-grow: 1; /* Faz a lista de comunidades ocupar o espaço restante */
-    overflow-y: auto; /* Adiciona rolagem se a lista for muito longa */
-    padding-top: 0; /* Remove padding superior extra se houver */
-    padding-bottom: 0; /* Remove padding inferior extra se houver */
-    margin-top: 10px; /* Adiciona um pequeno espaço entre o botão "Editar" e a lista */
+    flex-grow: 1;
+    overflow-y: auto;
+    padding-top: 0;
+    padding-bottom: 0;
+    margin-top: 10px;
 }
 
 #communityListSection .community-list-header h4 {
-    display: none; /* Mantém oculto se não for mais usado */
+    display: none;
 }
 
 #communityListSection .community-list {
@@ -339,7 +341,7 @@ body {
 
 .chat-input-area #send:active::before {
     border-left-color: #1F3F3E;
-    transform: translateX(2px);
+    transform: translateY(2px);
 }
 
 .main-content-container {
@@ -427,60 +429,55 @@ body {
     transform: translateY(0);
 }
 
-/* Estilos para o Modal de Criação de Comunidade */
 #criar-comunidade {
-    display: none; /* Mantenha o display: none para que ele esteja oculto por padrão */
-    position: fixed; /* Fixa o modal na tela */
+    display: none; 
+    position: fixed; 
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.6); /* Fundo semi-transparente escuro */
-    display: flex; /* Para centralizar o conteúdo do modal */
-    justify-content: center; /* Centraliza horizontalmente */
-    align-items: center; /* Centraliza verticalmente */
-    /* Z-index alto para garantir que fique sobre todo o conteúdo */
+    background-color: rgba(0, 0, 0, 0.6); 
+    display: flex; 
+    justify-content: center; 
+    align-items: center;
     z-index: 9999; 
-    padding: 20px; /* Adiciona um pouco de padding para telas menores */
-    box-sizing: border-box; /* Inclui padding na largura/altura total */
+    padding: 20px; 
+    box-sizing: border-box; 
 }
 
 #criar-comunidade-form {
-    background-color: #E0F2F1; /* Cor de fundo mais clara, como o chat-layout-container */
+    background-color: #E0F2F1; 
     padding: 40px;
-    border-radius: 20px; /* Mais arredondado */
-    box-shadow: 0 8px 25px rgba(0,0,0,0.4); /* Sombra mais pronunciada */
-    max-width: 500px; /* Largura máxima do formulário */
+    border-radius: 20px; 
+    box-shadow: 0 8px 25px rgba(0,0,0,0.4); 
+    max-width: 500px; 
     width: 100%;
-    position: relative; /* Para posicionar o botão de fechar */
-    border: 1px solid #79B8B3; /* Borda sutil para dar um toque */
-    /* Z-index ainda maior para garantir que o formulário fique acima do background do modal */
+    position: relative;
+    border: 1px solid #79B8B3; 
     z-index: 10000; 
 }
 
-/* Adicione um botão de fechar (opcional, mas recomendado para modais) */
 .close-modal-button {
     position: absolute;
     top: 15px;
     right: 15px;
     background: none;
     border: none;
-    font-size: 2em; /* Um pouco maior para visibilidade */
-    color: #555; /* Cor do tema */
+    font-size: 2em; 
+    color: #555; 
     cursor: pointer;
     transition: color 0.2s ease;
-    z-index: 10001; /* Garante que o 'X' esteja acima de TUDO no modal */
+    z-index: 10001; 
 }
 
 .close-modal-button:hover {
-    color: #333; /* Verde mais escuro no hover */
+    color: #333; 
 }
 
-/* Estilo para o título do modal de criação */
 #criar-comunidade-form h1 {
     font-family: 'Louis George Cafe', sans-serif;
-    color: #386D6B; /* Cor do tema */
-    font-size: 2em; /* Tamanho maior para o título */
+    color: #386D6B; 
+    font-size: 2em; 
     text-align: center;
     margin-bottom: 25px;
     font-weight: bold;
@@ -488,10 +485,10 @@ body {
 
 #criar-comunidade-form .form-label {
     font-weight: bold;
-    color: #386D6B; /* Cor do tema */
-    margin-bottom: 8px; /* Mais espaçamento */
-    font-family: 'Louis George Cafe', sans-serif; /* Aplicar a fonte */
-    font-size: 1.1em; /* Levemente maior */
+    color: #386D6B; 
+    margin-bottom: 8px; 
+    font-family: 'Louis George Cafe', sans-serif;
+    font-size: 1.1em; 
 }
 
 #criar-comunidade-form input[type="text"],
@@ -499,75 +496,73 @@ body {
 #criar-comunidade-form select {
     width: 100%;
     padding: 12px;
-    border: 1px solid #79B8B3; /* Borda com cor do tema */
-    border-radius: 10px; /* Mais arredondado */
-    font-size: 1.05em; /* Ligeiramente maior */
-    background-color: #ffffff; /* Fundo branco para os campos */
-    box-sizing: border-box; /* Inclui padding na largura */
-    font-family: 'Louis George Cafe', sans-serif; /* Aplicar a fonte */
-    color: #333; /* Cor do texto */
+    border: 1px solid #79B8B3; 
+    border-radius: 10px; 
+    font-size: 1.05em; 
+    background-color: #ffffff; 
+    box-sizing: border-box; 
+    font-family: 'Louis George Cafe', sans-serif; 
+    color: #333; 
 }
 
 #criar-comunidade-form textarea {
     resize: vertical;
-    min-height: 120px; /* Um pouco mais alto */
+    min-height: 120px; 
 }
 
 #criar-comunidade-form .form-check-inline {
-    margin-right: 25px; /* Mais espaço entre eles */
+    margin-right: 25px; 
 }
 
 #criar-comunidade-form .form-check-label {
-    font-family: 'Louis George Cafe', sans-serif; /* Aplicar a fonte */
-    color: #386D6B; /* Cor do tema */
+    font-family: 'Louis George Cafe', sans-serif; 
+    color: #386D6B; 
     font-size: 1em;
 }
 
 #criar-comunidade-form input[type="radio"]:checked + .form-check-label {
-    color: #2F5957; /* Um verde mais escuro quando selecionado */
+    color: #2F5957; 
     font-weight: bold;
 }
 
 #criar-comunidade-form button[type="submit"] {
-    background-color: #386D6B; /* Verde do tema */
+    background-color: #386D6B; 
     color: white;
-    padding: 15px 25px; /* Um pouco mais de padding */
+    padding: 15px 25px; 
     border: none;
-    border-radius: 10px; /* Mais arredondado */
-    font-size: 1.2em; /* Um pouco maior */
+    border-radius: 10px; 
+    font-size: 1.2em; 
     cursor: pointer;
     transition: background-color 0.3s ease, transform 0.1s ease;
     width: 100%;
-    box-shadow: 0 4px 10px rgba(56,109,107,0.4); /* Sombra com cor do botão */
-    font-family: 'Louis George Cafe', sans-serif; /* Aplicar a fonte */
+    box-shadow: 0 4px 10px rgba(56,109,107,0.4); 
+    font-family: 'Louis George Cafe', sans-serif; 
 }
 
 #criar-comunidade-form button[type="submit"]:hover {
-    background-color: #2F5957; /* Verde mais escuro no hover */
+    background-color: #2F5957;
     transform: translateY(-2px);
 }
 #criar-comunidade-form button[type="submit"]:active {
-    background-color: #1A302F; /* Verde ainda mais escuro no clique */
+    background-color: #1A302F;
     transform: translateY(0);
     box-shadow: 0 2px 5px rgba(56,109,107,0.2);
 }
 
-/* Estilos para o Modal de Apagar Comunidade */
 #apagar-comunidade-modal {
-    display: none; /* Inicie oculto. O JS vai mudar para 'flex' quando abrir. */
-    position: fixed; /* Essencial para que ele flutue sobre o conteúdo */
+    display: none; 
+    position: fixed; 
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.6); /* Fundo semi-transparente escuro */
-    display: flex; /* Para centralizar o conteúdo do modal */
-    justify-content: center; /* Centraliza horizontalmente */
-    align-items: center; /* Centraliza verticalmente */
-    /* Z-index alto para garantir que fique sobre todo o conteúdo */
+    background-color: rgba(0, 0, 0, 0.6); 
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
     z-index: 9999; 
-    padding: 20px; /* Adiciona um pouco de padding para telas menores */
-    box-sizing: border-box; /* Inclui padding na largura/altura total */
+    padding: 20px; 
+    box-sizing: border-box; 
 }
 
 #apagar-comunidade-form-container {
@@ -577,9 +572,8 @@ body {
     box-shadow: 0 8px 25px rgba(0,0,0,0.4);
     max-width: 500px;
     width: 100%;
-    position: relative; /* Para posicionar o botão de fechar */
+    position: relative; 
     border: 1px solid #79B8B3;
-    /* Z-index ainda maior para garantir que o formulário fique acima do background do modal */
     z-index: 10000;
 }
 
@@ -592,15 +586,14 @@ body {
     font-weight: bold;
 }
 
-/* Estilo para a lista de comunidades dentro do modal de apagar */
 .community-delete-list-wrapper {
-    max-height: 250px; /* Altura máxima para a lista */
-    overflow-y: auto; /* Adiciona scroll se a lista for grande */
+    max-height: 250px;
+    overflow-y: auto; 
     border: 1px solid #79B8B3;
     border-radius: 10px;
     background-color: #ffffff;
     padding: 10px;
-    margin-bottom: 20px; /* Espaço abaixo da lista e antes do botão */
+    margin-bottom: 20px; 
 }
 
 #deleteCommunityList {
@@ -636,9 +629,8 @@ body {
     transform: translateY(-1px);
 }
 
-/* Estilo para o botão de "Apagar Selecionada" */
 #confirmDeleteCommunityButton {
-    background-color: #d9534f; /* Um vermelho mais forte para apagar */
+    background-color: #d9534f; 
     color: white;
     padding: 15px 25px;
     border: none;
@@ -652,44 +644,56 @@ body {
 }
 
 #confirmDeleteCommunityButton:hover {
-    background-color: #c9302c; /* Vermelho mais escuro no hover */
+    background-color: #c9302c; 
     transform: translateY(-2px);
 }
 
 #confirmDeleteCommunityButton:active {
-    background-color: #a72320; /* Vermelho ainda mais escuro no clique */
+    background-color: #a72320; 
     transform: translateY(0);
     box-shadow: 0 2px 5px rgba(217,83,79,0.2);
 }
 
-/* A regra vh-100 continua sendo usada em outro lugar, então manter */
 .vh-100 {
     min-height: auto !important;
 }
 
-/* NOVO: Estilos para o popup de gerenciamento (Criar, Apagar, Voltar) */
 .community-management-popup {
-    position: absolute; /* Posição absoluta em relação ao seu pai (.edit-section) */
-    top: 0px; /* Alinha o topo do popup com o topo do botão + Editar */
-    right: 0; /* Alinha o popup à direita do botão + Editar */
-    background-color: #386D6B; /* Cor de fundo do tema */
+    position: absolute; 
+    top: 0px; 
+    right: 0; 
+    background-color: #386D6B; 
     border-radius: 8px;
     box-shadow: 0 4px 15px rgba(0,0,0,0.3);
     padding: 15px;
-    z-index: 1010; /* Garante que ele esteja acima da lista de comunidades e outros elementos próximos */
-    min-width: 200px; /* Garante que as opções não fiquem muito apertadas */
-    text-align: left; /* Alinha o texto das opções à esquerda */
+    z-index: 1010;
+    min-width: 200px;
+    text-align: left;
 }
 
 .community-management-popup p {
-    margin: 0 0 10px 0; /* Espaçamento entre as opções */
+    margin: 0 0 10px 0; 
 }
 
 .community-management-popup p:last-child {
-    margin-bottom: 0; /* Remove margem inferior da última opção */
+    margin-bottom: 0;
 }
 
-/* Garante que o link de edição de comunidades esteja visível */
 .edit-communities-button {
-    position: relative; /* Garante que o popup posicione-se em relação a ele */
+    position: relative; 
+}
+
+.ajuda a {
+    text-decoration: none;
+    color: inherit;
+	color: rgb(255, 255, 255)
+}
+.ajuda {
+    position: fixed;
+    bottom: 25px;
+    right: 2em;
+	font-size: 1.5em;
+    z-index: 1001;
+    text-align: center;
+    font-family: 'Louis George Cafe', sans-serif;
 }
