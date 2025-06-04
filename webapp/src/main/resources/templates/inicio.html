@@ -46,8 +46,18 @@
       </div>
       <div class="user-section">
         <div sec:authorize="isAuthenticated()" class="logged-in-container">
-          <span class="logged-in-username"><i class="fas fa-star"></i> <span sec:authentication="principal.name">Nome do Usuário</span> <span class="user-icon"><i class="fas fa-user-circle"></i></span></span>
-          <a th:href="@{/logout}" class="logout-button">Sair</a> </div>
+          <span class="logged-in-username">
+            <th:block sec:authorize="hasRole('ADMIN')">
+                <i class="fas fa-check-circle" title="Administrador"></i>
+            </th:block>
+            <th:block sec:authorize="hasRole('MANAGER') and !hasRole('ADMIN')">
+                <i class="fas fa-star" title="Gerente"></i>
+            </th:block>
+            <span sec:authentication="principal.name">Nome do Usuário</span>
+            <span class="user-icon"><i class="fas fa-user-circle"></i></span>
+          </span>
+          <a th:href="@{/logout}" class="logout-button">Sair</a>
+        </div>
         <a sec:authorize="!isAuthenticated()" th:href="@{/login}" class="login-button">Login</a>
       </div>
     </div>

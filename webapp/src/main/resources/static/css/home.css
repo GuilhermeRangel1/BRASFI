@@ -57,7 +57,7 @@ header {
 
 .logged-in-username {
   background-color: #ddd; 
-  color: #333;
+  color: #333; 
   padding: 8px 16px;
   border-radius: 20px; 
   font-size: 16px;
@@ -66,6 +66,14 @@ header {
   display: flex;
   align-items: center;
   gap: 8px;
+}
+
+.logged-in-username .fas.fa-star {
+  margin-right: 5px; 
+}
+
+.logged-in-username .fas.fa-check-circle {
+  margin-right: 5px; 
 }
 
 .logged-in-username i {

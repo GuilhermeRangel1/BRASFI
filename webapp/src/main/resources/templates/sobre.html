@@ -8,8 +8,8 @@
   <link rel="stylesheet" th:href="@{/css/home.css}" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   <link rel="icon" type="image/jpg" th:href="@{/img/brasfi.jpg}">
-  <link rel="stylesheet" th:href="@{/css/ajuda.css}" /> 
-</head>
+  <link rel="stylesheet" th:href="@{/css/ajuda.css}" />
+  </head>
 <body>
   <header>
     <div class="top-bar">
@@ -19,7 +19,16 @@
       </div>
       <div class="user-section">
         <div sec:authorize="isAuthenticated()" class="logged-in-container">
-          <span class="logged-in-username"><i class="fas fa-star"></i> <span sec:authentication="principal.name">Nome do Usuário</span> <span class="user-icon"><i class="fas fa-user-circle"></i></span></span>
+          <span class="logged-in-username">
+            <th:block sec:authorize="hasRole('ADMIN')">
+                <i class="fas fa-check-circle" title="Administrador"></i>
+            </th:block>
+            <th:block sec:authorize="hasRole('MANAGER') and !hasRole('ADMIN')">
+                <i class="fas fa-star" title="Gerente"></i>
+            </th:block>
+            <span sec:authentication="principal.name">Nome do Usuário</span>
+            <span class="user-icon"><i class="fas fa-user-circle"></i></span>
+          </span>
           <a th:href="@{/logout}" class="logout-button">Sair</a>
         </div>
         <a sec:authorize="!isAuthenticated()" th:href="@{/login}" class="login-button">Login</a>

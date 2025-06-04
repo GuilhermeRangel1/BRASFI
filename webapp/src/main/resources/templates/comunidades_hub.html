@@ -19,24 +19,23 @@
 
     <style>
 
-
         .swal2-popup-larger {
             width: 35em !important;
-            max-width: 90% !important; 
+            max-width: 90% !important;
         }
 
         .swal2-title-larger {
-            font-size: 2.2em !important; 
+            font-size: 2.2em !important;
         }
 
         .swal2-text-larger {
-            font-size: 1.2em !important; 
+            font-size: 1.2em !important;
         }
 
         .swal2-confirm.swal2-styled,
         .swal2-cancel.swal2-styled {
-            font-size: 1.1em !important; 
-            padding: 0.8em 1.5em !important; 
+            font-size: 1.1em !important;
+            padding: 0.8em 1.5em !important;
         }
     </style>
     <script th:inline="javascript">
@@ -63,7 +62,16 @@
             </div>
             <div class="user-section">
                 <div sec:authorize="isAuthenticated()" class="logged-in-container">
-                    <span class="logged-in-username"><i class="fas fa-star"></i> <span sec:authentication="principal.name">Nome do Usuário</span> <span class="user-icon"><i class="fas fa-user-circle"></i></span></span>
+                    <span class="logged-in-username">
+                        <th:block sec:authorize="hasRole('ADMIN')">
+                            <i class="fas fa-check-circle" title="Administrador"></i>
+                        </th:block>
+                        <th:block sec:authorize="hasRole('MANAGER') and !hasRole('ADMIN')">
+                            <i class="fas fa-star" title="Gerente"></i>
+                        </th:block>
+                        <span sec:authentication="principal.name">Nome do Usuário</span>
+                        <span class="user-icon"><i class="fas fa-user-circle"></i></span>
+                    </span>
                     <a th:href="@{/logout}" class="logout-button">Sair</a>
                 </div>
                 <a sec:authorize="!isAuthenticated()" th:href="@{/login}" class="login-button">Login</a>
