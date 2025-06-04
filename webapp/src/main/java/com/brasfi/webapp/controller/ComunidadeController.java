@@ -92,10 +92,8 @@ public class ComunidadeController {
     ) {
         System.out.println(nivelDePermissao.getDescricaoDeAcesso());
         Comunidade comunidadeAdicionada = comunidadeService.incluirComunidade(new Comunidade(nome, descricao, nivelDePermissao));
-        if (comunidadeAdicionada != null) {
-            ModelAndView mv = new ModelAndView("redirect:/comunidades");
-            mv.addObject("criado-com-sucesso", "Comunidade criada com sucesso!");
-            return mv;
+        if (comunidadeAdicionada != null && comunidadeAdicionada.getId() != null) {
+            return new ModelAndView("redirect:/comunidades/" + comunidadeAdicionada.getId());
         }
         ModelAndView mv = new ModelAndView("criarComunidade");
         mv.addObject("erro-criacao", "Não foi possível criar a comunidade. Tente novamente.");
@@ -121,7 +119,7 @@ public class ComunidadeController {
     }
 
     @GetMapping("/api/comunidades")
-    @ResponseBody 
+    @ResponseBody
     public List<Comunidade> getAllComunidadesApi() {
         return comunidadeService.listarTodasComunidades();
     }
