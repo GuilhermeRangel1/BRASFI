@@ -2,6 +2,7 @@ package com.brasfi.webapp.service;
 
 import com.brasfi.webapp.entities.User;
 import com.brasfi.webapp.entities.Administrador;
+import com.brasfi.webapp.entities.Gerente;
 import com.brasfi.webapp.exception.CpfAlreadyExistsException;
 import com.brasfi.webapp.exception.EmailAlreadyExistsException;
 import com.brasfi.webapp.exception.InvalidCpfFormatException;
@@ -10,7 +11,7 @@ import com.brasfi.webapp.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
-import org.springframework.security.crypto.password.PasswordEncoder; 
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.List;
 
@@ -21,7 +22,7 @@ public class UserService {
     private UserRepository userRepository;
 
     @Autowired
-    private PasswordEncoder passwordEncoder; 
+    private PasswordEncoder passwordEncoder;
 
     public List<User> findAll() {
         return userRepository.findAll();
@@ -47,6 +48,18 @@ public class UserService {
         return userRepository.save(newUser);
     }
 
+    public Gerente registerManager(String nome, String email, String cpf, String senha, int idade)
+            throws MissingRequiredFieldsException, EmailAlreadyExistsException, CpfAlreadyExistsException, InvalidCpfFormatException {
+
+        validateFields(nome, email, cpf, senha, idade);
+        validateUniqueEmail(email);
+        validateUniqueCpf(cpf);
+        validateCpfFormat(cpf);
+
+        Gerente newManager = new Gerente(null, nome, email, cpf, passwordEncoder.encode(senha), idade);
+        return userRepository.save(newManager);
+    }
+
     public Administrador registerAdmin(String nome, String email, String cpf, String senha, int idade)
             throws MissingRequiredFieldsException, EmailAlreadyExistsException, CpfAlreadyExistsException, InvalidCpfFormatException {
 
@@ -61,7 +74,7 @@ public class UserService {
 
     private void validateFields(String nome, String email, String cpf, String senha, int idade) throws MissingRequiredFieldsException {
         if (!StringUtils.hasText(nome) || !StringUtils.hasText(email) ||
-            !StringUtils.hasText(cpf) || !StringUtils.hasText(senha) || idade <= 0) {
+                !StringUtils.hasText(cpf) || !StringUtils.hasText(senha) || idade <= 0) {
             throw new MissingRequiredFieldsException("Todos os campos devem ser preenchidos e a idade deve ser maior que zero.");
         }
     }

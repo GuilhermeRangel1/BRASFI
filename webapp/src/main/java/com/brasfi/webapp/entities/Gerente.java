@@ -4,16 +4,16 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.DiscriminatorValue;
 
 @Entity
-@DiscriminatorValue("ADMIN")
-public class Administrador extends Gerente {
+@DiscriminatorValue("GERENTE")
+public class Gerente extends User {
 
     private static final long serialVersionUID = 1L;
 
-    public Administrador() {
+    public Gerente() {
         super();
     }
 
-    public Administrador(Long id, String name, String email, String cpf, String password, int idade) {
+    public Gerente(Long id, String name, String email, String cpf, String password, int idade) {
         super(id, name, email, cpf, password, idade);
     }
 }

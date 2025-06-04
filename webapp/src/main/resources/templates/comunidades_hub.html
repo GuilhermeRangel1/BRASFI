@@ -8,45 +8,19 @@
 
     <link rel="stylesheet" href="/css/home.css">
     <link rel="stylesheet" href="/css/comunidades.css">
+    <link rel="stylesheet" th:href="@{/css/ajuda.css}" />
 
     <link rel="stylesheet" href="/webjars/bootstrap/5.3.3/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-    <link rel="icon" type="image/jpg" href="/img/brasfi.jpg">
+    <link rel="icon" type="image/jpg" th:href="@{/img/brasfi.jpg}">
 
     <script th:inline="javascript">
         /*<![CDATA[*/
-            let comunidadeId = /*[[${comunidade.id}]]*/ 0;
-            let usuarioId = /*[[${usuario.id}]]*/ 0;
+        let comunidadeId = /*[[${comunidade != null ? comunidade.id : 0}]]*/ 0;
+        let usuarioId = /*[[${usuario != null ? usuario.id : 0}]]*/ 0;
         /*]]>*/
     </script>
-
-    <!--<script th:inline="javascript">
-
-        /*document.addEventListener('DOMContentLoaded', function() {
-            // Verifica se o atributo 'acessoNegado' foi passado pelo modelo do Spring
-
-            /*<![CDATA[*/
-            //const podeAcessar = /*[[${podeAcessar}]]*/ true; // Thymeaf injeta o valor aqui
-            /*]]>*/
-
-            //console.log("DEBUG: Valor de podeAcessar injetado: " + podeAcessar);
-
-            /*if (podeAcessar) {
-        document.getElementById('acesso-negado-overlay').style.display = 'flex';
-        document.getElementById('acesso-negado-popup').style.display = 'block';
-        }
-        });
-
-        function fecharPopupAcessoNegado() {
-        document.getElementById('acesso-negado-overlay').style.display = 'none';
-        document.getElementById('acesso-negado-popup').style.display = 'none';
-        // Opcional: Redirecionar para uma página de onde o usuário possa solicitar acesso
-        // window.location.href = '/minhas-comunidades';
-        }*/
-        }
-    </script>-->
-
     <script type="module" src="/js/comunidade.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1.6.1/dist/sockjs.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@stomp/stompjs@7.0.0/bundles/stomp.umd.min.js"></script>
@@ -56,218 +30,379 @@
     <script th:src="@{/js/inicio.js}"></script>
 </head>
 <body>
-    <header>
-        <div class="top-bar">
-            <div class="logo-section">
-                <div class="brasfi-logo">BRASFI</div>
-                <img th:src="@{/img/brasfi.jpg}" alt="Logo BRASFI" class="brasfi-icon">
+<header>
+    <div class="top-bar">
+        <div class="logo-section">
+            <div class="brasfi-logo">BRASFI</div>
+            <img th:src="@{/img/brasfi.jpg}" alt="Logo BRASFI" class="brasfi-icon">
+        </div>
+        <div class="user-section">
+            <div sec:authorize="isAuthenticated()" class="logged-in-container">
+                <span class="logged-in-username"><i class="fas fa-star"></i> <span sec:authentication="principal.name">Nome do Usuário</span> <span class="user-icon"><i class="fas fa-user-circle"></i></span></span>
+                <a th:href="@{/logout}" class="logout-button">Sair</a>
             </div>
-            <div class="user-section">
-                <div sec:authorize="isAuthenticated()" class="logged-in-container">
-                    <span class="logged-in-username"><i class="fas fa-star"></i> <span sec:authentication="principal.name">Nome do Usuário</span> <span class="user-icon"><i class="fas fa-user-circle"></i></span></span>
-                    <a th:href="@{/logout}" class="logout-button">Sair</a>
+            <a sec:authorize="!isAuthenticated()" th:href="@{/login}" class="login-button">Login</a>
+        </div>
+    </div>
+
+    <div class="menu-container">
+        <div class="menu-toggle-bar">
+            <button class="menu-open-button" id="menu-open-button">
+                <i class="fas fa-angle-down"></i>
+            </button>
+        </div>
+        <ul class="menu" id="main-menu">
+            <button class="menu-close-button" id="menu-close-button">
+                <i class="fas fa-angle-up"></i>
+            </button>
+            <li><a th:href="@{/}">Home</a></li>
+            <li><a th:href="@{/sobre}">Sobre a BRASFI</a></li>
+            <li><a th:href="@{/agenda}">Agenda de Eventos</a></li>
+            <li><a th:href="@{/eventosGravados}">Eventos Gravados</a></li>
+            <li><a th:href="@{/comunidades}">Comunidade</a></li>
+        </ul>
+    </div>
+</header>
+
+<form action="/criar-solicitacao" method="post" th:if="${!podeAcessar}">
+    <div id="acesso-negado-overlay" class="acesso-negado-overlay" >
+        <div id="acesso-negado-popup" class="acesso-negado-popup">
+            <h3>ATENÇÃO</h3>
+            <p th:text="${mensagemAcessoNegado}"></p>
+            <input style="display: none" type="text" name="comunidadeId-solicitada" th:value="${comunidade.getId()}">
+            <textarea name="solicitacao-usuario" placeholder="Escreva aqui sua solicitação..."></textarea>
+            <button type="submit">Enviar Solicitação</button>
+        </div>
+    </div>
+</form>
+<div class="chat-layout-container">
+    <div class="left-sidebar">
+        <div class="communities-title-standalone">
+            <h3>COMUNIDADES</h3>
+        </div>
+    </div>
+
+    <main class="chat-main-content">
+        <div class="chat-messages-area">
+            <div th:each="post: ${postagens}" class="message-bubble">
+                <div class="user-avatar">
+                    <i class="fas fa-user-circle"></i>
                 </div>
-                <a sec:authorize="!isAuthenticated()" th:href="@{/login}" class="login-button">Login</a>
+                <div class="message-content">
+                    <span class="message-author" th:text="${post.getAutor().getName()}"></span>
+                    <p class="message-text" th:text="${post.getDescricao()}"></p>
+                </div>
             </div>
         </div>
 
-        <div class="menu-container">
-            <div class="menu-toggle-bar">
-                <button class="menu-open-button" id="menu-open-button">
-                    <i class="fas fa-angle-down"></i>
-                </button>
+        <div class="chat-input-area">
+            <div class="input-and-button-container">
+                <input type="text" id="message" placeholder="Escreva uma mensagem...">
+                <button id="send" type="submit"><i class="fas fa-play"></i></button>
             </div>
-            <ul class="menu" id="main-menu">
-                <button class="menu-close-button" id="menu-close-button">
-                    <i class="fas fa-angle-up"></i>
-                </button>
-                <li><a th:href="@{/}">Home</a></li>
-                <li><a th:href="@{/sobre}">Sobre a BRASFI</a></li>
-                <li><a th:href="@{/agenda}">Agenda de Eventos</a></li>
-                <li><a th:href="@{/eventosGravados}">Eventos Gravados</a></li>
-                <li><a th:href="@{/comunidades}">Comunidade</a></li>
+        </div>
+    </main>
+
+    <div class="right-sidebar">
+        <div class="edit-section" style="position: relative;"> <a href="#" id="editCommunitiesButton" class="edit-communities-button">+ Editar</a>
+
+            <div id="communityManagementPopup" class="community-management-popup" style="display: none;">
+                <p><a href="#" id="createCommunityLink" class="community-management-link">Criar nova comunidade</a></p>
+                <p><a href="#" id="deleteCommunityLink" class="community-management-link">Apagar uma comunidade</a></p>
+                <p><a href="#" id="backToCommunitiesLink" class="community-management-link">Voltar para Comunidades</a></p>
+            </div>
+        </div>
+
+        <div id="communityListSection" class="community-list-section">
+            <ul class="community-list">
+                <li th:each="com : ${comunidades}"
+                    th:class="${com != null and (com.id == comunidade.id) ? 'active-community' : ''}">
+                    <a th:href="@{/comunidades/{id}(id=${com.getId()})}" th:text="${com.nome}"></a>
+                </li>
             </ul>
         </div>
-    </header>
 
-    <form action=/criar-solicitacao method="post" th:if="${!podeAcessar}">
-        <div id="acesso-negado-overlay" class="acesso-negado-overlay" >
-            <div id="acesso-negado-popup" class="acesso-negado-popup">
-                <h3>ATENÇÃO</h3>
-                <p th:text="${mensagemAcessoNegado}"></p>
-                <input style="display: none" type="text" name="comunidadeId-solicitada" th:value="${comunidade.getId()}">
-                <textarea name="solicitacao-usuario" placeholder="Escreva aqui sua solicitação..."></textarea>
-                <button type="submit">Enviar Solicitação</button>
+        <button sec:authorize="hasRole('MANAGER')"><a th:href="@{/listar-solicitacoes}">Verificar solicitações</a></button>
+
+    </div>
+</div>
+<button onclick="OpenForm()" id="open-criar-comunidade" style="display: none;">Criar nova comunidade</button>
+
+<div id="criar-comunidade" style="display: none">
+    <form action="/criar-comunidade" method="post" id="criar-comunidade-form" class="p-4 border rounded bg-light shadow">
+        <button type="button" class="close-modal-button" id="closeCreateCommunityModal">&times;</button>
+        <h1>Nova Comunidade</h1>
+        <div class="mb-3">
+            <label for="nome" class="form-label">Nome</label>
+            <input type="text" class="form-control" id="nome" name="nome" placeholder="Digite o nome" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="descricao" class="form-label">Descrição</label>
+            <textarea class="form-control" id="descricao" name="descricao" rows="4" placeholder="Descreva a comunidade"></textarea>
+        </div>
+
+        <label class="form-label">Integrantes da comunidade</label>
+        <div class="mb-3">
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" id="Publica" name="nivelPermissao" th:value="${PUBLICA}">
+                <label class="form-check-label" for="Publica">Pública</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" id="Lideres" name="nivelPermissao" th:value="${APENAS_LIDERES}">
+                <label class="form-check-label" for="Lideres">Apenas líderes</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" id="Personalizada" name="nivelPermissao" th:value="${PERSONALIZADA}">
+                <label class="form-label" for="Personalizada">Personalizada</label>
             </div>
         </div>
+
+        <button type="submit" class="btn btn-primary w-100">Criar</button>
     </form>
+</div>
 
-    <div class="chat-layout-container">
-        <div class="left-sidebar">
-            <div class="communities-title-standalone">
-                <h3>COMUNIDADES</h3>
-            </div>
+<div id="apagar-comunidade-modal" style="display: none;">
+    <div id="apagar-comunidade-form-container" class="p-4 border rounded bg-light shadow">
+        <button type="button" class="close-modal-button" id="closeDeleteCommunityModal">&times;</button>
+        <h1>Apagar Comunidade</h1>
+        <p style="font-family: 'Louis George Cafe', sans-serif; color: #386D6B;">Selecione a comunidade que deseja apagar:</p>
+        <div class="community-delete-list-wrapper">
+            <ul id="deleteCommunityList" class="community-list">
+                <li style="color: #386D6B; font-family: 'Louis George Cafe', sans-serif;">Carregando comunidades...</li>
+            </ul>
         </div>
-
-        <main class="chat-main-content">
-            <div class="chat-messages-area">
-                <div th:each="post: ${postagens}" class="message-bubble">
-                    <div class="user-avatar">
-                        <i class="fas fa-user-circle"></i>
-                    </div>
-                    <div class="message-content">
-                        <span class="message-author" th:text="${post.getAutor().getName()}"></span>
-                        <p class="message-text" th:text="${post.getDescricao()}"></p>
-                    </div>
-                </div>
-                </div>
-
-            <div class="chat-input-area">
-                <div class="input-and-button-container">
-                    <input type="text" id="message" placeholder="Escreva uma mensagem...">
-                    <button id="send" type="submit"><i class="fas fa-play"></i></button>
-                </div>
-            </div>
-        </main>
-
-        <div class="right-sidebar">
-            <div class="edit-section" style="position: relative;"> <a href="#" id="editCommunitiesButton" class="edit-communities-button">+ Editar</a>
-
-                <div id="communityManagementPopup" class="community-management-popup" style="display: none;">
-                    <p><a href="#" id="createCommunityLink" class="community-management-link">Criar nova comunidade</a></p>
-                    <p><a href="#" id="deleteCommunityLink" class="community-management-link">Apagar uma comunidade</a></p>
-                    <p><a href="#" id="backToCommunitiesLink" class="community-management-link">Voltar para Comunidades</a></p>
-                </div>
-            </div>
-
-            <div id="communityListSection" class="community-list-section">
-                <ul class="community-list">
-                    <li th:each="com : ${comunidades}"
-                        th:class="${com != null and (com.id == comunidade.id) ? 'active-community' : ''}">
-                        <a th:href="@{/comunidades/{id}(id=${com.getId()})}" th:text="${com.nome}"></a>
-                    </li>
-                    </ul>
-            </div>
-        </div> </div> <button onclick="OpenForm()" id="open-criar-comunidade" style="display: none;">Criar nova comunidade</button>
-
-    <div id="criar-comunidade" style="display: none">
-        <form action="/criar-comunidade" method="post" id="criar-comunidade-form" class="p-4 border rounded bg-light shadow">
-            <button type="button" class="close-modal-button" id="closeCreateCommunityModal">&times;</button>
-            <h1>Nova Comunidade</h1>
-            <div class="mb-3">
-                <label for="nome" class="form-label">Nome</label>
-                <input type="text" class="form-control" id="nome" name="nome" placeholder="Digite o nome" required>
-            </div>
-
-            <div class="mb-3">
-                <label for="descricao" class="form-label">Descrição</label>
-                <textarea class="form-control" id="descricao" name="descricao" rows="4" placeholder="Descreva a comunidade"></textarea>
-            </div>
-
-            <label class="form-label">Integrantes da comunidade</label>
-            <div class="mb-3">
-                <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" id="Publica" name="Nivel de Permissao" th:value="${PUBLICA}">
-                    <label class="form-check-label" for="Publica">Pública</label>
-                </div>
-                <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" id="Lideres" name="Nivel de Permissao" th:value="${APENAS_LIDERES}">
-                    <label class="form-check-label" for="Lideres">Apenas líderes</label>
-                </div>
-                <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" id="Personalizada" name="Nivel de Permissao" th:value="${PERSONALIZADA}">
-                    <label class="form-label" for="Personalizada">Personalizada</label>
-                </div>
-            </div>
-
-            <button type="submit" class="btn btn-primary w-100">Criar</button>
-        </form>
+        <button type="button" class="btn btn-danger w-100 mt-3" id="confirmDeleteCommunityButton">Apagar Selecionada</button>
     </div>
+</div>
 
-    <div id="apagar-comunidade-modal" style="display: none;">
-        <div id="apagar-comunidade-form-container" class="p-4 border rounded bg-light shadow">
-            <button type="button" class="close-modal-button" id="closeDeleteCommunityModal">&times;</button>
-            <h1>Apagar Comunidade</h1>
-            <p style="font-family: 'Louis George Cafe', sans-serif; color: #386D6B;">Selecione a comunidade que deseja apagar:</p>
-            <div class="community-delete-list-wrapper">
-                <ul id="deleteCommunityList" class="community-list">
-                    <li style="color: #386D6B; font-family: 'Louis George Cafe', sans-serif;">Carregando comunidades...</li>
-                </ul>
-            </div>
-            <button type="button" class="btn btn-danger w-100 mt-3" id="confirmDeleteCommunityButton">Apagar Selecionada</button>
-        </div>
-    </div>
+<div class="ajuda">
+    <a href="javascript:void(0);" onclick="abrirAjuda()">Ajuda</a>
+</div>
 
-    <div class="ajuda">
-        <a href="javascript:void(0);" onclick="abrirAjuda()">Ajuda</a>
-    </div>
+<div id="help-overlay" onclick="fecharAjuda()">
+        <div id="help-box" onclick="event.stopPropagation()">
+            <span class="close-help" onclick="fecharAjuda()">×</span>
+            <h2>Dúvidas Frequentes</h2>
 
-	<div id="help-overlay" onclick="fecharAjuda()">
-	    <div id="help-box" onclick="event.stopPropagation()">
-	        <span class="close-help" onclick="fecharAjuda()">×</span>
-	        <h2>Dúvidas Frequentes</h2>
+            <button class="help-question" onclick="mostrarResposta(0)">
+                <i class="fas fa-sign-in-alt"></i> Dificuldade com login
+            </button>
+            <div class="help-answer">
+                Verifique seu e-mail e senha. Caso tenha esquecido, entre em contato via contato@brasfi.com
+            </div>
 
-	        <button class="help-question" onclick="mostrarResposta(0)">
-	            <i class="fas fa-sign-in-alt"></i> Dificuldade com login
-	        </button>
-	        <div class="help-answer">
-	            Verifique seu e-mail e senha. Caso tenha esquecido, entre em contato via contato@brasfi.com
-	        </div>
+            <button class="help-question" onclick="mostrarResposta(1)">
+                <i class="fas fa-user-plus"></i> Como se cadastrar?
+            </button>
+            <div class="help-answer">
+                Para criar uma conta é necessário ser um membro BRASFI, entre em contato diretamente com a gente
+            </div>
 
-	        <button class="help-question" onclick="mostrarResposta(1)">
-	            <i class="fas fa-user-plus"></i> Como se cadastrar?
-	        </button>
-	        <div class="help-answer">
-	            Para criar uma conta é necessário ser um membro BRASFI, entre em contato diretamente com a gente
-	        </div>
+            <button class="help-question" onclick="mostrarResposta(2)">
+                <i class="fas fa-comments"></i> Comunidade
+            </button>
+            <div class="help-answer">
+               Nós temos um meio de comunicação interno para membros
+            </div>
 
-	        <button class="help-question" onclick="mostrarResposta(2)">
-	            <i class="fas fa-comments"></i> Comunidade
-	        </button>
-	        <div class="help-answer">
-	           Nós temos um meio de comunicação interno para membros
-	        </div>
+            <button class="help-question" onclick="mostrarResposta(3)">
+                <i class="fas fa-seedling"></i> Projetos sustentáveis (ESG)
+            </button>
+            <div class="help-answer">
+                Nossos projetos estão relacionados diretamente no ensino de finanças sustentáveis
+            </div>
 
-	        <button class="help-question" onclick="mostrarResposta(3)">
-	            <i class="fas fa-seedling"></i> Projetos sustentáveis (ESG)
-	        </button>
-	        <div class="help-answer">
-	            Nossos projetos estão relacionados diretamente no ensino de finanças sustentáveis
-	        </div>
+            <button class="help-question" onclick="mostrarResposta(4)">
+                <i class="fas fa-calendar-alt"></i> Agenda de eventos
+            </button>
+            <div class="help-answer">
+                Visite a página de eventos para visualizar as próximas datas e conteúdos gravados.
+            </div>
+        </div>
+</div>
+<script src="/webjars/jquery/3.7.1/jquery.min.js"></script>
+<script src="/webjars/bootstrap/5.3.3/js/bootstrap.min.js"></script>
+<script th:src="@{/js/inicio.js}"></script>
+<script th:src="@{/js/comunidadeManagement.js}"></script>
+<script>
+    function abrirAjuda() {
+        document.getElementById('help-overlay').style.display = 'flex';
+    }
 
-	        <button class="help-question" onclick="mostrarResposta(4)">
-	            <i class="fas fa-calendar-alt"></i> Agenda de eventos
-	        </button>
-	        <div class="help-answer">
-	            Visite a página de eventos para visualizar as próximas datas e conteúdos gravados.
-	        </div>
-	    </div>
-	</div>
-    </div>
-    <script src="/webjars/jquery/3.7.1/jquery.min.js"></script>
-    <script src="/webjars/bootstrap/5.3.3/js/bootstrap.min.js"></script>
-    <script th:src="@{/js/inicio.js}"></script>
-	<script th:src="@{/js/comunidadeManagement.js}"></script>
-    <script>
-        function abrirAjuda() {
-            document.getElementById('help-overlay').style.display = 'flex';
+    function fecharAjuda() {
+        document.getElementById('help-overlay').style.display = 'none';
+        document.querySelectorAll('.help-answer').forEach(el => el.style.display = 'none');
+    }
+
+    function mostrarResposta(index) {
+        const respostas = document.querySelectorAll('.help-answer');
+        respostas.forEach((el, i) => {
+            if (i === index) {
+                el.style.display = el.style.display === 'block' ? 'none' : 'block';
+            } else {
+                el.style.display = 'none';
+            }
+        });
+    }
+</script>
+<script>
+    // These functions control the display of the create/delete community modals.
+    function OpenForm() {
+        document.getElementById("criar-comunidade").style.display = "flex";
+    }
+
+    function CloseForm() {
+        document.getElementById("criar-comunidade").style.display = "none";
+    }
+
+    function OpenDeleteCommunityModal() {
+        document.getElementById("apagar-comunidade-modal").style.display = "flex";
+        loadCommunitiesForDeletion(); // This function is crucial for populating the list of communities
+    }
+
+    function CloseDeleteCommunityModal() {
+        document.getElementById("apagar-comunidade-modal").style.display = "none";
+    }
+
+    let selectedCommunityIdForDeletion = null;
+
+    // Function to load communities for deletion into the modal list.
+    async function loadCommunitiesForDeletion() {
+        const deleteCommunityList = document.getElementById('deleteCommunityList');
+        deleteCommunityList.innerHTML = '<li style="color: #386D6B; font-family: \'Louis George Cafe\', sans-serif;">Carregando comunidades...</li>';
+        selectedCommunityIdForDeletion = null;
+        document.getElementById('confirmDeleteCommunityButton').disabled = true;
+
+        try {
+            const response = await fetch('/api/comunidades');
+            if (!response.ok) {
+                throw new Error('Erro ao carregar comunidades: ' + response.statusText);
+            }
+            const comunidades = await response.json();
+
+            deleteCommunityList.innerHTML = '';
+
+            if (comunidades.length === 0) {
+                deleteCommunityList.innerHTML = '<li style="color: #386D6B; font-family: \'Louis George Cafe\', sans-serif;">Nenhuma comunidade encontrada.</li>';
+                document.getElementById('confirmDeleteCommunityButton').disabled = true;
+                return;
+            }
+
+            comunidades.forEach(com => {
+                const li = document.createElement('li');
+                li.textContent = com.nome;
+                li.dataset.id = com.id;
+                li.addEventListener('click', () => {
+                    Array.from(deleteCommunityList.children).forEach(item => {
+                        item.classList.remove('selected');
+                    });
+                    li.classList.add('selected');
+                    selectedCommunityIdForDeletion = com.id;
+                    document.getElementById('confirmDeleteCommunityButton').disabled = false;
+                });
+                deleteCommunityList.appendChild(li);
+            });
+        } catch (error) {
+            console.error('Erro ao carregar comunidades para exclusão:', error);
+            deleteCommunityList.innerHTML = '<li style="color: #d9534f; font-family: \'Louis George Cafe\', sans-serif;">Erro ao carregar comunidades.</li>';
+            document.getElementById('confirmDeleteCommunityButton').disabled = true;
         }
+    }
 
-        function fecharAjuda() {
-            document.getElementById('help-overlay').style.display = 'none';
-            document.querySelectorAll('.help-answer').forEach(el => el.style.display = 'none');
-        }
+    // Event listeners for managing the community management popup and modals.
+    document.addEventListener('DOMContentLoaded', () => {
+        const editButton = document.getElementById('editCommunitiesButton');
+        const communityListSection = document.getElementById('communityListSection');
+        const communityManagementPopup = document.getElementById('communityManagementPopup');
 
-        function mostrarResposta(index) {
-            const respostas = document.querySelectorAll('.help-answer');
-            respostas.forEach((el, i) => {
-                if (i === index) {
-                    el.style.display = el.style.display === 'block' ? 'none' : 'block';
+        const createCommunityLink = document.getElementById('createCommunityLink');
+        const deleteCommunityLink = document.getElementById('deleteCommunityLink');
+        const backToCommunitiesLink = document.getElementById('backToCommunitiesLink');
+        const closeCreateCommunityModalButton = document.getElementById('closeCreateCommunityModal');
+
+        const apagarComunidadeModal = document.getElementById('apagar-comunidade-modal');
+        const closeDeleteCommunityModalButton = document.getElementById('closeDeleteCommunityModal');
+        const confirmDeleteCommunityButton = document.getElementById('confirmDeleteCommunityButton');
+
+
+        if (editButton && communityListSection && communityManagementPopup) {
+            editButton.addEventListener('click', (e) => {
+                e.preventDefault();
+                if (communityManagementPopup.style.display === 'none' || communityManagementPopup.style.display === '') {
+                    communityManagementPopup.style.display = 'block';
+                    communityListSection.style.display = 'none';
                 } else {
-                    el.style.display = 'none';
+                    communityManagementPopup.style.display = 'none';
+                    communityListSection.style.display = 'block';
                 }
             });
+
+            if (createCommunityLink) {
+                createCommunityLink.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    OpenForm();
+                    communityManagementPopup.style.display = 'none';
+                });
+            }
+
+            if (deleteCommunityLink) {
+                deleteCommunityLink.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    OpenDeleteCommunityModal();
+                    communityManagementPopup.style.display = 'none';
+                });
+            }
+
+            if (backToCommunitiesLink) {
+                backToCommunitiesLink.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    communityManagementPopup.style.display = 'none';
+                    communityListSection.style.display = 'block';
+                });
+            }
+
+            if (closeCreateCommunityModalButton) {
+                closeCreateCommunityModalButton.addEventListener('click', () => {
+                    CloseForm();
+                });
+            }
+
+            if (closeDeleteCommunityModalButton) {
+                closeDeleteCommunityModalButton.addEventListener('click', () => {
+                    CloseDeleteCommunityModal();
+                });
+            }
+
+            if (confirmDeleteCommunityButton) {
+                confirmDeleteCommunityButton.addEventListener('click', async () => {
+                    if (selectedCommunityIdForDeletion) {
+                        if (confirm(`Tem certeza que deseja apagar a comunidade selecionada (ID: ${selectedCommunityIdForDeletion})? Esta ação é irreversível.`)) {
+                            try {
+                                const response = await fetch(`/comunidades/${selectedCommunityIdForDeletion}`, {
+                                    method: 'DELETE'
+                                });
+
+                                if (response.ok) {
+                                    alert('Comunidade apagada com sucesso!');
+                                    CloseDeleteCommunityModal();
+                                    window.location.href = '/comunidades';
+                                } else {
+                                    const errorText = await response.text();
+                                    throw new Error(errorText || 'Erro desconhecido ao apagar a comunidade.');
+                                }
+                            } catch (error) {
+                                console.error('Erro ao apagar comunidade:', error);
+                                alert(`Não foi possível apagar a comunidade: ${error.message}`);
+                            }
+                        }
+                    } else {
+                        alert('Por favor, selecione uma comunidade para apagar.');
+                    }
+                });
+            }
         }
-    </script>
+    });
+</script>
 </body>
 </html>

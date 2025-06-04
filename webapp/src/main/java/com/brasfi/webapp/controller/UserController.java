@@ -40,17 +40,19 @@ public class UserController {
 
     @PostMapping("/register")
     public String processRegister(
-        @RequestParam("nome") String nome,
-        @RequestParam("email") String email,
-        @RequestParam("cpf") String cpf,
-        @RequestParam("senha") String senha,
-        @RequestParam("idade") int idade,
-        @RequestParam(value = "tipoConta", defaultValue = "USER") String tipoConta, 
-        Model model
+            @RequestParam("nome") String nome,
+            @RequestParam("email") String email,
+            @RequestParam("cpf") String cpf,
+            @RequestParam("senha") String senha,
+            @RequestParam("idade") int idade,
+            @RequestParam(value = "tipoConta", defaultValue = "USER") String tipoConta,
+            Model model
     ) {
         try {
             if ("ADMIN".equals(tipoConta)) {
                 userService.registerAdmin(nome, email, cpf, senha, idade);
+            } else if ("MANAGER".equals(tipoConta)) {
+                userService.registerManager(nome, email, cpf, senha, idade);
             } else {
                 userService.registerUser(nome, email, cpf, senha, idade);
             }

@@ -7,6 +7,7 @@ import com.brasfi.webapp.repositories.ComunidadeRepository;
 import com.brasfi.webapp.repositories.SolicitacaoRepository;
 import com.brasfi.webapp.security.CustomUserDetails;
 import org.springframework.boot.Banner;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -70,6 +71,7 @@ public class SolicitacaoController {
         return new ModelAndView("redirect:/"); // Redirect to the home page after submission
     }
 
+    @PreAuthorize("hasRole('MANAGER')")
     @GetMapping("/listar-solicitacoes")
     public ModelAndView listarSolicitacoes() {
         ModelAndView mv = new ModelAndView("lista_de_solicitacoes");
