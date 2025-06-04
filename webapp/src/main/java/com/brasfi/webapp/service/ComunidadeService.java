@@ -28,22 +28,30 @@ public class ComunidadeService {
     public boolean validarAcesso(NivelDePermissaoComunidade nivelDePermissaoComunidade, User user,
                                  List<User> usuariosComunidade)
     {
+        // If there's no logged-in user, they can't access any restricted communities.
+        if (user == null) {
+            return nivelDePermissaoComunidade == NivelDePermissaoComunidade.PUBLICA;
+        }
+
         switch (nivelDePermissaoComunidade)
         {
-            /*case APENAS_LIDERES:
-                //return usuariosComunidade.contains(user);
-
+            case APENAS_LIDERES:
+                // Assuming you have a way to identify leaders, e.g., a role or a specific list.
+                // For now, let's assume if the user is in the community's user list, they are allowed for this type.
+                // You'll need to define what "APENAS_LIDERES" truly means for your application.
+                // For example: return user.hasRole("LIDER") || usuariosComunidade.contains(user);
+                return usuariosComunidade.contains(user); // Placeholder for now, refine this based on your 'leader' logic.
 
             case PUBLICA:
-                return true;
+                return true; // Anyone can access public communities.
 
             case PERSONALIZADA:
                 System.out.println(usuariosComunidade);
-                return usuariosComunidade.contains(user);*/
-            default:
-                return false;
-        }
+                return usuariosComunidade.contains(user); // Only users explicitly added to the community can access.
 
+            default:
+                return false; // Default to denying access if the permission level is not recognized.
+        }
     }
 
     @Transactional 

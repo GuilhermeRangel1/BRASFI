@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.util.HtmlUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -67,6 +68,10 @@ public class ComunidadeController {
 
         if (comunidadeOpt.isPresent()) {
             Comunidade comunidade = comunidadeOpt.get();
+            User user = (currentUser != null) ? currentUser.getUserEntity() : null; // Get the User entity
+
+            // Determine if the user can access the community
+            boolean podeAcessar = comunidadeService.validarAcesso(comunidade.getNivelDePermissao(), user, new ArrayList<>(comunidade.getUsuarios())); // Assuming getNivelDePermissao() and getUsuarios() exist on Comunidade
 
             if (currentUser != null) {
                 mv.addObject("usuario", currentUser.getUserEntity());
@@ -74,6 +79,14 @@ public class ComunidadeController {
 
             mv.addObject("comunidade", comunidade);
             mv.addObject("comunidades", comunidadeRepository.findAll());
+            mv.addObject("podeAcessar", podeAcessar); // Add the access flag to the model
+
+            // Conditional rendering for the "access denied" overlay message
+            if (!podeAcessar) {
+                mv.addObject("mensagemAcessoNegado", "Você não tem permissão para acessar esta comunidade. Envie uma solicitação para ter acesso.");
+            }
+
+            System.out.println(podeAcessar);
 
             mv.addObject("PUBLICA", NivelDePermissaoComunidade.PUBLICA);
             mv.addObject("APENAS_LIDERES", NivelDePermissaoComunidade.APENAS_LIDERES);

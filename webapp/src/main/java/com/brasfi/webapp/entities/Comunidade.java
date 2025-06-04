@@ -24,6 +24,42 @@ public class Comunidade {
     @JsonManagedReference
     private List<Post> posts = new ArrayList<>();
 
+    // --- START REQUIRED CHANGES ---
+
+    // REMOVE THIS DUPLICATE DECLARATION:
+    // public List<User> getUsuarios() {
+    //     return usuarios;
+    // }
+    //
+    // public void setUsuarios(List<User> usuarios) {
+    //     this.usuarios = usuarios;
+    // }
+
+    // This is the CORRECT and ONLY declaration for the 'usuarios' list
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinTable(name = "comunidade_usuarios_membros", // Renamed for clarity, to avoid confusion with the "comunidades" table
+            joinColumns = @JoinColumn(name = "comunidade_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id") // Renamed to 'user_id' for clarity and consistency
+    )
+    private List<User> usuarios = new ArrayList<>(); // Initialize to prevent NullPointerException
+
+    // --- END REQUIRED CHANGES ---
+
+    public Comunidade(String nome, String descricao, NivelDePermissaoComunidade nivelDePermissao, List<User> usuarios) {
+        this.nome = nome;
+        this.descricao = descricao;
+        this.nivelDePermissao = nivelDePermissao;
+        // Make sure to set the 'usuarios' field if passed in the constructor
+        if (usuarios != null) {
+            this.usuarios = new ArrayList<>(usuarios);
+        }
+    }
+
+    public Comunidade() {
+    }
+
+    // --- START REQUIRED CHANGES ---
+    // Moved these getters/setters here as they refer to the actual 'usuarios' field
     public List<User> getUsuarios() {
         return usuarios;
     }
@@ -31,22 +67,7 @@ public class Comunidade {
     public void setUsuarios(List<User> usuarios) {
         this.usuarios = usuarios;
     }
-
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    @JoinTable(name = "comunidade_usuarios",
-            joinColumns = @JoinColumn(name = "comunidade_id"),
-            inverseJoinColumns = @JoinColumn(name = "usuarios_id")
-    )
-    private List<User> usuarios = new ArrayList<>();
-
-    public Comunidade(String nome, String descricao, NivelDePermissaoComunidade nivelDePermissao, List<User> usuarios) {
-        this.nome = nome;
-        this.descricao = descricao;
-        this.nivelDePermissao = nivelDePermissao;
-    }
-
-    public Comunidade() {
-    }
+    // --- END REQUIRED CHANGES ---
 
     public NivelDePermissaoComunidade getNivelDePermissao() {
         return nivelDePermissao;

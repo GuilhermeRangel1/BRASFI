@@ -21,16 +21,16 @@
         /*]]>*/
     </script>
 
-    <script th:inline="javascript">
+    <!--<script th:inline="javascript">
 
-        document.addEventListener('DOMContentLoaded', function() {
+        /*document.addEventListener('DOMContentLoaded', function() {
             // Verifica se o atributo 'acessoNegado' foi passado pelo modelo do Spring
 
             /*<![CDATA[*/
-            const podeAcessar = /*[[${podeAcessar}]]*/ true; // Thymeaf injeta o valor aqui
+            //const podeAcessar = /*[[${podeAcessar}]]*/ true; // Thymeaf injeta o valor aqui
             /*]]>*/
 
-            console.log("DEBUG: Valor de podeAcessar injetado: " + podeAcessar);
+            //console.log("DEBUG: Valor de podeAcessar injetado: " + podeAcessar);
 
             /*if (podeAcessar) {
         document.getElementById('acesso-negado-overlay').style.display = 'flex';
@@ -45,7 +45,7 @@
         // window.location.href = '/minhas-comunidades';
         }*/
         }
-    </script>
+    </script>-->
 
     <script type="module" src="/js/comunidade.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1.6.1/dist/sockjs.min.js"></script>
@@ -90,8 +90,8 @@
         </div>
     </header>
 
-    <form action=/criar-solicitacao method="post">
-        <div id="acesso-negado-overlay" class="acesso-negado-overlay">
+    <form action=/criar-solicitacao method="post" th:if="${!podeAcessar}">
+        <div id="acesso-negado-overlay" class="acesso-negado-overlay" >
             <div id="acesso-negado-popup" class="acesso-negado-popup">
                 <h3>ATENÇÃO</h3>
                 <p th:text="${mensagemAcessoNegado}"></p>
