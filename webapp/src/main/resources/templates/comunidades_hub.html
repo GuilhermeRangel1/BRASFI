@@ -31,10 +31,10 @@
             // Verifica se o atributo 'acessoNegado' foi passado pelo modelo do Spring
 
             /*<![CDATA[*/
-                const acessoNegado = /*[[${acessoNegado}]]*/ false; // Thymeaf injeta o valor aqui
+                const podeAcessar = /*[[${podeAcessar}]]*/ false; // Thymeaf injeta o valor aqui
             /*]]>*/
 
-            if (acessoNegado) {
+            if (!podeAcessar) {
                 document.getElementById('acesso-negado-overlay').style.display = 'flex';
                 document.getElementById('acesso-negado-popup').style.display = 'block';
             }
@@ -141,7 +141,7 @@
 <body>
 
 
-<form action=/processar-solicitacao method="post">
+<form action=/criar-solicitacao method="post">
     <div id="acesso-negado-overlay" class="acesso-negado-overlay">
     <div id="acesso-negado-popup" class="acesso-negado-popup">
         <h3>ATENÇÃO</h3>

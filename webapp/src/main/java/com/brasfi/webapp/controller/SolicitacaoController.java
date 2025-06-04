@@ -13,9 +13,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 public class SolicitacaoController {
@@ -26,6 +28,44 @@ public class SolicitacaoController {
     public SolicitacaoController(SolicitacaoRepository solicitacaoRepository, ComunidadeRepository comunidadeRepository) {
         this.solicitacaoRepository = solicitacaoRepository;
         this.comunidadeRepository = comunidadeRepository;
+    }
+
+    @PostMapping("/criar-solicitacao")
+    public ModelAndView criarSolicitacao(
+            @RequestParam("comunidadeId-solicitada") Long comunidadeId,
+            @RequestParam("solicitacao-usuario") String conteudoSolicitacao,
+            @AuthenticationPrincipal CustomUserDetails currentUser,
+            RedirectAttributes redirectAttributes // Used for flash attributes
+    ) {
+        // Ensure a user is logged in to create a solicitation
+        if (currentUser == null || currentUser.getUserEntity() == null) {
+            redirectAttributes.addFlashAttribute("erroMensagem", "Você precisa estar logado para enviar uma solicitação.");
+            return new ModelAndView("redirect:/login"); // Redirect to login page
+        }
+
+        User solicitante = currentUser.getUserEntity();
+        Optional<Comunidade> comunidadeOptional = comunidadeRepository.findById(comunidadeId);
+
+        if (comunidadeOptional.isEmpty()) {
+            redirectAttributes.addFlashAttribute("erroMensagem", "Comunidade solicitada não encontrada.");
+            return new ModelAndView("redirect:/"); // Redirect to home or an error page
+        }
+
+        Comunidade comunidadeSolicitada = comunidadeOptional.get();
+
+        // Create the new Solicitacao object
+        Solicitacao novaSolicitacao = new Solicitacao();
+        novaSolicitacao.setUsuarioSolicitante(solicitante);
+        novaSolicitacao.setComunidadeSolicitada(comunidadeSolicitada);
+        novaSolicitacao.setDataDeSolicitacao(LocalDate.now()); // Set current date
+        novaSolicitacao.setConteudo(conteudoSolicitacao);
+        // You might want to set an initial status, e.g., SolicitacaoStatus.PENDENTE
+        // novaSolicitacao.setStatus(SolicitacaoStatus.PENDENTE);
+
+        solicitacaoRepository.save(novaSolicitacao);
+
+        redirectAttributes.addFlashAttribute("mensagemSucesso", "Sua solicitação foi enviada com sucesso!");
+        return new ModelAndView("redirect:/"); // Redirect to the home page after submission
     }
 
     @GetMapping("/listar-solicitacoes")

@@ -73,7 +73,7 @@ public class ComunidadeController {
             mv.addObject("APENAS_LIDERES", NivelDePermissaoComunidade.APENAS_LIDERES);
             mv.addObject("PERSONALIZADA", NivelDePermissaoComunidade.PERSONALIZADA);
             comunidade.ifPresent(value -> mv.addObject("postagens", postService.buscarPorComunidade(value)));
-            mv.addObject("acessoNegado", podeAcessar);
+            mv.addObject("podeAcessar", podeAcessar);
             return mv;
         }
 
