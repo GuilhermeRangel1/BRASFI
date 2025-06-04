@@ -39,72 +39,99 @@
             <li><a th:href="@{/sobre}">Sobre a BRASFI</a></li>
             <li><a th:href="@{/agenda}">Agenda de Eventos</a></li>
             <li><a th:href="@{/eventosGravados}">Eventos Gravados</a></li>
-			    <li><a th:href="@{/comunidades}">Comunidade</a></li>
+            <li><a th:href="@{/comunidades}">Comunidade</a></li>
         </ul>
     </div>
   </header>
 
   <div class="eventos">
-  	<div class="eventos-header">
-          <h1>Eventos Agendados (Próximos e Atuais)</h1>
-          <div class="header-actions-group">
-              <div class="filter-group">
-                  <form th:action="@{/agenda/filtro}" method="get" class="filter-form">
-                      <select name="categoria" id="categoria-filtro" class="filter-select">
-                          <option value="">Todas as Categorias</option>
-                          <option th:each="cat : ${categorias}"
-                                  th:value="${cat}"
-                                  th:text="${cat.displayName}"
-                                  th:selected="${categoriaSelecionada != null and categoriaSelecionada.name() == cat.name()}">
-                          </option>
-                      </select>
-                      <button type="submit" class="filter-button">
-                          <i class="fas fa-filter"></i> Filtrar
-                      </button>
-                  </form>
-              </div>
-              <div class="event-actions">
-                  <a sec:authorize="hasRole('ADMIN')" 
-                     th:href="@{/novoEvento}" class="create-event-button">Criar Novo Evento</a>
-              </div>
-          </div>
+    <div class="eventos-header">
+      <h1>Eventos Agendados (Próximos e Atuais)</h1>
+      <div class="header-actions-group">
+        <div class="filter-group">
+          <form th:action="@{/agenda/filtro}" method="get" class="filter-form">
+            <select name="categoria" id="categoria-filtro" class="filter-select">
+              <option value="">Todas as Categorias</option>
+              <option th:each="cat : ${categorias}"
+                      th:value="${cat}"
+                      th:text="${cat.displayName}"
+                      th:selected="${categoriaSelecionada != null and categoriaSelecionada.name() == cat.name()}">
+              </option>
+            </select>
+            <button type="submit" class="filter-button">
+              <i class="fas fa-filter"></i> Filtrar
+            </button>
+          </form>
+        </div>
+        <div class="event-actions">
+          <a sec:authorize="hasRole('ADMIN')" th:href="@{/novoEvento}" class="create-event-button">Criar Novo Evento</a>
+        </div>
       </div>
+    </div>
 
-      <ul class="eventos-list">
-        <li th:each="evento : ${eventos}" class="evento-card">
-            <div class="event-image-container">
-                <div class="event-image"></div>
-                <a th:href="${evento.urlVideo}" target="_blank" class="play-button"><i class="fas fa-play-circle"></i></a>
-            </div>
+    <ul class="eventos-list">
+      <li th:each="evento : ${eventos}" class="evento-card">
+        <div class="event-image-container">
+          <div class="event-image"></div>
+          <a th:href="${evento.urlVideo}" target="_blank" class="play-button"><i class="fas fa-play-circle"></i></a>
+        </div>
 
-            <div class="evento-details">
-                <p><strong>Nome do Evento:</strong> <span th:text="${evento.titulo}"></span></p>
-                <p><strong>Data:</strong> <span th:text="${#temporals.format(evento.dataEvento, 'dd/MM/yyyy')}"></span></p>
-                <p><strong>Participantes:</strong> <span th:text="${evento.convidados}"></span></p>
-                <p><strong>Categoria:</strong> <span th:text="${evento.categoria}"></span></p>
-                <p><strong>Conteúdo:</strong> <span th:text="${evento.conteudo}"></span></p>
-            </div>
-            <div class="evento-actions">
-                <a sec:authorize="hasRole('ADMIN')" 
-                   th:href="@{/eventos/editar/{id}(id=${evento.id})}" class="edit-event-button">
-                    <i class="fas fa-edit"></i> Editar
-                </a>
-                <form sec:authorize="hasRole('ADMIN')" 
-                      th:action="@{/eventos/excluir/{id}(id=${evento.id})}" method="post" onsubmit="return confirm('Tem certeza que deseja excluir este evento?');">
-                    <input type="hidden" name="_method" value="delete" />
-                    <button type="submit" class="delete-event-button">
-                        <i class="fas fa-trash-alt"></i> Excluir
-                    </button>
-                </form>
-            </div>
-        </li>
-      </ul>
-      <p th:if="${#lists.isEmpty(eventos)}" class="no-events-message">Nenhum evento agendado ou atual encontrado.</p>
+        <div class="evento-details">
+          <p><strong>Nome do Evento:</strong> <span th:text="${evento.titulo}"></span></p>
+          <p><strong>Data:</strong> <span th:text="${#temporals.format(evento.dataEvento, 'dd/MM/yyyy')}"></span></p>
+          <p><strong>Participantes:</strong> <span th:text="${evento.convidados}"></span></p>
+          <p><strong>Categoria:</strong> <span th:text="${evento.categoria}"></span></p>
+          <p><strong>Conteúdo:</strong> <span th:text="${evento.conteudo}"></span></p>
+        </div>
+
+        <div class="evento-actions">
+          <a sec:authorize="hasRole('ADMIN')" th:href="@{/eventos/editar/{id}(id=${evento.id})}" class="edit-event-button">
+            <i class="fas fa-edit"></i> Editar
+          </a>
+          <form sec:authorize="hasRole('ADMIN')" 
+                th:action="@{/eventos/excluir/{id}(id=${evento.id})}" 
+                method="post" 
+                onsubmit="return confirm('Tem certeza que deseja excluir este evento?');">
+            <input type="hidden" name="_method" value="delete" />
+            <button type="submit" class="delete-event-button">
+              <i class="fas fa-trash-alt"></i> Excluir
+            </button>
+          </form>
+        </div>
+      </li>
+    </ul>
+    <p th:if="${#lists.isEmpty(eventos)}" class="no-events-message">Nenhum evento agendado ou atual encontrado.</p>
   </div>
 
-<div class="ajuda">
-<a th:href="@{/ajuda}">Ajuda</a>
-</div>
-<script th:src="@{/js/inicio.js}"></script>
+  <div class="ajuda">
+    <a href="javascript:void(0);" onclick="document.getElementById('help-overlay').style.display='flex'">Ajuda</a>
+  </div>
+
+  <!-- RETÂNGULO DE AJUDA -->
+  <div id="help-overlay">
+    <div id="help-box">
+      <span class="close-help" onclick="document.getElementById('help-overlay').style.display='none'">&times;</span>
+      <h2>Dúvidas Frequentes</h2>
+
+      <button class="help-question" onclick="toggleAnswer('resposta1')"><i class="fas fa-question-circle"></i> Como participar de um evento?</button>
+      <div id="resposta1" class="help-answer">Basta clicar no link do evento ou assistir ao vídeo se estiver disponível.</div>
+
+      <button class="help-question" onclick="toggleAnswer('resposta2')"><i class="fas fa-question-circle"></i> Quem pode criar novos eventos?</button>
+      <div id="resposta2" class="help-answer">Apenas administradores com permissão especial podem criar novos eventos.</div>
+
+      <button class="help-question" onclick="toggleAnswer('resposta3')"><i class="fas fa-question-circle"></i> Posso editar um evento depois de criado?</button>
+      <div id="resposta3" class="help-answer">Sim, os administradores podem editar eventos a qualquer momento.</div>
+
+    </div>
+  </div>
+
+  <script>
+    function toggleAnswer(id) {
+      const el = document.getElementById(id);
+      el.style.display = (el.style.display === 'block') ? 'none' : 'block';
+    }
+  </script>
+
+  <script th:src="@{/js/inicio.js}"></script>
 </body>
 </html>

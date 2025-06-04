@@ -18,50 +18,113 @@
       <div class="user-section">
         <div sec:authorize="isAuthenticated()" class="logged-in-container">
           <span class="logged-in-username"><i class="fas fa-star"></i> <span sec:authentication="principal.name">Nome do Usuário</span> <span class="user-icon"><i class="fas fa-user-circle"></i></span></span>
-          <a th:href="@{/logout}" class="logout-button">Sair</a> </div>
+          <a th:href="@{/logout}" class="logout-button">Sair</a> 
+        </div>
         <a sec:authorize="!isAuthenticated()" th:href="@{/login}" class="login-button">Login</a>
       </div>
     </div>
 
     <div class="menu-container">
-        <div class="menu-toggle-bar">
-            <button class="menu-open-button" id="menu-open-button">
-                <i class="fas fa-angle-down"></i>
-            </button>
-        </div>
-        <ul class="menu" id="main-menu">
-            <button class="menu-close-button" id="menu-close-button">
-                <i class="fas fa-angle-up"></i>
-            </button>
-            <li><a th:href="@{/}">Home</a></li>
-            <li><a th:href="@{/sobre}">Sobre a BRASFI</a></li>
-            <li><a th:href="@{/agenda}">Agenda de Eventos</a></li>
-            <li><a th:href="@{/eventosGravados}">Eventos Gravados</a></li>
-            <li><a th:href="@{/comunidades}">Comunidade</a></li>
-        </ul>
+      <div class="menu-toggle-bar">
+        <button class="menu-open-button" id="menu-open-button">
+          <i class="fas fa-angle-down"></i>
+        </button>
+      </div>
+      <ul class="menu" id="main-menu">
+        <button class="menu-close-button" id="menu-close-button">
+          <i class="fas fa-angle-up"></i>
+        </button>
+        <li><a th:href="@{/}">Home</a></li>
+        <li><a th:href="@{/sobre}">Sobre a BRASFI</a></li>
+        <li><a th:href="@{/agenda}">Agenda de Eventos</a></li>
+        <li><a th:href="@{/eventosGravados}">Eventos Gravados</a></li>
+        <li><a th:href="@{/comunidades}">Comunidade</a></li>
+      </ul>
     </div>
   </header>
 
   <div class="bottom-logo-section">
-      <div class="bottom-brasfi-logo">BRASFI</div>
-      <img th:src="@{/img/brasfi.jpg}" alt="Logo BRASFI" class="bottom-brasfi-icon">
+    <div class="bottom-brasfi-logo">BRASFI</div>
+    <img th:src="@{/img/brasfi.jpg}" alt="Logo BRASFI" class="bottom-brasfi-icon">
   </div>
 
   <div class="main-content-text">
-    <p>A BRASFI é mais do que uma empresa de financiamentos – somos parte da mudança que o mundo precisa. Nosso compromisso é com o crescimento sustentável, apoiando projetos que tenham impacto real no meio ambiente e na vida das pessoas.</p>
-    <p>Se você tem um projeto sustentável — seja em energia solar, construção ecológica, agricultura limpa ou outro setor verde — nós temos a solução financeira ideal para fazer ele acontecer!</p>
-    <p>Nossos financiamentos são pensados para facilitar o acesso ao crédito, com condições justas, taxas competitivas e acompanhamento especializado. Trabalhamos com responsabilidade e propósito, ajudando você a crescer sem abrir mão dos valores que importam.</p>
-    <p>Na BRASFI, cada investimento é uma oportunidade de transformar comunidades, preservar recursos naturais e construir um futuro melhor para todos.</p>
+    <p>A BRASFI é mais do que uma empresa de financiamentos – somos parte da mudança que o mundo precisa...</p>
+    <p>Se você tem um projeto sustentável — seja em energia solar, construção ecológica...</p>
+    <p>Nossos financiamentos são pensados para facilitar o acesso ao crédito...</p>
+    <p>Na BRASFI, cada investimento é uma oportunidade de transformar comunidades...</p>
 
     <div class="contact-section">
-        <h3 class="contact-heading">Fale com a gente!</h3>
-        <p class="whatsapp-info">WhatsApp: <a href="https://wa.me/5581999999999" target="_blank">(81) 99999-9999</a></p>
-        <p class="slogan">BRASFI – Financiamentos Sustentáveis. Porque é possível crescer fazendo o bem.</p>
+      <h3 class="contact-heading">Fale com a gente!</h3>
+      <p class="whatsapp-info">WhatsApp: <a href="https://wa.me/5581999999999" target="_blank">(81) 99999-9999</a></p>
+      <p class="slogan">BRASFI – Financiamentos Sustentáveis. Porque é possível crescer fazendo o bem.</p>
     </div>
+  </div>
+
+  <!-- Botão de ajuda -->
+  <div class="ajuda">
+    <a href="javascript:void(0);" onclick="abrirAjuda()">Ajuda</a>
+  </div>
+
+  <!-- Retângulo de ajuda -->
+  <div id="help-overlay" onclick="fecharAjuda()">
+    <div id="help-box" onclick="event.stopPropagation()">
+      <span class="close-help" onclick="fecharAjuda()">&times;</span>
+      <h2>Dúvidas Frequentes</h2>
+
+      <button class="help-question" onclick="mostrarResposta(0)">
+        <i class="fas fa-sign-in-alt"></i> Dificuldade com login
+      </button>
+      <div class="help-answer">
+        Verifique seu e-mail e senha. Caso tenha esquecido, clique em "Esqueci minha senha".
+      </div>
+
+      <button class="help-question" onclick="mostrarResposta(1)">
+        <i class="fas fa-user-plus"></i> Como se cadastrar?
+      </button>
+      <div class="help-answer">
+        Clique em "Login" no canto superior e selecione "Criar conta". Preencha os dados obrigatórios e confirme.
+      </div>
+
+      <button class="help-question" onclick="mostrarResposta(2)">
+        <i class="fas fa-lock"></i> Troca de senha
+      </button>
+      <div class="help-answer">
+        Acesse seu perfil e clique em "Alterar Senha" para redefinir sua senha atual.
+      </div>
+
+      <button class="help-question" onclick="mostrarResposta(3)">
+        <i class="fas fa-seedling"></i> Projetos sustentáveis (ESG)
+      </button>
+      <div class="help-answer">
+        Financiamos projetos de energia limpa, mobilidade, agricultura regenerativa e mais.
+      </div>
+
+      <button class="help-question" onclick="mostrarResposta(4)">
+        <i class="fas fa-calendar-alt"></i> Agenda de eventos
+      </button>
+      <div class="help-answer">
+        Visite a página de eventos para visualizar as próximas datas e conteúdos gravados.
+      </div>
     </div>
-	<div class="ajuda">
-	<a th:href="@{/ajuda}">Ajuda</a>
-	</div>
+  </div>
+
+  <!-- Scripts -->
   <script th:src="@{/js/inicio.js}"></script>
+  <script>
+    function abrirAjuda() {
+      document.getElementById('help-overlay').style.display = 'block';
+    }
+
+    function fecharAjuda() {
+      document.getElementById('help-overlay').style.display = 'none';
+      document.querySelectorAll('.help-answer').forEach(el => el.style.display = 'none');
+    }
+
+    function mostrarResposta(index) {
+      const respostas = document.querySelectorAll('.help-answer');
+      respostas.forEach((el, i) => el.style.display = i === index ? 'block' : 'none');
+    }
+  </script>
 </body>
 </html>

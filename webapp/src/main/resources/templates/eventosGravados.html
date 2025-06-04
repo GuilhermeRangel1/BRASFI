@@ -45,63 +45,88 @@
   </header>
 
   <div class="eventos">
-  	<div class="eventos-header">
-          <h1>Eventos Gravados</h1>
-          <div class="header-actions-group">
-              <div class="filter-group">
-                  <form th:action="@{/eventosGravados/filtro}" method="get" class="filter-form">
-                      <select name="categoria" id="categoria-filtro" class="filter-select">
-                          <option value="">Todas as Categorias</option>
-                          <option th:each="cat : ${categorias}"
-                                  th:value="${cat}"
-                                  th:text="${cat.displayName}"
-                                  th:selected="${categoriaSelecionada != null and categoriaSelecionada.name() == cat.name()}">
-                          </option>
-                      </select>
-                      <button type="submit" class="filter-button">
-                          <i class="fas fa-filter"></i> Filtrar
-                      </button>
-                  </form>
-              </div>
-          </div>
+    <div class="eventos-header">
+      <h1>Eventos Gravados</h1>
+      <div class="header-actions-group">
+        <div class="filter-group">
+          <form th:action="@{/eventosGravados/filtro}" method="get" class="filter-form">
+            <select name="categoria" id="categoria-filtro" class="filter-select">
+              <option value="">Todas as Categorias</option>
+              <option th:each="cat : ${categorias}"
+                      th:value="${cat}"
+                      th:text="${cat.displayName}"
+                      th:selected="${categoriaSelecionada != null and categoriaSelecionada.name() == cat.name()}">
+              </option>
+            </select>
+            <button type="submit" class="filter-button">
+              <i class="fas fa-filter"></i> Filtrar
+            </button>
+          </form>
+        </div>
       </div>
+    </div>
 
-      <ul class="eventos-list">
-        <li th:each="evento : ${eventos}" class="evento-card">
-            <div class="event-image-container">
-                <div class="event-image"></div>
-                <a th:href="${evento.urlVideo}" target="_blank" class="play-button"><i class="fas fa-play-circle"></i></a>
-            </div>
+    <ul class="eventos-list">
+      <li th:each="evento : ${eventos}" class="evento-card">
+        <div class="event-image-container">
+          <div class="event-image"></div>
+          <a th:href="${evento.urlVideo}" target="_blank" class="play-button"><i class="fas fa-play-circle"></i></a>
+        </div>
 
-            <div class="evento-details">
-                <p><strong>Nome do Evento:</strong> <span th:text="${evento.titulo}"></span></p>
-                <p><strong>Data:</strong> <span th:text="${#temporals.format(evento.dataEvento, 'dd/MM/yyyy')}"></span></p>
-                <p><strong>Participantes:</strong> <span th:text="${evento.convidados}"></span></p>
-                <p><strong>Categoria:</strong> <span th:text="${evento.categoria}"></span></p>
-                <p><strong>Conteúdo:</strong> <span th:text="${evento.conteudo}"></span></p>
-            </div>
-            <div class="evento-actions">
-                <a sec:authorize="hasRole('ADMIN')"
-                   th:href="@{/eventos/editar/{id}(id=${evento.id})}" class="edit-event-button">
-                    <i class="fas fa-edit"></i> Editar
-                </a>
-                <form sec:authorize="hasRole('ADMIN')"
-                      th:action="@{/eventos/excluir/{id}(id=${evento.id})}" method="post" onsubmit="return confirm('Tem certeza que deseja excluir este evento?');">
-                    <input type="hidden" name="_method" value="delete" />
-                    <button type="submit" class="delete-event-button">
-                        <i class="fas fa-trash-alt"></i> Excluir
-                    </button>
-                </form>
-            </div>
-        </li>
-      </ul>
-      <p th:if="${#lists.isEmpty(eventos)}" class="no-events-message">Nenhum evento passado encontrado.</p>
-
+        <div class="evento-details">
+          <p><strong>Nome do Evento:</strong> <span th:text="${evento.titulo}"></span></p>
+          <p><strong>Data:</strong> <span th:text="${#temporals.format(evento.dataEvento, 'dd/MM/yyyy')}"></span></p>
+          <p><strong>Participantes:</strong> <span th:text="${evento.convidados}"></span></p>
+          <p><strong>Categoria:</strong> <span th:text="${evento.categoria}"></span></p>
+          <p><strong>Conteúdo:</strong> <span th:text="${evento.conteudo}"></span></p>
+        </div>
+        <div class="evento-actions">
+          <a sec:authorize="hasRole('ADMIN')"
+             th:href="@{/eventos/editar/{id}(id=${evento.id})}" class="edit-event-button">
+            <i class="fas fa-edit"></i> Editar
+          </a>
+          <form sec:authorize="hasRole('ADMIN')"
+                th:action="@{/eventos/excluir/{id}(id=${evento.id})}" method="post" onsubmit="return confirm('Tem certeza que deseja excluir este evento?');">
+            <input type="hidden" name="_method" value="delete" />
+            <button type="submit" class="delete-event-button">
+              <i class="fas fa-trash-alt"></i> Excluir
+            </button>
+          </form>
+        </div>
+      </li>
+    </ul>
+    <p th:if="${#lists.isEmpty(eventos)}" class="no-events-message">Nenhum evento passado encontrado.</p>
   </div>
 
-<div class="ajuda">
-<a th:href="@{/ajuda}">Ajuda</a>
-</div>
-<script th:src="@{/js/inicio.js}"></script>
+  <div class="ajuda">
+    <a href="#" onclick="document.getElementById('help-overlay').style.display='flex';">Ajuda</a>
+  </div>
+
+  <div id="help-overlay" onclick="this.style.display='none'">
+    <div id="help-box" onclick="event.stopPropagation()">
+      <div class="close-help" onclick="document.getElementById('help-overlay').style.display='none'">&times;</div>
+      <h2>Dúvidas Frequentes</h2>
+      <button class="help-question" onclick="toggleAnswer(this)"><i class="fas fa-question-circle"></i>Como assistir aos eventos?</button>
+      <div class="help-answer">Clique no botão play sobre a imagem do evento para ser redirecionado ao vídeo.</div>
+
+      <button class="help-question" onclick="toggleAnswer(this)"><i class="fas fa-question-circle"></i>O que é a categoria do evento?</button>
+      <div class="help-answer">A categoria indica o tema principal abordado no evento.</div>
+
+      <button class="help-question" onclick="toggleAnswer(this)"><i class="fas fa-question-circle"></i>Sou admin, como edito um evento?</button>
+      <div class="help-answer">Aparecerá um botão "Editar" ao lado dos eventos. Clique para modificar o evento.</div>
+
+      <button class="help-question" onclick="toggleAnswer(this)"><i class="fas fa-question-circle"></i>Como filtrar por categoria?</button>
+      <div class="help-answer">Use o menu suspenso no topo da página para escolher uma categoria e clique em Filtrar.</div>
+    </div>
+  </div>
+
+  <script>
+    function toggleAnswer(button) {
+      const answer = button.nextElementSibling;
+      answer.style.display = answer.style.display === 'block' ? 'none' : 'block';
+    }
+  </script>
+
+  <script th:src="@{/js/inicio.js}"></script>
 </body>
 </html>

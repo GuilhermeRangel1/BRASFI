@@ -2,11 +2,10 @@
 <html lang="pt-br" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>BRASFI</title>
-  <link rel="stylesheet" th:href="@{/css/sobre.css}" />
   <link rel="stylesheet" th:href="@{/css/home.css}" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
   <link rel="icon" type="image/jpg" th:href="@{/img/brasfi.jpg}">
 </head>
 <body>
@@ -14,11 +13,15 @@
     <div class="top-bar">
       <div class="logo-section">
         <div class="brasfi-logo">BRASFI</div>
-        <img th:src="@{/img/brasfi.jpg}" alt="Logo BRASFI" class="brasfi-icon" />
+        <img th:src="@{/img/brasfi.jpg}" alt="Logo BRASFI" class="brasfi-icon">
       </div>
       <div class="user-section">
         <div sec:authorize="isAuthenticated()" class="logged-in-container">
-          <span class="logged-in-username"><i class="fas fa-star"></i> <span sec:authentication="principal.name">Nome do Usuário</span> <span class="user-icon"><i class="fas fa-user-circle"></i></span></span>
+          <span class="logged-in-username">
+            <i class="fas fa-star"></i> 
+            <span sec:authentication="principal.name">Nome do Usuário</span> 
+            <span class="user-icon"><i class="fas fa-user-circle"></i></span>
+          </span>
           <a th:href="@{/logout}" class="logout-button">Sair</a>
         </div>
         <a sec:authorize="!isAuthenticated()" th:href="@{/login}" class="login-button">Login</a>
@@ -26,67 +29,109 @@
     </div>
 
     <div class="menu-container">
-        <div class="menu-toggle-bar">
-            <button class="menu-open-button" id="menu-open-button">
-                <i class="fas fa-angle-down"></i>
-            </button>
-        </div>
-        <ul class="menu" id="main-menu">
-            <button class="menu-close-button" id="menu-close-button">
-                <i class="fas fa-angle-up"></i>
-            </button>
-            <li><a th:href="@{/}">Home</a></li>
-            <li><a th:href="@{/sobre}">Sobre a BRASFI</a></li>
-            <li><a th:href="@{/agenda}">Agenda de Eventos</a></li>
-            <li><a th:href="@{/eventosGravados}">Eventos Gravados</a></li>
-            <li><a th:href="@{/comunidades}">Comunidade</a></li>
-        </ul>
+      <div class="menu-toggle-bar">
+        <button class="menu-open-button" id="menu-open-button">
+          <i class="fas fa-angle-down"></i>
+        </button>
+      </div>
+      <ul class="menu" id="main-menu">
+        <button class="menu-close-button" id="menu-close-button">
+          <i class="fas fa-angle-up"></i>
+        </button>
+        <li><a th:href="@{/}">Home</a></li>
+        <li><a th:href="@{/sobre}">Sobre a BRASFI</a></li>
+        <li><a th:href="@{/agenda}">Agenda de Eventos</a></li>
+        <li><a th:href="@{/eventosGravados}">Eventos Gravados</a></li>
+        <li><a th:href="@{/comunidades}">Comunidade</a></li>
+      </ul>
     </div>
   </header>
 
-  <main class="sobre-container">
-    <section class="sobre-content">
-      <h1><span class="bold">Sobre a</span> <span class="green">BRASFI</span></h1>
+  <div class="bottom-logo-section">
+    <div class="bottom-brasfi-logo">BRASFI</div>
+    <img th:src="@{/img/brasfi.jpg}" alt="Logo BRASFI" class="bottom-brasfi-icon">
+  </div>
 
-      <p>
-        A BRASFI – Financiamentos Sustentáveis é uma empresa brasileira voltada para o fomento de projetos que integram inovação, impacto social e responsabilidade ambiental. Atuamos como uma ponte entre o capital e as causas que realmente importam, oferecendo soluções financeiras sob medida para quem quer crescer de forma consciente, ética e duradoura.
-      </p>
-      <p>
-        Nosso propósito é claro: financiar o futuro sem comprometer o presente. Por isso, apoiamos iniciativas voltadas à geração de energia limpa, construção civil sustentável, agricultura regenerativa, mobilidade elétrica, eficiência hídrica e projetos de inclusão social. Todos os nossos produtos financeiros seguem os critérios ESG (ambiental, social e governança), atendendo às exigências do mercado moderno e dos consumidores conscientes.
-      </p>
-      <p>
-        A BRASFI nasceu da necessidade de unir o setor financeiro aos desafios globais da sustentabilidade. Entendemos que o capital tem um papel fundamental na transformação do mundo — e é por isso que acreditamos em um modelo de negócios em que o lucro anda lado a lado com o impacto positivo.
-      </p>
-      <p>
-        Nossos diferenciais incluem:
-      </p>
-      <ul>
-        <li>Avaliação técnica e ambiental dos projetos financiados</li>
-        <li>Taxas competitivas com condições acessíveis</li>
-        <li>Atendimento personalizado para empresas, empreendedores e pessoas físicas</li>
-        <li>Acompanhamento contínuo do impacto gerado</li>
-      </ul>
-      <p>
-        Com uma equipe especializada e apaixonada por inovação sustentável, a BRASFI trabalha para que cada financiamento seja também uma contribuição real para um planeta mais equilibrado e uma sociedade mais justa.
-      </p>
-      <p>
-        Entre em contato com a gente<br>
-        WhatsApp/Telefone: (81) 99999-9999<br>
-		Email de contato: contato@brasfi.com.br
-      </p>
+  <div class="main-content-text">
+    <p>A BRASFI é mais do que uma empresa de financiamentos – somos parte da mudança que o mundo precisa. Nosso compromisso é com o crescimento sustentável, apoiando projetos que tenham impacto real no meio ambiente e na vida das pessoas.</p>
+    <p>Se você tem um projeto sustentável — seja em energia solar, construção ecológica, agricultura limpa ou outro setor verde — nós temos a solução financeira ideal para fazer ele acontecer!</p>
+    <p>Nossos financiamentos são pensados para facilitar o acesso ao crédito, com condições justas, taxas competitivas e acompanhamento especializado. Trabalhamos com responsabilidade e propósito, ajudando você a crescer sem abrir mão dos valores que importam.</p>
+    <p>Na BRASFI, cada investimento é uma oportunidade de transformar comunidades, preservar recursos naturais e construir um futuro melhor para todos.</p>
 
-      <div class="redes-sociais">
-        <a href="https://www.instagram.com/brasfi_/" target="_blank"><i class="fab fa-instagram"></i></a>
-        <a href="https://www.linkedin.com/company/brasfi" target="_blank"><i class="fab fa-linkedin"></i></a>
-        <a href="https://open.spotify.com/show/5rtlL3dVTPE5B3zzW9Ltu5?si=6c079fd18269451e" target="_blank"><i class="fab fa-spotify"></i></a>
-        <a href="https://www.youtube.com/channel/UCCN4DtzVfGLxUrIaP8p7tgA/sub_confirmation%3D1" target="_blank"><i class="fab fa-youtube"></i></a>
+    <div class="contact-section">
+      <h3 class="contact-heading">Fale com a gente!</h3>
+      <p class="whatsapp-info">WhatsApp: <a href="https://wa.me/5581999999999" target="_blank">(81) 99999-9999</a></p>
+      <p class="slogan">BRASFI – Financiamentos Sustentáveis. Porque é possível crescer fazendo o bem.</p>
+    </div>
+  </div>
+
+  <!-- Botão flutuante de ajuda -->
+  <div class="ajuda">
+    <a href="javascript:void(0);" onclick="abrirAjuda()">Ajuda</a>
+  </div>
+
+  <!-- Caixa de ajuda -->
+  <div id="help-overlay" onclick="fecharAjuda()">
+    <div id="help-box" onclick="event.stopPropagation()">
+      <span class="close-help" onclick="fecharAjuda()">&times;</span>
+      <h2>Dúvidas Frequentes</h2>
+
+      <button class="help-question" onclick="mostrarResposta(0)">
+        <i class="fas fa-sign-in-alt"></i> Dificuldade com login
+      </button>
+      <div class="help-answer">
+        Verifique seu e-mail e senha. Caso tenha esquecido, clique em "Esqueci minha senha".
       </div>
-	  <div class="ajuda">
-		<a th:href="@{/ajuda}">Ajuda</a>
-	  </div>
-    </section>
-  </main>
+
+      <button class="help-question" onclick="mostrarResposta(1)">
+        <i class="fas fa-user-plus"></i> Como se cadastrar?
+      </button>
+      <div class="help-answer">
+        Clique em "Login", depois em "Cadastrar" e preencha seus dados corretamente.
+      </div>
+
+      <button class="help-question" onclick="mostrarResposta(2)">
+        <i class="fas fa-lock"></i> Troca de senha
+      </button>
+      <div class="help-answer">
+        Acesse seu perfil e selecione a opção "Alterar senha".
+      </div>
+
+      <button class="help-question" onclick="mostrarResposta(3)">
+        <i class="fas fa-leaf"></i> Projetos sustentáveis (ESG)
+      </button>
+      <div class="help-answer">
+        Financiamos projetos de energia limpa, construção sustentável, etc.
+      </div>
+
+      <button class="help-question" onclick="mostrarResposta(4)">
+        <i class="fas fa-calendar-alt"></i> Agenda de eventos
+      </button>
+      <div class="help-answer">
+        Consulte a agenda de eventos da BRASFI na seção de eventos.
+      </div>
+    </div>
+  </div>
 
   <script th:src="@{/js/inicio.js}"></script>
+  <script>
+    function abrirAjuda() {
+      document.getElementById('help-overlay').style.display = 'flex';
+    }
+
+    function fecharAjuda() {
+      document.getElementById('help-overlay').style.display = 'none';
+      document.querySelectorAll('.help-answer').forEach(e => e.style.display = 'none');
+    }
+
+    function mostrarResposta(index) {
+      const respostas = document.querySelectorAll('.help-answer');
+      respostas.forEach((el, i) => {
+        el.style.display = (i === index) ? 'block' : 'none';
+      });
+    }
+  </script>
 </body>
 </html>
+
+
