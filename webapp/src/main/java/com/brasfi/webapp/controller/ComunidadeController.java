@@ -6,18 +6,16 @@ import com.brasfi.webapp.repositories.UserRepository;
 import com.brasfi.webapp.security.CustomUserDetails;
 import com.brasfi.webapp.service.ComunidadeService;
 import com.brasfi.webapp.service.PostService;
-import org.springframework.http.HttpStatus; // Importe HttpStatus
-import org.springframework.http.ResponseEntity; // Importe ResponseEntity
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
-import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.util.HtmlUtils;
 
 import java.util.List;
@@ -33,19 +31,18 @@ public class ComunidadeController {
 
     public ComunidadeController(ComunidadeRepository comunidadeRepository, PostService postService, ComunidadeService comunidadeService, SimpMessagingTemplate messagingTemplate, UserRepository userRepository) {
         this.comunidadeRepository = comunidadeRepository;
-        this.comunidadeService = comunidadeService; // injeta o service, sem new
+        this.comunidadeService = comunidadeService;
         this.postService = postService;
         this.messagingTemplate = messagingTemplate;
         this.userRepository = userRepository;
     }
 
     @MessageMapping("/create-post")
-    public void createPost(@Payload PostEntrada postEntrada)
-    {
+    public void createPost(@Payload PostEntrada postEntrada) {
         Comunidade comunidade = comunidadeRepository.findById(postEntrada.getComunidadeId()).orElse(null);
         User autor = userRepository.findById(postEntrada.getUsuarioId()).orElse(null);
 
-        Post post = new Post(null, null, postEntrada.getMensagem(), 0, null ,comunidade, autor);
+        Post post = new Post(null, null, postEntrada.getMensagem(), 0, null, comunidade, autor);
         postService.incluirPost(post);
 
         assert autor != null;
@@ -92,12 +89,10 @@ public class ComunidadeController {
             @RequestParam("descricao") String descricao,
             @RequestParam("Nivel de Permissao") NivelDePermissaoComunidade nivelDePermissao,
             Model model
-    )
-    {
+    ) {
         System.out.println(nivelDePermissao.getDescricaoDeAcesso());
         Comunidade comunidadeAdicionada = comunidadeService.incluirComunidade(new Comunidade(nome, descricao, nivelDePermissao));
-        if (comunidadeAdicionada != null)
-        {
+        if (comunidadeAdicionada != null) {
             ModelAndView mv = new ModelAndView("redirect:/comunidades");
             mv.addObject("criado-com-sucesso", "Comunidade criada com sucesso!");
             return mv;
@@ -126,12 +121,11 @@ public class ComunidadeController {
     }
 
     @GetMapping("/api/comunidades")
-    @ResponseBody // Indica que o retorno deve ser o corpo da resposta HTTP (JSON por padrão com Spring Boot)
+    @ResponseBody 
     public List<Comunidade> getAllComunidadesApi() {
-        return comunidadeService.listarTodasComunidades(); // Chame o método do service
+        return comunidadeService.listarTodasComunidades();
     }
 
-    // Endpoint para apagar comunidade VIA REST - AGORA USANDO O SERVIÇO e ResponseEntity
     @DeleteMapping("/comunidades/{id}")
     @ResponseBody
     public ResponseEntity<String> deleteComunidadeApi(@PathVariable Long id) {

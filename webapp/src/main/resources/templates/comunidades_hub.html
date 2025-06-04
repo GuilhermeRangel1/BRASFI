@@ -166,39 +166,32 @@
     <script src="/webjars/bootstrap/5.3.3/js/bootstrap.min.js"></script>
     <script th:src="@{/js/inicio.js}"></script>
     <script>
-        // Função para abrir o modal de criação de comunidade
         function OpenForm() {
-            document.getElementById("criar-comunidade").style.display = "flex"; // Use 'flex' para centralizar
+            document.getElementById("criar-comunidade").style.display = "flex"; 
         }
 
-        // Função para fechar o modal de criação de comunidade
         function CloseForm() {
             document.getElementById("criar-comunidade").style.display = "none";
         }
 
-        // NOVA: Função para abrir o modal de apagar comunidade
         function OpenDeleteCommunityModal() {
             document.getElementById("apagar-comunidade-modal").style.display = "flex";
-            loadCommunitiesForDeletion(); // Carrega as comunidades no modal
+            loadCommunitiesForDeletion(); 
         }
 
-        // NOVA: Função para fechar o modal de apagar comunidade
         function CloseDeleteCommunityModal() {
             document.getElementById("apagar-comunidade-modal").style.display = "none";
         }
 
-        // NOVA: Variável para armazenar o ID da comunidade selecionada para exclusão
         let selectedCommunityIdForDeletion = null;
 
-        // NOVA: Função para carregar comunidades no modal de apagar
         async function loadCommunitiesForDeletion() {
             const deleteCommunityList = document.getElementById('deleteCommunityList');
             deleteCommunityList.innerHTML = '<li style="color: #386D6B; font-family: \'Louis George Cafe\', sans-serif;">Carregando comunidades...</li>';
-            selectedCommunityIdForDeletion = null; // Resetar a seleção ao abrir o modal
-            document.getElementById('confirmDeleteCommunityButton').disabled = true; // Desabilita o botão inicialmente
+            selectedCommunityIdForDeletion = null;
+            document.getElementById('confirmDeleteCommunityButton').disabled = true; 
 
             try {
-                // Requisição para buscar todas as comunidades do novo endpoint REST
                 const response = await fetch('/api/comunidades');
                 if (!response.ok) {
                     throw new Error('Erro ao carregar comunidades: ' + response.statusText);
@@ -254,10 +247,10 @@
                     e.preventDefault();
                     if (communityManagementPopup.style.display === 'none' || communityManagementPopup.style.display === '') {
                         communityManagementPopup.style.display = 'block';
-                        communityListSection.style.display = 'none'; // Esconde a lista de comunidades
+                        communityListSection.style.display = 'none'; 
                     } else {
                         communityManagementPopup.style.display = 'none';
-                        communityListSection.style.display = 'block'; // Mostra a lista de comunidades
+                        communityListSection.style.display = 'block'; 
                     }
                 });
 
@@ -265,7 +258,7 @@
                     createCommunityLink.addEventListener('click', (e) => {
                         e.preventDefault();
                         OpenForm();
-                        communityManagementPopup.style.display = 'none'; // Esconde o popup após abrir o modal
+                        communityManagementPopup.style.display = 'none'; 
                     });
                 }
 
@@ -273,15 +266,15 @@
                     deleteCommunityLink.addEventListener('click', (e) => {
                         e.preventDefault();
                         OpenDeleteCommunityModal(); 
-                        communityManagementPopup.style.display = 'none'; // Esconde o popup após abrir o modal
+                        communityManagementPopup.style.display = 'none'; 
                     });
                 }
 
                 if (backToCommunitiesLink) {
                     backToCommunitiesLink.addEventListener('click', (e) => {
                         e.preventDefault();
-                        communityManagementPopup.style.display = 'none'; // Esconde o popup
-                        communityListSection.style.display = 'block'; // Mostra a lista de comunidades
+                        communityManagementPopup.style.display = 'none'; 
+                        communityListSection.style.display = 'block'; 
                     });
                 }
 

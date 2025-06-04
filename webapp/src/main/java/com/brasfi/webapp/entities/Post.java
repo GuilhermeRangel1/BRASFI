@@ -1,8 +1,8 @@
 package com.brasfi.webapp.entities;
 
 import jakarta.persistence.*;
-
 import java.time.LocalDateTime;
+import com.fasterxml.jackson.annotation.JsonBackReference; 
 
 @Entity
 public class Post {
@@ -12,8 +12,34 @@ public class Post {
     @Column()
     private Long id;
 
-    public Post() {
+    @Column()
+    private String titulo;
 
+    @Column()
+    private String descricao;
+
+    @Column()
+    private int contadorDelikes;
+
+    @Column()
+    private LocalDateTime dataCriacao;
+
+    @ManyToOne
+    @JsonBackReference
+    private Comunidade comunidade;
+
+    public User getAutor() {
+        return autor;
+    }
+
+    public void setAutor(User autor) {
+        this.autor = autor;
+    }
+
+    @ManyToOne
+    private User autor; 
+
+    public Post() {
     }
 
     public String getTitulo() {
@@ -58,31 +84,13 @@ public class Post {
         this.dataCriacao = dataCriacao;
     }
 
-    @Column()
-    private String titulo;
-
-    @Column()
-    private String descricao;
-
-    @Column()
-    private int contadorDelikes;
-
-    @Column()
-    private LocalDateTime dataCriacao;
-
-    @ManyToOne
-    private Comunidade comunidade;
-
-    public User getAutor() {
-        return autor;
+    public Comunidade getComunidade() {
+        return comunidade;
     }
 
-    public void setAutor(User autor) {
-        this.autor = autor;
+    public void setComunidade(Comunidade comunidade) {
+        this.comunidade = comunidade;
     }
-
-    @ManyToOne
-    private User autor;
 
     public void setId(Long id) {
         this.id = id;
