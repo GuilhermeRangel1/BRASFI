@@ -16,7 +16,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.util.HtmlUtils;
+import org.springframework.web.util.HtmlUtils; 
 
 import java.util.List;
 import java.util.Optional;
@@ -47,9 +47,9 @@ public class ComunidadeController {
 
         assert autor != null;
 
-        PostSaida ps = new PostSaida(autor.getName(), postEntrada.getMensagem());
+        PostSaida ps = new PostSaida(autor.getName(), postEntrada.getMensagem(), autor.getId());
 
-        System.out.println("Enviando mensagem: " + ps.getAuthorName() + " - " + ps.getMessageContent()); 
+        System.out.println("Enviando mensagem: " + ps.getAuthorName() + " (ID: " + ps.getAuthorId() + ") - " + ps.getMessageContent());
 
         String destino = "/topic/" + postEntrada.getComunidadeId();
         System.out.println("Destino WebSocket: " + destino);

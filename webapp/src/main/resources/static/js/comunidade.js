@@ -1,12 +1,18 @@
 let stompClient = null;
 let connected = false;
 
+
+const messageInput = document.getElementById('message');
+const sendButton = document.getElementById('send');
+const chatMessagesArea = document.querySelector('.chat-messages-area');
+
+
 function connect() {
     const socketUrl = "/brasfi-webapp-websocket";
 
     stompClient = new StompJs.Client({
         webSocketFactory: function () {
-            return new SockJS(socketUrl); 
+            return new SockJS(socketUrl);
         },
         reconnectDelay: 5000,
         debug: function (str) {
@@ -18,7 +24,7 @@ function connect() {
 
             stompClient.subscribe(`/topic/${comunidadeId}`, function (message) {
                 const postSaida = JSON.parse(message.body);
-                showPost(postSaida.authorName, postSaida.messageContent);
+                showPost(postSaida.authorName, postSaida.messageContent, postSaida.authorId);
             });
 
         },
@@ -31,64 +37,61 @@ function connect() {
     stompClient.activate();
 }
 
-function disconnect() {
-    if (stompClient && connected) {
-        stompClient.deactivate();
-        connected = false;
-        console.log("Desconectado");
-
-    }
-}
-
 function sendMessage() {
-    const content = document.getElementById("message").value;
+    const content = messageInput.value.trim();
 
     if (stompClient && connected && content && comunidadeId !== 0 && usuarioId !== 0) {
+        const messagePayload = {
+            'mensagem': content,
+            'comunidadeId': comunidadeId,
+            'usuarioId': usuarioId 
+        };
         stompClient.publish({
             destination: "/app/create-post",
-            body: JSON.stringify({
-                'mensagem': content,
-                'comunidadeId': comunidadeId, 
-                'usuarioId': usuarioId
-            })
+            body: JSON.stringify(messagePayload)
         });
 
-        document.getElementById("message").value = "";
+        messageInput.value = "";
+        console.log("Mensagem enviada.");
     } else {
         console.warn("Não foi possível enviar a mensagem. Verifique a conexão, conteúdo e IDs.");
+        console.log({connected: connected, content: content, comunidadeId: comunidadeId, usuarioId: usuarioId}); 
     }
 }
 
-function showPost(authorName, messageContent) { 
-    const chatBody = document.querySelector(".chat-messages-area");
+function showPost(authorName, messageContent, messageAuthorId) { 
+    const messageBubble = document.createElement('div');
+    messageBubble.classList.add('message-bubble');
 
-    const newMessageBubble = document.createElement('div');
-    newMessageBubble.classList.add('message-bubble');
+    if (messageAuthorId === usuarioId) {
+        messageBubble.classList.add('my-message'); 
+    }
 
     const userAvatar = document.createElement('div');
     userAvatar.classList.add('user-avatar');
-    userAvatar.innerHTML = '<i class="fas fa-user-circle"></i>'; 
+    userAvatar.innerHTML = '<i class="fas fa-user-circle"></i>';
 
     const messageContentDiv = document.createElement('div');
     messageContentDiv.classList.add('message-content');
 
     const authorSpan = document.createElement('span');
-    authorSpan.classList.add('message-author'); 
+    authorSpan.classList.add('message-author');
     authorSpan.textContent = authorName;
 
     const messageParagraph = document.createElement('p');
-    messageParagraph.classList.add('message-text'); 
+    messageParagraph.classList.add('message-text');
     messageParagraph.textContent = messageContent;
 
     messageContentDiv.appendChild(authorSpan);
     messageContentDiv.appendChild(messageParagraph);
 
-    newMessageBubble.appendChild(userAvatar);
-    newMessageBubble.appendChild(messageContentDiv);
+    messageBubble.appendChild(userAvatar);
+    messageBubble.appendChild(messageContentDiv);
 
-    chatBody.appendChild(newMessageBubble);
+    chatMessagesArea.appendChild(messageBubble);
 
-    chatBody.scrollTop = chatBody.scrollHeight;
+    chatMessagesArea.scrollTop = chatMessagesArea.scrollHeight;
+    console.log("Mensagem exibida: " + authorName + " (ID: " + messageAuthorId + ") - " + messageContent); 
 }
 
 window.addEventListener("load", () => {
@@ -102,7 +105,7 @@ window.addEventListener("load", () => {
 
     if (document.getElementById("send")) {
         document.getElementById("send").addEventListener("click", function (e) {
-            e.preventDefault();
+            e.preventDefault(); 
             sendMessage();
         });
     }
