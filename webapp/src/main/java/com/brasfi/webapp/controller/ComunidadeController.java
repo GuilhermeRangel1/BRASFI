@@ -51,35 +51,41 @@ public class ComunidadeController {
         assert autor != null;
         String conteudo = autor.getName() + "\n" + postEntrada.getMensagem();
 
-        PostSaida ps = new PostSaida(conteudo);
-        System.out.println(HtmlUtils.htmlEscape(ps.getContent()));
+        PostSaida ps = new PostSaida(autor.getName(), postEntrada.getMensagem(), autor.getId());
+
+        System.out.println("Enviando mensagem: " + ps.getAuthorName() + " (ID: " + ps.getAuthorId() + ") - " + ps.getMessageContent());
 
         String destino = "/topic/" + postEntrada.getComunidadeId();
-        System.out.println(destino);
+        System.out.println("Destino WebSocket: " + destino);
         messagingTemplate.convertAndSend(destino, ps);
     }
 
     @GetMapping("/comunidades/{id}")
     public ModelAndView getComunidades(@PathVariable Long id, @AuthenticationPrincipal CustomUserDetails currentUser) {
         ModelAndView mv = new ModelAndView("comunidades_hub");
-        Optional<Comunidade> comunidade = comunidadeRepository.findById(id);
-        boolean podeAcessar = true;
+        Optional<Comunidade> comunidadeOpt = comunidadeRepository.findById(id);
 
-        if (currentUser != null && comunidade.isPresent()) {
-            podeAcessar = comunidadeService.validarAcesso(comunidade.get().getNivelDePermissao(), currentUser.getUserEntity(),
-                    comunidade.get().getUsuarios());
-            mv.addObject("usuario",currentUser.getUserEntity());
+        if (comunidadeOpt.isPresent()) {
+            Comunidade comunidade = comunidadeOpt.get();
+
+            if (currentUser != null) {
+                mv.addObject("usuario", currentUser.getUserEntity());
+            }
+
+            mv.addObject("comunidade", comunidade);
+            mv.addObject("comunidades", comunidadeRepository.findAll());
+
+            mv.addObject("PUBLICA", NivelDePermissaoComunidade.PUBLICA);
+            mv.addObject("APENAS_LIDERES", NivelDePermissaoComunidade.APENAS_LIDERES);
+            mv.addObject("PERSONALIZADA", NivelDePermissaoComunidade.PERSONALIZADA);
+
+            mv.addObject("postagens", postService.buscarPorComunidade(comunidade));
+
+            return mv;
+        } else {
+            System.out.println("DEBUG: Comunidade com ID " + id + " não encontrada. Redirecionando para /comunidades.");
+            return new ModelAndView("redirect:/comunidades");
         }
-
-        comunidade.ifPresent(value -> mv.addObject("comunidade", value));
-        mv.addObject("mensagemAcessoNegado", mensagemAcessoNegado);
-        mv.addObject("comunidades", comunidadeRepository.findAll());
-        mv.addObject("PUBLICA", NivelDePermissaoComunidade.PUBLICA);
-        mv.addObject("APENAS_LIDERES", NivelDePermissaoComunidade.APENAS_LIDERES);
-        mv.addObject("PERSONALIZADA", NivelDePermissaoComunidade.PERSONALIZADA);
-        comunidade.ifPresent(value -> mv.addObject("postagens", postService.buscarPorComunidade(value)));
-        mv.addObject("podeAcessar", podeAcessar);
-        return mv;
     }
 
     @PostMapping("/mudar-de-comunidade")

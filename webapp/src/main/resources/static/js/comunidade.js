@@ -1,13 +1,18 @@
 let stompClient = null;
 let connected = false;
 
-// Conecta ao WebSocket e se inscreve no tópico
+
+const messageInput = document.getElementById('message');
+const sendButton = document.getElementById('send');
+const chatMessagesArea = document.querySelector('.chat-messages-area');
+
+
 function connect() {
     const socketUrl = "/brasfi-webapp-websocket";
 
     stompClient = new StompJs.Client({
         webSocketFactory: function () {
-            return new SockJS("/brasfi-webapp-websocket");
+            return new SockJS(socketUrl);
         },
         reconnectDelay: 5000,
         debug: function (str) {
@@ -18,12 +23,10 @@ function connect() {
             console.log("Conectado: " + frame);
 
             stompClient.subscribe(`/topic/${comunidadeId}`, function (message) {
-                const post = JSON.parse(message.body).content;
-                showPost(post);
-        });
+                const postSaida = JSON.parse(message.body);
+                showPost(postSaida.authorName, postSaida.messageContent, postSaida.authorId);
+            });
 
-            document.getElementById("connect").disabled = true;
-            document.getElementById("disconnect").disabled = false;
         },
         onStompError: function (frame) {
             console.error("Erro STOMP: ", frame.headers["message"]);
@@ -34,56 +37,85 @@ function connect() {
     stompClient.activate();
 }
 
-// Desconecta do WebSocket
-function disconnect() {
-    if (stompClient && connected) {
-        stompClient.deactivate();
-        connected = false;
-        console.log("Desconectado");
-
-        document.getElementById("connect").disabled = false;
-        document.getElementById("disconnect").disabled = true;
-    }
-}
-
-// Envia uma mensagem para o broker
 function sendMessage() {
-    //const author = document.getElementById("user").value;
-    const content = document.getElementById("message").value;
+    const content = messageInput.value.trim();
 
-    if (stompClient && connected && content) {
+    if (stompClient && connected && content && comunidadeId !== 0 && usuarioId !== 0) {
+        const messagePayload = {
+            'mensagem': content,
+            'comunidadeId': comunidadeId,
+            'usuarioId': usuarioId 
+        };
         stompClient.publish({
             destination: "/app/create-post",
-            body: JSON.stringify({'mensagem': $("#message").val(), 'comunidadeId': comunidadeId, 'usuarioId' : usuarioId})
+            body: JSON.stringify(messagePayload)
         });
 
-        document.getElementById("message").value = ""; // Limpa campo
+        messageInput.value = "";
+        console.log("Mensagem enviada.");
+    } else {
+        console.warn("Não foi possível enviar a mensagem. Verifique a conexão, conteúdo e IDs.");
+        console.log({connected: connected, content: content, comunidadeId: comunidadeId, usuarioId: usuarioId}); 
     }
 }
 
-// Exibe a mensagem na tela
-function showPost(post) {
-    /*const tableBody = document.getElementById("livechat");
-    const row = document.createElement("tr");
-    const cell = document.createElement("td");
+function showPost(authorName, messageContent, messageAuthorId) { 
+    const messageBubble = document.createElement('div');
+    messageBubble.classList.add('message-bubble');
 
-    cell.textContent = post;
-    row.appendChild(cell);
-    tableBody.appendChild(row);*/
+    if (messageAuthorId === usuarioId) {
+        messageBubble.classList.add('my-message'); 
+    }
 
-    const chatBody = document.querySelector(".chat-messages-area");
-    const messageBody = document.querySelector(".message-bubble");
-    const newMessageBody = messageBody.cloneNode(true);
-    newMessageBody.getElementsByClassName("message-content")[0].textContent = post;
-    chatBody.appendChild(newMessageBody);
+    const userAvatar = document.createElement('div');
+    userAvatar.classList.add('user-avatar');
+    userAvatar.innerHTML = '<i class="fas fa-user-circle"></i>';
+
+    const messageContentDiv = document.createElement('div');
+    messageContentDiv.classList.add('message-content');
+
+    const authorSpan = document.createElement('span');
+    authorSpan.classList.add('message-author');
+    authorSpan.textContent = authorName;
+
+    const messageParagraph = document.createElement('p');
+    messageParagraph.classList.add('message-text');
+    messageParagraph.textContent = messageContent;
+
+    messageContentDiv.appendChild(authorSpan);
+    messageContentDiv.appendChild(messageParagraph);
+
+    messageBubble.appendChild(userAvatar);
+    messageBubble.appendChild(messageContentDiv);
+
+    chatMessagesArea.appendChild(messageBubble);
+
+    chatMessagesArea.scrollTop = chatMessagesArea.scrollHeight;
+    console.log("Mensagem exibida: " + authorName + " (ID: " + messageAuthorId + ") - " + messageContent); 
 }
 
-// Associa os botões
 window.addEventListener("load", () => {
-    connect();
-    //document.getElementById("disconnect").addEventListener("click", disconnect);
-    document.getElementById("send").addEventListener("click", function (e) {
-        e.preventDefault();
-        sendMessage();
-    });
+    if (comunidadeId !== 0) {
+        connect();
+    } else {
+        console.warn("comunidadeId é 0 na inicialização. Conexão WebSocket não será estabelecida.");
+        if (document.getElementById('message')) document.getElementById('message').disabled = true;
+        if (document.getElementById('send')) document.getElementById('send').disabled = true;
+    }
+
+    if (document.getElementById("send")) {
+        document.getElementById("send").addEventListener("click", function (e) {
+            e.preventDefault(); 
+            sendMessage();
+        });
+    }
+
+    if (document.getElementById("message")) {
+        document.getElementById("message").addEventListener('keypress', (event) => {
+            if (event.key === 'Enter') {
+                event.preventDefault(); 
+                sendMessage();
+            }
+        });
+    }
 });

@@ -24,15 +24,15 @@
     <script th:inline="javascript">
 
         document.addEventListener('DOMContentLoaded', function() {
-        // Verifica se o atributo 'acessoNegado' foi passado pelo modelo do Spring
+            // Verifica se o atributo 'acessoNegado' foi passado pelo modelo do Spring
 
-        /*<![CDATA[*/
-            const podeAcessar = /*[[${podeAcessar}]]*/ false; // Thymeaf injeta o valor aqui
-        /*]]>*/
+            /*<![CDATA[*/
+            const podeAcessar = /*[[${podeAcessar}]]*/ true; // Thymeaf injeta o valor aqui
+            /*]]>*/
 
-        console.log("DEBUG: Valor de podeAcessar injetado: " + podeAcessar);
+            console.log("DEBUG: Valor de podeAcessar injetado: " + podeAcessar);
 
-        if (!podeAcessar) {
+            /*if (podeAcessar) {
         document.getElementById('acesso-negado-overlay').style.display = 'flex';
         document.getElementById('acesso-negado-popup').style.display = 'block';
         }
@@ -43,6 +43,7 @@
         document.getElementById('acesso-negado-popup').style.display = 'none';
         // Opcional: Redirecionar para uma página de onde o usuário possa solicitar acesso
         // window.location.href = '/minhas-comunidades';
+        }*/
         }
     </script>
 
@@ -115,10 +116,11 @@
                         <i class="fas fa-user-circle"></i>
                     </div>
                     <div class="message-content">
-                        <p th:text="${post.getAutor().getName() + ' ' + post.getDescricao()}"></p>
+                        <span class="message-author" th:text="${post.getAutor().getName()}"></span>
+                        <p class="message-text" th:text="${post.getDescricao()}"></p>
                     </div>
                 </div>
-            </div>
+                </div>
 
             <div class="chat-input-area">
                 <div class="input-and-button-container">
@@ -146,11 +148,7 @@
                     </li>
                     </ul>
             </div>
-
-            </div>
-    </div>
-
-    <button onclick="OpenForm()" id="open-criar-comunidade" style="display: none;">Criar nova comunidade</button>
+        </div> </div> <button onclick="OpenForm()" id="open-criar-comunidade" style="display: none;">Criar nova comunidade</button>
 
     <div id="criar-comunidade" style="display: none">
         <form action="/criar-comunidade" method="post" id="criar-comunidade-form" class="p-4 border rounded bg-light shadow">
@@ -178,7 +176,7 @@
                 </div>
                 <div class="form-check form-check-inline">
                     <input class="form-check-input" type="radio" id="Personalizada" name="Nivel de Permissao" th:value="${PERSONALIZADA}">
-                    <label class="form-check-label" for="Personalizada">Personalizada</label>
+                    <label class="form-label" for="Personalizada">Personalizada</label>
                 </div>
             </div>
 
@@ -200,167 +198,76 @@
         </div>
     </div>
 
+    <div class="ajuda">
+        <a href="javascript:void(0);" onclick="abrirAjuda()">Ajuda</a>
+    </div>
+
+	<div id="help-overlay" onclick="fecharAjuda()">
+	    <div id="help-box" onclick="event.stopPropagation()">
+	        <span class="close-help" onclick="fecharAjuda()">×</span>
+	        <h2>Dúvidas Frequentes</h2>
+
+	        <button class="help-question" onclick="mostrarResposta(0)">
+	            <i class="fas fa-sign-in-alt"></i> Dificuldade com login
+	        </button>
+	        <div class="help-answer">
+	            Verifique seu e-mail e senha. Caso tenha esquecido, entre em contato via contato@brasfi.com
+	        </div>
+
+	        <button class="help-question" onclick="mostrarResposta(1)">
+	            <i class="fas fa-user-plus"></i> Como se cadastrar?
+	        </button>
+	        <div class="help-answer">
+	            Para criar uma conta é necessário ser um membro BRASFI, entre em contato diretamente com a gente
+	        </div>
+
+	        <button class="help-question" onclick="mostrarResposta(2)">
+	            <i class="fas fa-comments"></i> Comunidade
+	        </button>
+	        <div class="help-answer">
+	           Nós temos um meio de comunicação interno para membros
+	        </div>
+
+	        <button class="help-question" onclick="mostrarResposta(3)">
+	            <i class="fas fa-seedling"></i> Projetos sustentáveis (ESG)
+	        </button>
+	        <div class="help-answer">
+	            Nossos projetos estão relacionados diretamente no ensino de finanças sustentáveis
+	        </div>
+
+	        <button class="help-question" onclick="mostrarResposta(4)">
+	            <i class="fas fa-calendar-alt"></i> Agenda de eventos
+	        </button>
+	        <div class="help-answer">
+	            Visite a página de eventos para visualizar as próximas datas e conteúdos gravados.
+	        </div>
+	    </div>
+	</div>
+    </div>
     <script src="/webjars/jquery/3.7.1/jquery.min.js"></script>
     <script src="/webjars/bootstrap/5.3.3/js/bootstrap.min.js"></script>
     <script th:src="@{/js/inicio.js}"></script>
-
-
-
+	<script th:src="@{/js/comunidadeManagement.js}"></script>
     <script>
-
-        function OpenForm() {
-            document.getElementById("criar-comunidade").style.display = "flex";
+        function abrirAjuda() {
+            document.getElementById('help-overlay').style.display = 'flex';
         }
 
-        function CloseForm() {
-            document.getElementById("criar-comunidade").style.display = "none";
+        function fecharAjuda() {
+            document.getElementById('help-overlay').style.display = 'none';
+            document.querySelectorAll('.help-answer').forEach(el => el.style.display = 'none');
         }
 
-        function OpenDeleteCommunityModal() {
-            document.getElementById("apagar-comunidade-modal").style.display = "flex";
-            loadCommunitiesForDeletion();
+        function mostrarResposta(index) {
+            const respostas = document.querySelectorAll('.help-answer');
+            respostas.forEach((el, i) => {
+                if (i === index) {
+                    el.style.display = el.style.display === 'block' ? 'none' : 'block';
+                } else {
+                    el.style.display = 'none';
+                }
+            });
         }
-
-        function CloseDeleteCommunityModal() {
-            document.getElementById("apagar-comunidade-modal").style.display = "none";
-        }
-
-        let selectedCommunityIdForDeletion = null;
-
-        async function loadCommunitiesForDeletion() {
-            const deleteCommunityList = document.getElementById('deleteCommunityList');
-            deleteCommunityList.innerHTML = '<li style="color: #386D6B; font-family: \'Louis George Cafe\', sans-serif;">Carregando comunidades...</li>';
-            selectedCommunityIdForDeletion = null;
-            document.getElementById('confirmDeleteCommunityButton').disabled = true;
-
-            try {
-                const response = await fetch('/api/comunidades');
-                if (!response.ok) {
-                    throw new Error('Erro ao carregar comunidades: ' + response.statusText);
-                }
-                const comunidades = await response.json();
-
-                deleteCommunityList.innerHTML = '';
-
-                if (comunidades.length === 0) {
-                    deleteCommunityList.innerHTML = '<li style="color: #386D6B; font-family: \'Louis George Cafe\', sans-serif;">Nenhuma comunidade encontrada.</li>';
-                    document.getElementById('confirmDeleteCommunityButton').disabled = true;
-                    return;
-                }
-
-                comunidades.forEach(com => {
-                    const li = document.createElement('li');
-                    li.textContent = com.nome;
-                    li.dataset.id = com.id;
-                    li.addEventListener('click', () => {
-                        Array.from(deleteCommunityList.children).forEach(item => {
-                            item.classList.remove('selected');
-                        });
-                        li.classList.add('selected');
-                        selectedCommunityIdForDeletion = com.id;
-                        document.getElementById('confirmDeleteCommunityButton').disabled = false;
-                    });
-                    deleteCommunityList.appendChild(li);
-                });
-            } catch (error) {
-                console.error('Erro ao carregar comunidades para exclusão:', error);
-                deleteCommunityList.innerHTML = '<li style="color: #d9534f; font-family: \'Louis George Cafe\', sans-serif;">Erro ao carregar comunidades.</li>';
-                document.getElementById('confirmDeleteCommunityButton').disabled = true;
-            }
-        }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            const editButton = document.getElementById('editCommunitiesButton');
-            const communityListSection = document.getElementById('communityListSection');
-            const communityManagementPopup = document.getElementById('communityManagementPopup');
-
-            const createCommunityLink = document.getElementById('createCommunityLink');
-            const deleteCommunityLink = document.getElementById('deleteCommunityLink');
-            const backToCommunitiesLink = document.getElementById('backToCommunitiesLink');
-            const closeCreateCommunityModalButton = document.getElementById('closeCreateCommunityModal');
-
-            const apagarComunidadeModal = document.getElementById('apagar-comunidade-modal');
-            const closeDeleteCommunityModalButton = document.getElementById('closeDeleteCommunityModal');
-            const confirmDeleteCommunityButton = document.getElementById('confirmDeleteCommunityButton');
-
-
-            if (editButton && communityListSection && communityManagementPopup) {
-                editButton.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    if (communityManagementPopup.style.display === 'none' || communityManagementPopup.style.display === '') {
-                        communityManagementPopup.style.display = 'block';
-                        communityListSection.style.display = 'none';
-                    } else {
-                        communityManagementPopup.style.display = 'none';
-                        communityListSection.style.display = 'block';
-                    }
-                });
-
-                if (createCommunityLink) {
-                    createCommunityLink.addEventListener('click', (e) => {
-                        e.preventDefault();
-                        OpenForm();
-                        communityManagementPopup.style.display = 'none';
-                    });
-                }
-
-                if (deleteCommunityLink) {
-                    deleteCommunityLink.addEventListener('click', (e) => {
-                        e.preventDefault();
-                        OpenDeleteCommunityModal();
-                        communityManagementPopup.style.display = 'none';
-                    });
-                }
-
-                if (backToCommunitiesLink) {
-                    backToCommunitiesLink.addEventListener('click', (e) => {
-                        e.preventDefault();
-                        communityManagementPopup.style.display = 'none';
-                        communityListSection.style.display = 'block';
-                    });
-                }
-
-                if (closeCreateCommunityModalButton) {
-                    closeCreateCommunityModalButton.addEventListener('click', () => {
-                        CloseForm();
-                    });
-                }
-
-                if (closeDeleteCommunityModalButton) {
-                    closeDeleteCommunityModalButton.addEventListener('click', () => {
-                        CloseDeleteCommunityModal();
-                    });
-                }
-
-                if (confirmDeleteCommunityButton) {
-                    confirmDeleteCommunityButton.addEventListener('click', async () => {
-                        if (selectedCommunityIdForDeletion) {
-                            if (confirm(`Tem certeza que deseja apagar a comunidade selecionada (ID: ${selectedCommunityIdForDeletion})? Esta ação é irreversível.`)) {
-                                try {
-                                    const response = await fetch(`/comunidades/${selectedCommunityIdForDeletion}`, {
-                                        method: 'DELETE'
-                                    });
-
-                                    if (response.ok) {
-                                        alert('Comunidade apagada com sucesso!');
-                                        CloseDeleteCommunityModal();
-                                        window.location.href = '/comunidades';
-                                    } else {
-                                        const errorText = await response.text();
-                                        throw new Error(errorText || 'Erro desconhecido ao apagar a comunidade.');
-                                    }
-                                } catch (error) {
-                                    console.error('Erro ao apagar comunidade:', error);
-                                    alert(`Não foi possível apagar a comunidade: ${error.message}`);
-                                }
-                            }
-                        } else {
-                            alert('Por favor, selecione uma comunidade para apagar.');
-                        }
-                    });
-                }
-            }
-        });
     </script>
 </body>
 </html>

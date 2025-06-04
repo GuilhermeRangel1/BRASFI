@@ -8,6 +8,7 @@
   <link rel="stylesheet" th:href="@{/css/home.css}" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
   <link rel="icon" type="image/jpg" th:href="@{/img/brasfi.jpg}">
+  <link rel="stylesheet" th:href="@{/css/ajuda.css}" />
 </head>
 <body>
   <header>
@@ -102,9 +103,67 @@
       <p th:if="${#lists.isEmpty(eventos)}" class="no-events-message">Nenhum evento agendado ou atual encontrado.</p>
   </div>
 
-<div class="ajuda">
-<a th:href="@{/ajuda}">Ajuda</a>
-</div>
-<script th:src="@{/js/inicio.js}"></script>
+  <div class="ajuda">
+      <a href="javascript:void(0);" onclick="abrirAjuda()">Ajuda</a>
+  </div>
+
+  <div id="help-overlay" onclick="fecharAjuda()">
+      <div id="help-box" onclick="event.stopPropagation()">
+          <span class="close-help" onclick="fecharAjuda()">×</span>
+          <h2>Dúvidas Frequentes</h2>
+
+          <button class="help-question" onclick="mostrarResposta(0)">
+              <i class="fas fa-sign-in-alt"></i> Dificuldade com login
+          </button>
+          <div class="help-answer">
+              Verifique seu e-mail e senha. Caso tenha esquecido, entre em contato via contato@brasfi.com
+          </div>
+
+          <button class="help-question" onclick="mostrarResposta(1)">
+              <i class="fas fa-user-plus"></i> Como se cadastrar?
+          </button>
+          <div class="help-answer">
+              Para criar uma conta é necessário ser um membro BRASFI, entre em contato diretamente com a gente
+          </div>
+
+          <button class="help-question" onclick="mostrarResposta(2)">
+              <i class="fas fa-comments"></i> Comunidade
+          </button>
+          <div class="help-answer">
+             Nós temos um meio de comunicação interno para membros
+          </div>
+
+          <button class="help-question" onclick="mostrarResposta(3)">
+              <i class="fas fa-seedling"></i> Projetos sustentáveis (ESG)
+          </button>
+          <div class="help-answer">
+              Nossos projetos estão relacionados diretamente no ensino de finanças sustentáveis
+          </div>
+
+          <button class="help-question" onclick="mostrarResposta(4)">
+              <i class="fas fa-calendar-alt"></i> Agenda de eventos
+          </button>
+          <div class="help-answer">
+              Visite a página de eventos para visualizar as próximas datas e conteúdos gravados.
+          </div>
+      </div>
+  </div>
+  </div>
+  <script th:src="@{/js/inicio.js}"></script>
+  <script>
+    function abrirAjuda() {
+        document.getElementById('help-overlay').style.display = 'flex';
+    }
+
+    function fecharAjuda() {
+        document.getElementById('help-overlay').style.display = 'none';
+        document.querySelectorAll('.help-answer').forEach(el => el.style.display = 'none');
+    }
+
+    function mostrarResposta(index) {
+        const respostas = document.querySelectorAll('.help-answer');
+        respostas.forEach((el, i) => el.style.display = i === index ? 'block' : 'none');
+    }
+  </script>
 </body>
 </html>
