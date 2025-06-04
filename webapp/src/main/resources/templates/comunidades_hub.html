@@ -15,7 +15,31 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <link rel="icon" type="image/jpg" th:href="@{/img/brasfi.jpg}">
 
-	<script th:inline="javascript">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.12.0/dist/sweetalert2.min.css">
+
+    <style>
+
+
+        .swal2-popup-larger {
+            width: 35em !important;
+            max-width: 90% !important; 
+        }
+
+        .swal2-title-larger {
+            font-size: 2.2em !important; 
+        }
+
+        .swal2-text-larger {
+            font-size: 1.2em !important; 
+        }
+
+        .swal2-confirm.swal2-styled,
+        .swal2-cancel.swal2-styled {
+            font-size: 1.1em !important; 
+            padding: 0.8em 1.5em !important; 
+        }
+    </style>
+    <script th:inline="javascript">
 	    /*<![CDATA[*/
 	        let comunidadeId = /*[[${comunidade != null ? comunidade.id : 0}]]*/ 0;
 	        let usuarioId = /*[[${usuario != null ? usuario.id : 0}]]*/ 0;
@@ -26,6 +50,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@stomp/stompjs@7.0.0/bundles/stomp.umd.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.12.0/dist/sweetalert2.all.min.js"></script>
 
     <script th:src="@{/js/inicio.js}"></script>
 </head>
@@ -364,27 +389,81 @@
                 if (confirmDeleteCommunityButton) {
                     confirmDeleteCommunityButton.addEventListener('click', async () => {
                         if (selectedCommunityIdForDeletion) {
-                            if (confirm(`Tem certeza que deseja apagar a comunidade selecionada (ID: ${selectedCommunityIdForDeletion})? Esta ação é irreversível.`)) {
+
+                            CloseDeleteCommunityModal();
+
+                            const result = await Swal.fire({
+                                title: 'Tem certeza?',
+                                text: `Você realmente deseja apagar esta comunidade? Esta ação é irreversível.`,
+                                icon: 'warning',
+                                showCancelButton: true,
+                                confirmButtonColor: '#d33',
+                                cancelButtonColor: '#3085d6',
+                                confirmButtonText: 'Sim, apagar!',
+                                cancelButtonText: 'Cancelar',
+                                customClass: {
+                                    title: 'swal2-title-larger', 
+                                    htmlContainer: 'swal2-text-larger', 
+                                    popup: 'swal2-popup-larger' 
+                                }
+                            });
+
+                            if (result.isConfirmed) {
                                 try {
                                     const response = await fetch(`/comunidades/${selectedCommunityIdForDeletion}`, {
                                         method: 'DELETE'
                                     });
 
                                     if (response.ok) {
-                                        alert('Comunidade apagada com sucesso!');
-                                        CloseDeleteCommunityModal();
-                                        window.location.href = '/comunidades';
+                                        await Swal.fire({
+                                            title: 'Apagada!',
+                                            text: 'A comunidade foi apagada com sucesso.',
+                                            icon: 'success',
+                                            customClass: {
+                                                title: 'swal2-title-larger',
+                                                htmlContainer: 'swal2-text-larger',
+                                                popup: 'swal2-popup-larger'
+                                            }
+                                        });
+                                        window.location.href = '/comunidades'; 
                                     } else {
                                         const errorText = await response.text();
-                                        throw new Error(errorText || 'Erro desconhecido ao apagar a comunidade.');
+                                        Swal.fire({
+                                            title: 'Erro!',
+                                            text: `Não foi possível apagar a comunidade: ${errorText || 'Erro desconhecido.'}`,
+                                            icon: 'error',
+                                            customClass: {
+                                                title: 'swal2-title-larger',
+                                                htmlContainer: 'swal2-text-larger',
+                                                popup: 'swal2-popup-larger'
+                                            }
+                                        });
                                     }
                                 } catch (error) {
                                     console.error('Erro ao apagar comunidade:', error);
-                                    alert(`Não foi possível apagar a comunidade: ${error.message}`);
+                                    Swal.fire({
+                                        title: 'Erro!',
+                                        text: `Ocorreu um erro ao tentar apagar a comunidade: ${error.message}`,
+                                        icon: 'error',
+                                        customClass: {
+                                            title: 'swal2-title-larger',
+                                            htmlContainer: 'swal2-text-larger',
+                                            popup: 'swal2-popup-larger'
+                                        }
+                                    });
                                 }
                             }
                         } else {
-                            alert('Por favor, selecione uma comunidade para apagar.');
+                            Swal.fire({
+                                title: 'Atenção!',
+                                text: 'Por favor, selecione uma comunidade para apagar.',
+                                icon: 'warning',
+                                customClass: {
+                                    title: 'swal2-title-larger',
+                                    htmlContainer: 'swal2-text-larger',
+                                    popup: 'swal2-popup-larger'
+                                }
+                            });
                         }
                     });
                 }
