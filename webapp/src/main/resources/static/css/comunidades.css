@@ -685,8 +685,8 @@ header {
 
 .ajuda a {
     text-decoration: none;
-    color: inherit;
-	color: rgb(255, 255, 255)
+    color: inherit; 
+	color: rgb(255, 255, 255) 
 }
 .ajuda {
     position: fixed;

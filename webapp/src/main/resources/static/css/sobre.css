@@ -57,23 +57,6 @@
   color: #4CAF50;
 }
 
-.ajuda a { 
-    text-decoration: none;
-    color: inherit; 
-	color: #215757
-}
-
-.ajuda {
-    position: fixed;
-    bottom: 25px;
-    right: 2em;
-	font-size: 1.5em;
-    z-index: 1001;
-    text-align: center;
-    font-family: 'Louis George Cafe', sans-serif;
-}
-
-
 
 
 
