@@ -67,10 +67,9 @@
             </div>
         </div>
 
-        <!--<main class="chat-main-content">
+        <main class="chat-main-content">
             <div class="chat-messages-area">
-                <div th:each="post: ${postagens}" class="message-bubble"
-                     th:classappend="${post.currentUser ? 'my-message' : 'other-message'}">
+                <div th:each="post: ${postagens}" class="message-bubble">
                     <div class="user-avatar">
                         <i class="fas fa-user-circle"></i>
                     </div>
@@ -78,7 +77,7 @@
                         <p th:text="${post.getDescricao()}"></p>
                     </div>
                 </div>
-            </div>-->
+            </div>
 
             <div class="chat-input-area">
                 <div class="input-and-button-container">

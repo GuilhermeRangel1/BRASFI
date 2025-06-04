@@ -63,13 +63,15 @@ function sendMessage() {
 
 // Exibe a mensagem na tela
 function showPost(post) {
-    const tableBody = document.getElementById("livechat");
+    /*const tableBody = document.getElementById("livechat");
     const row = document.createElement("tr");
     const cell = document.createElement("td");
 
     cell.textContent = post;
     row.appendChild(cell);
-    tableBody.appendChild(row);
+    tableBody.appendChild(row);*/
+
+
 }
 
 // Associa os botões
