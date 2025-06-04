@@ -71,7 +71,11 @@ function showPost(post) {
     row.appendChild(cell);
     tableBody.appendChild(row);*/
 
-
+    const chatBody = document.querySelector(".chat-messages-area");
+    const messageBody = document.querySelector(".message-bubble");
+    const newMessageBody = messageBody.cloneNode(true);
+    newMessageBody.getElementsByClassName("message-content")[0].textContent = post;
+    chatBody.appendChild(newMessageBody);
 }
 
 // Associa os botões

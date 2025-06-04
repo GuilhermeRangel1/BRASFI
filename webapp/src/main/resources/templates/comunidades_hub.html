@@ -15,7 +15,9 @@
     <link rel="icon" type="image/jpg" href="img/brasfi.jpg">
 
     <script th:inline="javascript">
-        let comunidadeId = 0;
+        /*<![CDATA[*/
+            let comunidadeId = /*[[${comunidade.id}]]*/ 0;
+        /*]]>*/
     </script>
     <script type="module" src="/js/comunidade.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1.6.1/dist/sockjs.min.js"></script>
