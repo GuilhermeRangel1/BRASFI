@@ -8,6 +8,7 @@ import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
 import jakarta.persistence.DiscriminatorColumn;
 import jakarta.persistence.DiscriminatorType;
+import jakarta.persistence.DiscriminatorValue; 
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -15,6 +16,7 @@ import java.util.Objects;
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "user_type", discriminatorType = DiscriminatorType.STRING)
+@DiscriminatorValue("USER") 
 public class User implements Serializable {
 
     private static final long serialVersionUID = 1L;

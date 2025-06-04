@@ -45,13 +45,15 @@ public class UserController {
         @RequestParam("cpf") String cpf,
         @RequestParam("senha") String senha,
         @RequestParam("idade") int idade,
-        @RequestParam(value = "tipoConta", defaultValue = "USER") String tipoConta, 
+        @RequestParam(value = "tipoConta", defaultValue = "USER") String tipoConta,
         Model model
     ) {
         try {
             if ("ADMIN".equals(tipoConta)) {
                 userService.registerAdmin(nome, email, cpf, senha, idade);
-            } else {
+            } else if ("MANAGER".equals(tipoConta)) {
+                userService.registerManager(nome, email, cpf, senha, idade);
+            } else { 
                 userService.registerUser(nome, email, cpf, senha, idade);
             }
             return "redirect:/login";
@@ -61,7 +63,7 @@ public class UserController {
             model.addAttribute("email", email);
             model.addAttribute("cpf", cpf);
             model.addAttribute("idade", idade);
-            model.addAttribute("tipoConta", tipoConta);
+            model.addAttribute("tipoConta", tipoConta); 
             return "register";
         }
     }

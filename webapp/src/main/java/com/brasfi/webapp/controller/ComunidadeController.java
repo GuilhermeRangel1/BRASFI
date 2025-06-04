@@ -11,12 +11,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.util.HtmlUtils; 
+import org.springframework.web.util.HtmlUtils;
 
 import java.util.List;
 import java.util.Optional;
@@ -93,6 +94,7 @@ public class ComunidadeController {
         return mv;
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     @PostMapping("/criar-comunidade")
     public ModelAndView criarComunidade(
             @RequestParam("nome") String nome,
@@ -119,6 +121,7 @@ public class ComunidadeController {
                 .orElse("redirect:/criarComunidade");
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     @GetMapping("/criarComunidade")
     public String exibirFormularioCriarComunidade(Model model) {
         model.addAttribute("comunidade", new Comunidade());
@@ -134,6 +137,7 @@ public class ComunidadeController {
         return comunidadeService.listarTodasComunidades();
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     @DeleteMapping("/comunidades/{id}")
     @ResponseBody
     public ResponseEntity<String> deleteComunidadeApi(@PathVariable Long id) {

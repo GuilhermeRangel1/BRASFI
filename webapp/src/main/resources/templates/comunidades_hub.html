@@ -93,7 +93,8 @@
         </main>
 
         <div class="right-sidebar">
-            <div class="edit-section" style="position: relative;"> <a href="#" id="editCommunitiesButton" class="edit-communities-button">+ Editar</a>
+            <div class="edit-section" style="position: relative;" sec:authorize="hasAnyRole('ADMIN', 'MANAGER')">
+                <a href="#" id="editCommunitiesButton" class="edit-communities-button">+ Editar</a>
 
                 <div id="communityManagementPopup" class="community-management-popup" style="display: none;">
                     <p><a href="#" id="createCommunityLink" class="community-management-link">Criar nova comunidade</a></p>
@@ -110,9 +111,12 @@
                     </li>
                     </ul>
             </div>
-        </div> </div> <button onclick="OpenForm()" id="open-criar-comunidade" style="display: none;">Criar nova comunidade</button>
+        </div>
+    </div>
 
-    <div id="criar-comunidade" style="display: none">
+    <button onclick="OpenForm()" id="open-criar-comunidade" style="display: none;" sec:authorize="hasAnyRole('ADMIN', 'MANAGER')">Criar nova comunidade</button>
+
+    <div id="criar-comunidade" style="display: none;" sec:authorize="hasAnyRole('ADMIN', 'MANAGER')">
         <form action="/criar-comunidade" method="post" id="criar-comunidade-form" class="p-4 border rounded bg-light shadow">
             <button type="button" class="close-modal-button" id="closeCreateCommunityModal">&times;</button>
             <h1>Nova Comunidade</h1>
@@ -146,14 +150,14 @@
         </form>
     </div>
 
-    <div id="apagar-comunidade-modal" style="display: none;">
+    <div id="apagar-comunidade-modal" style="display: none;" sec:authorize="hasAnyRole('ADMIN', 'MANAGER')">
         <div id="apagar-comunidade-form-container" class="p-4 border rounded bg-light shadow">
             <button type="button" class="close-modal-button" id="closeDeleteCommunityModal">&times;</button>
             <h1>Apagar Comunidade</h1>
             <p style="font-family: 'Louis George Cafe', sans-serif; color: #386D6B;">Selecione a comunidade que deseja apagar:</p>
             <div class="community-delete-list-wrapper">
                 <ul id="deleteCommunityList" class="community-list">
-                    <li style="color: #386D6B; font-family: 'Louis George Cafe', sans-serif;">Carregando comunidades...</li>
+                    <li>Carregando comunidades...</li>
                 </ul>
             </div>
             <button type="button" class="btn btn-danger w-100 mt-3" id="confirmDeleteCommunityButton">Apagar Selecionada</button>
@@ -205,7 +209,6 @@
 	        </div>
 	    </div>
 	</div>
-    </div>
     <script src="/webjars/jquery/3.7.1/jquery.min.js"></script>
     <script src="/webjars/bootstrap/5.3.3/js/bootstrap.min.js"></script>
     <script th:src="@{/js/inicio.js}"></script>
@@ -224,18 +227,18 @@
             const respostas = document.querySelectorAll('.help-answer');
             respostas.forEach((el, i) => {
                 if (i === index) {
-                    el.style.display = el.style.display === 'block' ? 'none' : 'block'; 
+                    el.style.display = el.style.display === 'block' ? 'none' : 'block';
                 } else {
-                    el.style.display = 'none'; 
+                    el.style.display = 'none';
                 }
             });
         }
     </script>
     <script>
 
-		
+
         function OpenForm() {
-            document.getElementById("criar-comunidade").style.display = "flex"; 
+            document.getElementById("criar-comunidade").style.display = "flex";
         }
 
         function CloseForm() {
@@ -244,7 +247,7 @@
 
         function OpenDeleteCommunityModal() {
             document.getElementById("apagar-comunidade-modal").style.display = "flex";
-            loadCommunitiesForDeletion(); 
+            loadCommunitiesForDeletion();
         }
 
         function CloseDeleteCommunityModal() {
@@ -257,7 +260,7 @@
             const deleteCommunityList = document.getElementById('deleteCommunityList');
             deleteCommunityList.innerHTML = '<li style="color: #386D6B; font-family: \'Louis George Cafe\', sans-serif;">Carregando comunidades...</li>';
             selectedCommunityIdForDeletion = null;
-            document.getElementById('confirmDeleteCommunityButton').disabled = true; 
+            document.getElementById('confirmDeleteCommunityButton').disabled = true;
 
             try {
                 const response = await fetch('/api/comunidades');
@@ -266,7 +269,7 @@
                 }
                 const comunidades = await response.json();
 
-                deleteCommunityList.innerHTML = ''; 
+                deleteCommunityList.innerHTML = '';
 
                 if (comunidades.length === 0) {
                     deleteCommunityList.innerHTML = '<li style="color: #386D6B; font-family: \'Louis George Cafe\', sans-serif;">Nenhuma comunidade encontrada.</li>';
@@ -277,13 +280,13 @@
                 comunidades.forEach(com => {
                     const li = document.createElement('li');
                     li.textContent = com.nome;
-                    li.dataset.id = com.id; 
+                    li.dataset.id = com.id;
                     li.addEventListener('click', () => {
                         Array.from(deleteCommunityList.children).forEach(item => {
                             item.classList.remove('selected');
                         });
                         li.classList.add('selected');
-                        selectedCommunityIdForDeletion = com.id; 
+                        selectedCommunityIdForDeletion = com.id;
                         document.getElementById('confirmDeleteCommunityButton').disabled = false;
                     });
                     deleteCommunityList.appendChild(li);
@@ -298,7 +301,7 @@
         document.addEventListener('DOMContentLoaded', () => {
             const editButton = document.getElementById('editCommunitiesButton');
             const communityListSection = document.getElementById('communityListSection');
-            const communityManagementPopup = document.getElementById('communityManagementPopup'); 
+            const communityManagementPopup = document.getElementById('communityManagementPopup');
 
             const createCommunityLink = document.getElementById('createCommunityLink');
             const deleteCommunityLink = document.getElementById('deleteCommunityLink');
@@ -315,10 +318,10 @@
                     e.preventDefault();
                     if (communityManagementPopup.style.display === 'none' || communityManagementPopup.style.display === '') {
                         communityManagementPopup.style.display = 'block';
-                        communityListSection.style.display = 'none'; 
+                        communityListSection.style.display = 'none';
                     } else {
                         communityManagementPopup.style.display = 'none';
-                        communityListSection.style.display = 'block'; 
+                        communityListSection.style.display = 'block';
                     }
                 });
 
@@ -326,23 +329,23 @@
                     createCommunityLink.addEventListener('click', (e) => {
                         e.preventDefault();
                         OpenForm();
-                        communityManagementPopup.style.display = 'none'; 
+                        communityManagementPopup.style.display = 'none';
                     });
                 }
 
                 if (deleteCommunityLink) {
                     deleteCommunityLink.addEventListener('click', (e) => {
                         e.preventDefault();
-                        OpenDeleteCommunityModal(); 
-                        communityManagementPopup.style.display = 'none'; 
+                        OpenDeleteCommunityModal();
+                        communityManagementPopup.style.display = 'none';
                     });
                 }
 
                 if (backToCommunitiesLink) {
                     backToCommunitiesLink.addEventListener('click', (e) => {
                         e.preventDefault();
-                        communityManagementPopup.style.display = 'none'; 
-                        communityListSection.style.display = 'block'; 
+                        communityManagementPopup.style.display = 'none';
+                        communityListSection.style.display = 'block';
                     });
                 }
 
@@ -369,7 +372,7 @@
 
                                     if (response.ok) {
                                         alert('Comunidade apagada com sucesso!');
-                                        CloseDeleteCommunityModal(); 
+                                        CloseDeleteCommunityModal();
                                         window.location.href = '/comunidades';
                                     } else {
                                         const errorText = await response.text();
