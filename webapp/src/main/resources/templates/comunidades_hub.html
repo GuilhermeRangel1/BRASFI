@@ -11,7 +11,6 @@
     <link rel="stylesheet" th:href="@{/css/ajuda.css}" />
 
     <link rel="stylesheet" href="/webjars/bootstrap/5.3.3/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <link rel="icon" type="image/jpg" th:href="@{/img/brasfi.jpg}">
 
@@ -24,7 +23,6 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.12.0/dist/sweetalert2.min.css">
 
     <style>
-
         .swal2-popup-larger {
             width: 35em !important;
             max-width: 90% !important;
@@ -43,18 +41,24 @@
             font-size: 1.1em !important;
             padding: 0.8em 1.5em !important;
         }
+       
+        .role-icon {
+            margin-right: 5px; 
+        }
+
+        .admin-check-icon {
+            color: #28a745; 
+        }
+
+        .user-dot-icon {
+            color: #6c757d;
+        }
     </style>
-    <script th:inline="javascript">
-	    /*<![CDATA[*/
-	        let comunidadeId = /*[[${comunidade != null ? comunidade.id : 0}]]*/ 0;
-	        let usuarioId = /*[[${usuario != null ? usuario.id : 0}]]*/ 0;
-	    /*]]>*/
-	</script>
     <script type="module" src="/js/comunidade.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1.6.1/dist/sockjs.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@stomp/stompjs@7.0.0/bundles/stomp.umd.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <script src="/webjars/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.12.0/dist/sweetalert2.all.min.js"></script>
 
     <script th:src="@{/js/inicio.js}"></script>
@@ -70,10 +74,13 @@
                 <div sec:authorize="isAuthenticated()" class="logged-in-container">
                     <span class="logged-in-username">
                         <th:block sec:authorize="hasRole('ADMIN')">
-                            <i class="fas fa-check-circle" title="Administrador"></i>
+                            <i class="fas fa-check admin-check-icon" title="Administrador"></i>
                         </th:block>
                         <th:block sec:authorize="hasRole('MANAGER') and !hasRole('ADMIN')">
-                            <i class="fas fa-star" title="Gerente"></i>
+                            <i class="fas fa-star role-icon" title="Gerente"></i>
+                        </th:block>
+                        <th:block sec:authorize="!hasAnyRole('ADMIN', 'MANAGER')">
+                            <i class="far fa-circle user-dot-icon" title="Usuário Comum"></i>
                         </th:block>
                         <span sec:authentication="principal.name">Nome do Usuário</span>
                         <span class="user-icon"><i class="fas fa-user-circle"></i></span>
@@ -122,7 +129,6 @@
     </div>
 
     <main class="chat-main-content">
-        <div style="z-index: 8100" th:if="${mensagemSucesso != null}" th:text="${mensagemSucesso}" class="alert alert-success alert-dismissible fade show" role="alert"></div>
         <div class="chat-messages-area">
             <div th:each="post: ${postagens}" class="message-bubble">
                 <div class="user-avatar">
@@ -262,7 +268,7 @@
 	    </div>
 	</div>
     <script src="/webjars/jquery/3.7.1/jquery.min.js"></script>
-    <script src="/webjars/bootstrap/5.3.3/js/bootstrap.min.js"></script>
+    <script src="/webjars/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
     <script th:src="@{/js/inicio.js}"></script>
 	<script th:src="@{/js/comunidadeManagement.js}"></script>
     <script>
@@ -287,8 +293,6 @@
         }
     </script>
     <script>
-
-
         function OpenForm() {
             document.getElementById("criar-comunidade").style.display = "flex";
         }
@@ -416,7 +420,7 @@
                 if (confirmDeleteCommunityButton) {
                     confirmDeleteCommunityButton.addEventListener('click', async () => {
                         if (selectedCommunityIdForDeletion) {
-
+                            // Mantenha CloseDeleteCommunityModal() aqui para fechar a modal de seleção
                             CloseDeleteCommunityModal();
 
                             const result = await Swal.fire({

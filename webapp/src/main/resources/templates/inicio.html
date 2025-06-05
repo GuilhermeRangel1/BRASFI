@@ -35,6 +35,20 @@
         position: relative;
         z-index: 2;
     }
+
+    .role-icon {
+        margin-right: 5px; 
+        color: #007bff;
+    }
+
+    .admin-check-icon {
+        color: #28a745; 
+    }
+
+    .user-dot-icon {
+        color: #6c757d;
+    }
+
   </style>
 </head>
 <body>
@@ -48,10 +62,13 @@
         <div sec:authorize="isAuthenticated()" class="logged-in-container">
           <span class="logged-in-username">
             <th:block sec:authorize="hasRole('ADMIN')">
-                <i class="fas fa-check-circle" title="Administrador"></i>
+                <i class="fas fa-check admin-check-icon" title="Administrador"></i>
             </th:block>
             <th:block sec:authorize="hasRole('MANAGER') and !hasRole('ADMIN')">
-                <i class="fas fa-star" title="Gerente"></i>
+                <i class="fas fa-star role-icon" title="Gerente"></i>
+            </th:block>
+            <th:block sec:authorize="!hasAnyRole('ADMIN', 'MANAGER')">
+                <i class="far fa-circle user-dot-icon" title="Usuário Comum"></i>
             </th:block>
             <span sec:authentication="principal.name">Nome do Usuário</span>
             <span class="user-icon"><i class="fas fa-user-circle"></i></span>

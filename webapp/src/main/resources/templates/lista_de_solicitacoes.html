@@ -39,12 +39,10 @@
             z-index: 2;
         }
 
-        /* Adjust content positioning to avoid header overlap */
         body {
-            padding-top: 150px; /* Adjust this value based on your header's height */
+            padding-top: 150px; 
         }
 
-        /* Styling for the request cards */
         .request-card {
             display: block;
             width: 100%;
@@ -53,35 +51,34 @@
             border-radius: 8px;
             text-align: left;
             cursor: pointer;
-            background-color: #ffffff; /* White background */
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* Subtle shadow */
+            background-color: #ffffff; 
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
             transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-            margin-bottom: 20px; /* Space between cards */
+            margin-bottom: 20px; 
         }
 
         .request-card:hover {
-            transform: translateY(-5px); /* Lift effect on hover */
-            box-shadow: 0 6px 12px rgba(0,0,0,0.15); /* Enhanced shadow on hover */
+            transform: translateY(-5px); 
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15); 
         }
 
         .request-card h3 {
-            color: #2c3e50; /* Darker title */
+            color: #2c3e50; 
             margin-bottom: 15px;
-            border-bottom: 1px solid #eee; /* Separator for title */
+            border-bottom: 1px solid #eee; 
             padding-bottom: 10px;
         }
 
         .request-card p {
             margin-bottom: 8px;
-            color: #555; /* Slightly darker text */
+            color: #555;
             font-size: 0.95em;
         }
 
         .request-card p strong {
-            color: #333; /* Stronger bold text */
+            color: #333; 
         }
 
-        /* Styling for the back button */
         .back-button-container {
             text-align: center;
             margin-top: 30px;
@@ -89,7 +86,7 @@
         }
 
         .back-button-container .btn-secondary {
-            background-color: #6c757d; /* Bootstrap secondary color */
+            background-color: #6c757d; 
             border-color: #6c757d;
             padding: 10px 25px;
             font-size: 1.1em;
@@ -98,7 +95,7 @@
         }
 
         .back-button-container .btn-secondary:hover {
-            background-color: #5a6268; /* Darker on hover */
+            background-color: #5a6268; 
             border-color: #545b62;
         }
 
@@ -233,7 +230,6 @@
 <script src="/webjars/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
 <script th:inline="javascript">
     /*<![CDATA[*/
-    // JavaScript para mostrar o modal se 'mostrarPopup' for true
     $(document).ready(function() {
         if (mostrarPopup) {
             var myModal = new bootstrap.Modal(document.getElementById('solicitacaoModal'), {});
