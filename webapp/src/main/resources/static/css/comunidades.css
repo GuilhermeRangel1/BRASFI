@@ -161,7 +161,7 @@ header {
     background-color: transparent;
     display: flex;
     flex-direction: column;
-    padding-top: 20px;
+    padding-top: 65px;
     z-index: 1;
 }
 

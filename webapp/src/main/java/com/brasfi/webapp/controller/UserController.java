@@ -40,13 +40,13 @@ public class UserController {
 
     @PostMapping("/register")
     public String processRegister(
-            @RequestParam("nome") String nome,
-            @RequestParam("email") String email,
-            @RequestParam("cpf") String cpf,
-            @RequestParam("senha") String senha,
-            @RequestParam("idade") int idade,
-            @RequestParam(value = "tipoConta", defaultValue = "USER") String tipoConta,
-            Model model
+        @RequestParam("nome") String nome,
+        @RequestParam("email") String email,
+        @RequestParam("cpf") String cpf,
+        @RequestParam("senha") String senha,
+        @RequestParam("idade") int idade,
+        @RequestParam(value = "tipoConta", defaultValue = "USER") String tipoConta,
+        Model model
     ) {
         try {
             if ("ADMIN".equals(tipoConta)) {

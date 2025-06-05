@@ -1,6 +1,10 @@
 package com.brasfi.webapp.entities;
 
-public class PostSaida {
+import java.io.Serializable; 
+
+public class PostSaida implements Serializable { 
+    private static final long serialVersionUID = 1L; 
+
     private String authorName;
     private String messageContent;
     private Long authorId; 
@@ -14,7 +18,6 @@ public class PostSaida {
     public PostSaida() {
     }
 
-    // Getters
     public String getAuthorName() {
         return authorName;
     }
