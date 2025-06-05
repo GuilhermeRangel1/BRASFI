@@ -2,6 +2,7 @@ package com.brasfi.webapp.service;
 
 import com.brasfi.webapp.entities.*;
 import com.brasfi.webapp.repositories.ComunidadeRepository;
+import com.brasfi.webapp.repositories.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
@@ -10,11 +11,13 @@ import java.util.Optional;
 @Service
 public class ComunidadeService {
     private final ComunidadeRepository comunidadeRepository;
-    private final PostService postService; 
+    private final PostService postService;
+    private final UserRepository userRepository;
 
-    public ComunidadeService(ComunidadeRepository comunidadeRepository, PostService postService) {
+    public ComunidadeService(ComunidadeRepository comunidadeRepository, PostService postService, UserRepository userRepository) {
         this.comunidadeRepository = comunidadeRepository;
-        this.postService = postService; 
+        this.postService = postService;
+        this.userRepository = userRepository;
     }
 
     public Comunidade incluirComunidade(Comunidade comunidade) {
@@ -23,6 +26,18 @@ public class ComunidadeService {
 
     public List<Comunidade> listarTodasComunidades() {
         return comunidadeRepository.findAll();
+    }
+
+    public String incluirUsuariosComunidade(Comunidade comunidade, NivelDePermissaoComunidade nivelDePermissao) {
+        switch (nivelDePermissao)
+        {
+            case PUBLICA:
+                List<User> allUsers = userRepository.findAll();
+                comunidade.setUsuarios(allUsers);
+                return "Todos foram adicionados";
+
+        }
+        return null;
     }
 
     public boolean validarAcesso(NivelDePermissaoComunidade nivelDePermissaoComunidade, User user,

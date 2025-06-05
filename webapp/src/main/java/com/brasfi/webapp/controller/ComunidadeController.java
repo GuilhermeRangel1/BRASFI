@@ -123,7 +123,10 @@ public class ComunidadeController {
             Model model
     ) {
         System.out.println("Criando comunidade com Nível de Permissão: " + nivelDePermissao.getDescricaoDeAcesso());
-        Comunidade comunidadeAdicionada = comunidadeService.incluirComunidade(new Comunidade(nome, descricao, nivelDePermissao, null));
+        Comunidade  comunidadeQueVaiSeAdicionar= new Comunidade(nome, descricao, nivelDePermissao, null);
+        comunidadeService.incluirUsuariosComunidade(comunidadeQueVaiSeAdicionar, comunidadeQueVaiSeAdicionar.getNivelDePermissao());
+
+        Comunidade comunidadeAdicionada = comunidadeService.incluirComunidade(comunidadeQueVaiSeAdicionar);
         if (comunidadeAdicionada != null && comunidadeAdicionada.getId() != null) {
             return new ModelAndView("redirect:/comunidades/" + comunidadeAdicionada.getId());
         }

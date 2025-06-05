@@ -252,7 +252,7 @@ header {
     display: block;
     padding: 5px 10px;
     text-decoration: none;
-    color: #ffffff;
+    color: #635e5e;
     border-radius: 4px;
     transition: background-color 0.2s ease;
     font-size: 1.1em;
@@ -261,13 +261,13 @@ header {
 
 #communityListSection .community-list li a:hover {
     background-color: rgba(255, 255, 255, 0.1);
-    color: #ffffff;
+    color: #635e5e;
 }
 
 #communityListSection .community-list li.active-community a,
 #communityListSection .community-list li:first-child a {
     background-color: rgba(255, 255, 255, 0.2);
-    color: #ffffff;
+    color: #635e5e;
     font-weight: bold;
     font-size: 1.2em;
     font-family: 'Louis George Cafe', sans-serif;
