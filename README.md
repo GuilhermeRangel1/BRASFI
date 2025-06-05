@@ -1,6 +1,5 @@
 # ☀️ Projeto BRASFI - Ecossistema de Finanças e Investimentos Sustentáveis
 
----
 
 ## 📖 Visão Geral do Projeto
 
@@ -22,9 +21,9 @@ Nossa missão é fortalecer a visibilidade e atualização da BRASFI, facilitand
 
 ## 🚀 Funcionalidades Principais
 
-A plataforma oferece as seguintes funcionalidades, com gestão de permissões para administradores:
+A plataforma oferece as seguintes funcionalidades, com gestão de permissões para administradores e gerentes:
 
-* **Autenticação e Autorização**: Sistema de login e controle de acesso com perfis de **Usuário Comum** e **Administrador**.
+* **Autenticação e Autorização**: Sistema de login e controle de acesso com perfis de **Usuário Comum**, **Gerente** e **Administrador**.
 * **Cadastro de Usuários**: Formulário para novos usuários se registrarem na plataforma.
 * **Gestão de Eventos**:
     * **Eventos Futuros (Agenda de Eventos)**: Visualização de eventos futuros. **Administradores** podem criar (com nome, convidados, URL do vídeo), editar e excluir eventos.
@@ -36,26 +35,10 @@ A plataforma oferece as seguintes funcionalidades, com gestão de permissões pa
 
 ---
 
-## ⚙️ Tecnologias Utilizadas
+## 📚 Diagrama de Classes
 
-Este projeto foi desenvolvido utilizando as seguintes tecnologias:
+* [Diagrama de Classes UML Contínuo - SR1 e SR2](https://lucid.app/lucidchart/f6cb28ee-c956-4cb7-9649-154ae0e29656/edit?viewport_loc=-7468%2C-9705%2C4377%2C2210%2C0_0&invitationId=inv_acaf2bc2-96c4-4108-922d-b1287a485501)
 
-* **Backend**:
-    * ![Java](https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=java&logoColor=white) **Java 17+**: Linguagem de programação principal.
-    * ![Spring Boot](https://img.shields.io/badge/Spring_Boot-6DB33F?style=for-the-badge&logo=spring-boot&logoColor=white) **Spring Boot 3.x**: Framework para construção de aplicações Java.
-    * ![Spring Security](https://img.shields.io/badge/Spring_Security-6DB33F?style=for-the-badge&logo=spring-security&logoColor=white) **Spring Security 6.x**: Para autenticação e autorização robustas.
-    * ![Spring Data JPA](https://img.shields.io/badge/Spring_Data_JPA-6DB33F?style=for-the-badge&logo=spring-data-jpa&logoColor=white) **Spring Data JPA / Hibernate**: Para persistência de dados.
-    * ![Maven](https://img.shields.io/badge/Apache_Maven-C71A36?style=for-the-badge&logo=apache-maven&logoColor=white) **Maven**: Ferramenta de gerenciamento de dependências e construção de projetos.
-* **Frontend**:
-    * ![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white) **HTML5**
-    * ![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white) **CSS3**
-    * ![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black) **JavaScript**
-    * ![Thymeleaf](https://img.shields.io/badge/Thymeleaf-005F0F?style=for-the-badge&logo=thymeleaf&logoColor=white) **Thymeleaf**: Motor de templates para integração com o Spring Boot.
-    * ![Font Awesome](https://img.shields.io/badge/Font_Awesome-528DD7?style=for-the-badge&logo=font-awesome&logoColor=white) **Font Awesome**: Ícones.
-* **Banco de Dados**:
-    * ![MySQL](https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=mysql&logoColor=white) **MySQL**: Sistema de gerenciamento de banco de dados relacional.
-* **Containers**:
-    * ![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white) **Docker** e **Docker Compose**: Para conteinerização da aplicação e do banco de dados, facilitando o ambiente de desenvolvimento.
 
 ---
 
@@ -189,13 +172,22 @@ Esta opção permite que você execute a aplicação Spring Boot diretamente em 
 Para testar as funcionalidades de usuário e administrador:
 
 1.  Acesse a página de registro: `http://localhost:8080/register`
-2.  Preencha o formulário e selecione o **Tipo de Conta** desejado (`Usuário Comum` ou `Administrador`).
+2.  Preencha o formulário e selecione o **Tipo de Conta** desejado (`Usuário Comum`, `Gerente` ou `Administrador`).
 3.  As credenciais serão criptografadas automaticamente ao registrar.
 4.  Após o registro, você poderá fazer login na página `http://localhost:8080/login`.
 
-## 📚 Diagrama de Classes
+## ⚙️ Tecnologias Utilizadas
 
-* [Diagrama de Classes UML Contínuo - SR1 e SR2](https://lucid.app/lucidchart/f6cb28ee-c956-4cb7-9649-154ae0e29656/edit?viewport_loc=-7468%2C-9705%2C4377%2C2210%2C0_0&invitationId=inv_acaf2bc2-96c4-4108-922d-b1287a485501)
+Este projeto foi desenvolvido utilizando as seguintes tecnologias:
+
+* **Backend**:
+    * ![Java](https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=java&logoColor=white) ![Spring Boot](https://img.shields.io/badge/Spring_Boot-6DB33F?style=for-the-badge&logo=spring-boot&logoColor=white) ![Spring Security](https://img.shields.io/badge/Spring_Security-6DB33F?style=for-the-badge&logo=spring-security&logoColor=white) ![Spring Data JPA](https://img.shields.io/badge/Spring_Data_JPA-6DB33F?style=for-the-badge&logo=spring-data-jpa&logoColor=white) ![Maven](https://img.shields.io/badge/Apache_Maven-C71A36?style=for-the-badge&logo=apache-maven&logoColor=white)
+* **Frontend**:
+    * ![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white) ![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white) ![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black) ![Thymeleaf](https://img.shields.io/badge/Thymeleaf-005F0F?style=for-the-badge&logo=thymeleaf&logoColor=white) ![Font Awesome](https://img.shields.io/badge/Font_Awesome-528DD7?style=for-the-badge&logo=font-awesome&logoColor=white)
+* **Banco de Dados**:
+    * ![MySQL](https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=mysql&logoColor=white)
+* **Containers**:
+    * ![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white) ![Docker Compose](https://img.shields.io/badge/Docker_Compose-2496ED?style=for-the-badge&logo=docker&logoColor=white)
 
 ## 👨‍💻 Criado por:
 
