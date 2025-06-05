@@ -1,8 +1,6 @@
 package com.brasfi.webapp.service;
 
-import com.brasfi.webapp.entities.Comunidade;
-import com.brasfi.webapp.entities.NivelDePermissaoComunidade;
-import com.brasfi.webapp.entities.User;
+import com.brasfi.webapp.entities.*;
 import com.brasfi.webapp.repositories.ComunidadeRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,18 +34,14 @@ public class ComunidadeService {
         switch (nivelDePermissaoComunidade)
         {
             case APENAS_LIDERES:
-                // Assuming you have a way to identify leaders, e.g., a role or a specific list.
-                // For now, let's assume if the user is in the community's user list, they are allowed for this type.
-                // You'll need to define what "APENAS_LIDERES" truly means for your application.
-                // For example: return user.hasRole("LIDER") || usuariosComunidade.contains(user);
-                return usuariosComunidade.contains(user); // Placeholder for now, refine this based on your 'leader' logic.
+                return usuariosComunidade.contains(user) || user instanceof Gerente; // Placeholder for now, refine this based on your 'leader' logic.
 
             case PUBLICA:
                 return true; // Anyone can access public communities.
 
             case PERSONALIZADA:
                 System.out.println(usuariosComunidade);
-                return usuariosComunidade.contains(user); // Only users explicitly added to the community can access.
+                return usuariosComunidade.contains(user) || user instanceof Gerente; // Only users explicitly added to the community can access.
 
             default:
                 return false; // Default to denying access if the permission level is not recognized.

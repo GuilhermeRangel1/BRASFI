@@ -84,13 +84,16 @@
                         <p><strong>Comunidade Desejada:</strong>
                             <span th:text="${solicitacaoSelecionada.comunidadeSolicitada != null ? solicitacaoSelecionada.comunidadeSolicitada.nome : 'Não especificada'}"></span>
                         </p>
+                        <p><strong>Mensagem:</strong>
+                            <span th:text="${solicitacaoSelecionada.getConteudo() != null ? solicitacaoSelecionada.getConteudo() : 'Não especificada'}"></span>
+                        </p>
                         <p><strong>Data da Solicitação:</strong>
                             <span th:text="${solicitacaoSelecionada.dataDeSolicitacao}"></span>
                         </p>
 
                         <form th:action="@{/adicionar-usuario-na-comunidade}" method="post">
                             <input type="hidden" name="solicitacaoId" th:value="${solicitacaoSelecionada.id}" />
-                            <p class="mt-3">Deseja adicionar este usuário à comunidade?</p>
+                            <p class="mt-3" th:text="'Deseja adicionar este usuário em ' + ${solicitacaoSelecionada.getComunidadeSolicitada().getNome()}"></p>
                             <button type="submit" class="btn btn-success">Permitir</button>
                         </form>
 
