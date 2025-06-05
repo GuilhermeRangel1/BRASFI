@@ -3,33 +3,6 @@ body {
     font-family: 'Louis George Cafe', sans-serif;
     line-height: 1.6;
 }
-.acesso-negado-overlay {
-    position: fixed; 
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.7); 
-    justify-content: center; 
-    align-items: center; 
-    z-index: 1000; 
-}
-
-.acesso-negado-popup {
-    background-color: #f0f0f0; 
-    padding: 30px;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    text-align: center;
-    max-width: 500px;
-    width: 90%;
-    z-index: 1001; 
-    position: relative;
-    color: #333; 
-    border: 1px solid #ccc;
-}
-
-
 
 .acesso-negado-overlay {
     position: fixed;
@@ -37,22 +10,25 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.7); 
+    background-color: rgba(0, 0, 0, 0.7);
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
     display: flex; 
-    align-items: center; 
-    justify-content: center; 
-    z-index: 100000; 
 }
 
 .acesso-negado-popup {
-    background-color: #fff;
+    background-color: #f0f0f0;
     padding: 30px;
     border-radius: 8px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     text-align: center;
-    max-width: 450px; 
-    width: 90%; 
-    color: #333; 
+    max-width: 500px;
+    width: 90%;
+    z-index: 1001;
+    position: relative;
+    color: #333;
+    border: 1px solid #ccc;
 }
 
 .acesso-negado-popup h3 {
@@ -72,12 +48,12 @@ body {
     margin-bottom: 20px;
     border: 1px solid #ccc;
     border-radius: 5px;
-    resize: vertical; 
+    resize: vertical;
     min-height: 80px;
 }
 
 .acesso-negado-popup button {
-    background-color: #007bff; 
+    background-color: #007bff;
     color: white;
     padding: 10px 20px;
     border: none;
@@ -89,6 +65,7 @@ body {
 .acesso-negado-popup button:hover {
     background-color: #0056b3;
 }
+
 header {
     position: fixed;
     top: 0;
@@ -108,7 +85,6 @@ header {
     padding-right: 350px;
     padding-left: 200px;
 }
-
 
 .communities-title-standalone {
     position: fixed;
@@ -302,53 +278,52 @@ header {
     background-color: rgba(255, 255, 255, 0.3);
 }
 
-
 .message-bubble {
     display: flex;
     margin-bottom: 15px;
-    max-width: 80%; 
+    max-width: 80%;
 }
 
 .message-bubble .message-content {
     padding: 10px 15px;
     border-radius: 18px;
-    word-wrap: break-word; 
+    word-wrap: break-word;
     font-family: 'Louis George Cafe', sans-serif;
 }
 
 .message-bubble .user-avatar {
-    font-size: 2.2em; 
+    font-size: 2.2em;
     color: #999;
-    flex-shrink: 0; 
-	margin-top: -10px;
+    flex-shrink: 0;
+    margin-top: -10px;
 }
 
 .message-bubble.other-message {
-    justify-content: flex-start; 
-    margin-right: auto; 
-    align-items: flex-start; 
+    justify-content: flex-start;
+    margin-right: auto;
+    align-items: flex-start;
 }
 
 .message-bubble.other-message .message-content {
-    background-color: #e9e9eb; 
+    background-color: #e9e9eb;
     color: #333;
     margin-left: 10px;
 }
 
-.message-bubble.my-message { 
-    justify-content: flex-end; 
-    margin-left: auto; 
-    align-items: flex-end; 
+.message-bubble.my-message {
+    justify-content: flex-end;
+    margin-left: auto;
+    align-items: flex-end;
 }
 
 .message-bubble.my-message .message-content {
-    background-color: #dcf8c6; 
+    background-color: #dcf8c6;
     color: #333;
     margin-right: 10px;
 }
 
 .message-bubble.my-message .user-avatar {
-    order: 2; 
+    order: 2;
 }
 
 .message-author {
@@ -363,7 +338,6 @@ header {
     font-size: 1em;
     line-height: 1.4;
 }
-
 
 .chat-input-area {
     position: fixed;
@@ -761,6 +735,65 @@ header {
     background-color: #a72320;
     transform: translateY(0);
     box-shadow: 0 2px 5px rgba(217,83,79,0.2);
+}
+
+.event-select-list {
+    list-style: none;
+    padding: 0;
+    max-height: 300px;
+    overflow-y: auto;
+    border: 1px solid #eee;
+    border-radius: 5px;
+    margin-top: 10px;
+}
+.event-select-list li {
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    font-family: 'Louis George Cafe', sans-serif;
+    color: #333;
+}
+.event-select-list li:last-child {
+    border-bottom: none;
+}
+.event-select-list li:hover {
+    background-color: #e9e9e9;
+}
+.event-select-list li.selected {
+    background-color: #dcf8c6;
+    font-weight: bold;
+}
+.event-select-list li span.event-date {
+    font-size: 0.9em;
+    color: #666;
+    margin-left: 10px;
+}
+
+#announce-event-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000;
+}
+
+#announce-event-form-container {
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    max-width: 500px;
+    width: 90%;
+    position: relative;
+    color: #333;
+    border: 1px solid #ccc;
 }
 
 .vh-100 {
