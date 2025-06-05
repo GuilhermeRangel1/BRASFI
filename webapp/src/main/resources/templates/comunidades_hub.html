@@ -83,6 +83,7 @@
     </div>
 
     <main class="chat-main-content">
+        <div style="z-index: 90" th:if="${mensagemSucesso != null}" th:text="${mensagemSucesso}" class="alert alert-success alert-dismissible fade show" role="alert"></div>
         <div class="chat-messages-area">
             <div th:each="post: ${postagens}" class="message-bubble">
                 <div class="user-avatar">

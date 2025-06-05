@@ -41,6 +41,8 @@ public class SolicitacaoController {
             @AuthenticationPrincipal CustomUserDetails currentUser,
             RedirectAttributes redirectAttributes // Used for flash attributes
     ) {
+        ModelAndView mv = new ModelAndView("comunidades_hub");
+
         // Ensure a user is logged in to create a solicitation
         if (currentUser == null || currentUser.getUserEntity() == null) {
             redirectAttributes.addFlashAttribute("erroMensagem", "Você precisa estar logado para enviar uma solicitação.");
@@ -52,7 +54,7 @@ public class SolicitacaoController {
 
         if (comunidadeOptional.isEmpty()) {
             redirectAttributes.addFlashAttribute("erroMensagem", "Comunidade solicitada não encontrada.");
-            return new ModelAndView("redirect:/"); // Redirect to home or an error page
+            return new ModelAndView("redirect:/comunidades"); // Redirect to home or an error page
         }
 
         Comunidade comunidadeSolicitada = comunidadeOptional.get();
@@ -69,7 +71,7 @@ public class SolicitacaoController {
         solicitacaoRepository.save(novaSolicitacao);
 
         redirectAttributes.addFlashAttribute("mensagemSucesso", "Sua solicitação foi enviada com sucesso!");
-        return new ModelAndView("redirect:/"); // Redirect to the home page after submission
+        return new ModelAndView("redirect:/comunidades/1"); // Redirect to the home page after submission
     }
 
     @PreAuthorize("hasRole('MANAGER')")
@@ -117,6 +119,7 @@ public class SolicitacaoController {
             @RequestParam("solicitacaoId") Long solicitacaoId
     )
     {
+        ModelAndView mv = new ModelAndView("lista_de_solicitacoes");
         return solicitacaoRepository.findById(solicitacaoId).map(solicitacao -> {
             User user = solicitacao.getUsuarioSolicitante();
             Comunidade comunidade = solicitacao.getComunidadeSolicitada();
@@ -124,7 +127,7 @@ public class SolicitacaoController {
             comunidadeRepository.save(comunidade);
             solicitacaoRepository.delete(solicitacao);
 
-            return new ModelAndView("redirect:/");
+            return mv;
         }).orElseGet(() -> {
             return new ModelAndView("redirect:/listar-solicitacoes?error=solicitacaoNaoEncontradaParaAdicionar");
         });
