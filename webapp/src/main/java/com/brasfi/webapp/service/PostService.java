@@ -1,10 +1,10 @@
 package com.brasfi.webapp.service;
 
-
 import com.brasfi.webapp.entities.Comunidade;
 import com.brasfi.webapp.entities.Post;
 import com.brasfi.webapp.repositories.PostRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional; 
 
 import java.util.List;
 
@@ -16,8 +16,7 @@ public class PostService {
         this.postRepository = postRepository;
     }
 
-    public void incluirPost(Post post)
-    {
+    public void incluirPost(Post post) {
         postRepository.save(post);
     }
 
@@ -25,4 +24,8 @@ public class PostService {
 
     public List<Post> buscarPorComunidade(Comunidade comunidade) { return postRepository.findByComunidade(comunidade); }
 
+    @Transactional 
+    public void excluirPostsPorComunidade(Comunidade comunidade) {
+        postRepository.deleteByComunidade(comunidade);
+    }
 }

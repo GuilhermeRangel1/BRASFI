@@ -10,9 +10,11 @@ import java.util.Optional;
 @Service
 public class ComunidadeService {
     private final ComunidadeRepository comunidadeRepository;
+    private final PostService postService; 
 
-    public ComunidadeService(ComunidadeRepository comunidadeRepository) {
+    public ComunidadeService(ComunidadeRepository comunidadeRepository, PostService postService) {
         this.comunidadeRepository = comunidadeRepository;
+        this.postService = postService; 
     }
 
     public Comunidade incluirComunidade(Comunidade comunidade) {
@@ -26,7 +28,6 @@ public class ComunidadeService {
     public boolean validarAcesso(NivelDePermissaoComunidade nivelDePermissaoComunidade, User user,
                                  List<User> usuariosComunidade)
     {
-        // If there's no logged-in user, they can't access any restricted communities.
         if (user == null) {
             return nivelDePermissaoComunidade == NivelDePermissaoComunidade.PUBLICA;
         }
@@ -34,24 +35,29 @@ public class ComunidadeService {
         switch (nivelDePermissaoComunidade)
         {
             case APENAS_LIDERES:
-                return usuariosComunidade.contains(user) || user instanceof Gerente; // Placeholder for now, refine this based on your 'leader' logic.
+                return usuariosComunidade.contains(user) || user instanceof Gerente || user instanceof Administrador;
 
             case PUBLICA:
-                return true; // Anyone can access public communities.
+                return true; 
 
             case PERSONALIZADA:
                 System.out.println(usuariosComunidade);
-                return usuariosComunidade.contains(user) || user instanceof Gerente; // Only users explicitly added to the community can access.
+                return usuariosComunidade.contains(user) || user instanceof Gerente || user instanceof Administrador;
 
             default:
-                return false; // Default to denying access if the permission level is not recognized.
+                return false; 
         }
     }
 
-    @Transactional 
+    @Transactional
     public boolean excluirComunidade(Long id) {
-        if (comunidadeRepository.existsById(id)) {
-            comunidadeRepository.deleteById(id);
+        Optional<Comunidade> comunidadeOptional = comunidadeRepository.findById(id);
+        if (comunidadeOptional.isPresent()) {
+            Comunidade comunidade = comunidadeOptional.get();
+
+            postService.excluirPostsPorComunidade(comunidade);
+
+            comunidadeRepository.delete(comunidade);
             return true;
         }
         return false;
