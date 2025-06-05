@@ -137,6 +137,13 @@ public class ComunidadeController {
 
     @GetMapping("/comunidades")
     public String redirecionarParaPrimeiraComunidade() {
+
+        if (comunidadeRepository.findAll().isEmpty()) {
+            Comunidade geral = new Comunidade("Geral", "Bem vindo à BRASFI!!", NivelDePermissaoComunidade.PUBLICA);
+            comunidadeService.incluirUsuariosComunidade(geral, geral.getNivelDePermissao());
+            comunidadeRepository.save(geral);
+        }
+
         return comunidadeRepository.findAll()
                 .stream()
                 .findFirst()
