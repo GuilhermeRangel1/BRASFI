@@ -127,6 +127,7 @@ public class SolicitacaoController {
             comunidadeRepository.save(comunidade);
             solicitacaoRepository.delete(solicitacao);
 
+            mv.addObject("solicitacoes", solicitacaoRepository.findAll());
             return mv;
         }).orElseGet(() -> {
             return new ModelAndView("redirect:/listar-solicitacoes?error=solicitacaoNaoEncontradaParaAdicionar");
@@ -142,10 +143,12 @@ public class SolicitacaoController {
             RedirectAttributes redirectAttributes
     ) {
         ModelAndView mv = new ModelAndView("lista_de_solicitacoes");
+        mv.addObject("solicitacoes", solicitacaoRepository.findAll());
 
         solicitacaoRepository.findById(solicitacaoId).ifPresentOrElse(
                 solicitacao -> {
                     solicitacaoRepository.delete(solicitacao);
+                    mv.addObject("solicitacoes", solicitacaoRepository.findAll());
                     mv.addObject("mensagemSucesso", "Solicitação recusada e excluída com sucesso.");
                 },
                 () -> {

@@ -123,7 +123,7 @@
             </ul>
         </div>
 
-        <button sec:authorize="hasRole('MANAGER')"><a th:href="@{/listar-solicitacoes}">Verificar solicitações</a></button>
+        <a class="btn btn-primary" style="margin-bottom: 80px; z-index: 1005;" sec:authorize="hasRole('MANAGER')" role="button" th:href="@{/listar-solicitacoes}">Verificar solicitações</a>
 
     </div>
 </div>

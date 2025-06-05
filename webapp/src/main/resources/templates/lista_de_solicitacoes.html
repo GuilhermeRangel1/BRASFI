@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,6 +9,98 @@
     <link rel="stylesheet" href="/webjars/bootstrap/5.3.3/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <link rel="icon" type="image/jpg" href="/img/brasfi.jpg">
+
+    <style>
+        .bottom-logo-section {
+            background-image: url('/img/matagal.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .bottom-logo-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #f0f0f0;
+            opacity: 0.6;
+            z-index: 1;
+        }
+
+        .bottom-logo-section > .bottom-brasfi-logo,
+        .bottom-logo-section > .bottom-brasfi-icon {
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Adjust content positioning to avoid header overlap */
+        body {
+            padding-top: 150px; /* Adjust this value based on your header's height */
+        }
+
+        /* Styling for the request cards */
+        .request-card {
+            display: block;
+            width: 100%;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            text-align: left;
+            cursor: pointer;
+            background-color: #ffffff; /* White background */
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* Subtle shadow */
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+            margin-bottom: 20px; /* Space between cards */
+        }
+
+        .request-card:hover {
+            transform: translateY(-5px); /* Lift effect on hover */
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15); /* Enhanced shadow on hover */
+        }
+
+        .request-card h3 {
+            color: #2c3e50; /* Darker title */
+            margin-bottom: 15px;
+            border-bottom: 1px solid #eee; /* Separator for title */
+            padding-bottom: 10px;
+        }
+
+        .request-card p {
+            margin-bottom: 8px;
+            color: #555; /* Slightly darker text */
+            font-size: 0.95em;
+        }
+
+        .request-card p strong {
+            color: #333; /* Stronger bold text */
+        }
+
+        /* Styling for the back button */
+        .back-button-container {
+            text-align: center;
+            margin-top: 30px;
+            margin-bottom: 30px;
+        }
+
+        .back-button-container .btn-secondary {
+            background-color: #6c757d; /* Bootstrap secondary color */
+            border-color: #6c757d;
+            padding: 10px 25px;
+            font-size: 1.1em;
+            border-radius: 5px;
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+
+        .back-button-container .btn-secondary:hover {
+            background-color: #5a6268; /* Darker on hover */
+            border-color: #545b62;
+        }
+    </style>
 
     <script th:inline="javascript">
         /*<![CDATA[*/
@@ -21,47 +113,65 @@
 </head>
 <body>
 
-<div class="container mt-4">
-    <h2>Solicitações Pendentes</h2>
-
-    <!--<div th:if="${mensagemSucesso != null}" class="alert alert-success alert-dismissible fade show" role="alert">
-        <span th:text="${mensagemSucesso}"></span>
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+<header>
+    <div class="top-bar">
+        <div class="logo-section">
+            <div class="brasfi-logo">BRASFI</div>
+            <img th:src="@{/img/brasfi.jpg}" alt="Logo BRASFI" class="brasfi-icon">
+        </div>
+        <div class="user-section">
+            <div sec:authorize="isAuthenticated()" class="logged-in-container">
+                <span class="logged-in-username"><i class="fas fa-star"></i> <span sec:authentication="principal.name">Nome do Usuário</span> <span class="user-icon"><i class="fas fa-user-circle"></i></span></span>
+                <a th:href="@{/logout}" class="logout-button">Sair</a> </div>
+            <a sec:authorize="!isAuthenticated()" th:href="@{/login}" class="login-button">Login</a>
+        </div>
     </div>
-    <div th:if="${erroMensagem != null and !mostrarPopup}" class="alert alert-danger alert-dismissible fade show" role="alert">
-        <span th:text="${erroMensagem}"></span>
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>-->
+
+    <div class="menu-container">
+        <div class="menu-toggle-bar">
+            <button class="menu-open-button" id="menu-open-button">
+                <i class="fas fa-angle-down"></i>
+            </button>
+        </div>
+        <ul class="menu" id="main-menu">
+            <button class="menu-close-button" id="menu-close-button">
+                <i class="fas fa-angle-up"></i>
+            </button>
+            <li><a th:href="@{/}">Home</a></li>
+            <li><a th:href="@{/sobre}">Sobre a BRASFI</a></li>
+            <li><a th:href="@{/agenda}">Agenda de Eventos</a></li>
+            <li><a th:href="@{/eventosGravados}">Eventos Gravados</a></li>
+            <li><a th:href="@{/comunidades}">Comunidade</a></li>
+        </ul>
+    </div>
+</header>
+
+<div class="container mt-4">
+    <h2 class="mb-4">Solicitações Pendentes</h2>
 
     <ul style="list-style: none; padding: 0;">
-        <li th:each="solicitacao : ${solicitacoes}" style="margin-bottom: 20px;">
+        <li th:each="solicitacao : ${solicitacoes}">
             <form th:action="@{/processar-solicitacao-acao}" method="post">
-                <button type="submit"
-                        class="btn btn-light"
-                        style="display: block; width: 100%; padding: 15px; border: 1px solid #ddd;
-                               border-radius: 8px; text-align: left; cursor: pointer;
-                               background-color: #f9f9f9; box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-                               transition: background-color 0.3s ease;">
-
+                <button type="submit" class="request-card">
                     <input type="hidden" name="solicitacaoId" th:value="${solicitacao.id}" />
 
-                    <h3 style="margin-top: 0; margin-bottom: 10px; color: #333;">Detalhes da Solicitação</h3>
+                    <h3>Detalhes da Solicitação</h3>
 
-                    <p th:if="${solicitacao.usuarioSolicitante != null}" style="margin-bottom: 5px;">
+                    <p th:if="${solicitacao.usuarioSolicitante != null}">
                         <strong>Usuário:</strong> <span th:text="${solicitacao.usuarioSolicitante.name}"></span>
                     </p>
-                    <p th:unless="${solicitacao.usuarioSolicitante != null}" style="margin-bottom: 5px;">
+                    <p th:unless="${solicitacao.usuarioSolicitante != null}">
                         <strong>Usuário:</strong> Desconhecido
                     </p>
 
-                    <p th:if="${solicitacao.comunidadeSolicitada != null}" style="margin-bottom: 5px;">
+                    <p th:if="${solicitacao.comunidadeSolicitada != null}">
                         <strong>Comunidade:</strong> <span th:text="${solicitacao.comunidadeSolicitada.nome}"></span>
                     </p>
-                    <p th:unless="${solicitacao.comunidadeSolicitada != null}" style="margin-bottom: 5px;">
+                    <p th:unless="${solicitacao.comunidadeSolicitada != null}">
                         <strong>Comunidade:</strong> Não especificada
                     </p>
 
-                    <p style="margin-bottom: 0;">
+                    <p>
                         <strong>Data da Solicitação:</strong> <span th:text="${solicitacao.dataDeSolicitacao}"></span>
                     </p>
                 </button>
@@ -109,8 +219,11 @@
     </div>
 </div>
 
-<a style="margin-left: 500px" href="/comunidades/1" class="btn btn-secondary mb-3">Voltar</a>
+<div class="back-button-container">
+    <a href="/comunidades/1" class="btn btn-secondary">Voltar</a>
+</div>
 
+<script th:src="@{/js/inicio.js}"></script>
 <script src="/webjars/jquery/3.7.1/jquery.min.js"></script>
 <script src="/webjars/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
 <script th:inline="javascript">
@@ -121,24 +234,6 @@
             var myModal = new bootstrap.Modal(document.getElementById('solicitacaoModal'), {});
             myModal.show();
         }
-
-        // Exibir mensagens de sucesso/erro que vêm como flash attributes
-        /*if (mensagemSucesso) {
-            var alertPlaceholder = document.createElement('div');
-            alertPlaceholder.innerHTML = '<div class="alert alert-success alert-dismissible fade show" role="alert">' +
-                '<span>' + mensagemSucesso + '</span>' +
-                '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>' +
-                '</div>';
-            document.querySelector('.container.mt-4').prepend(alertPlaceholder);
-        }
-        if (erroMensagem && !mostrarPopup) { // Evita duplicidade se o erro já é parte do popup
-            var alertPlaceholder = document.createElement('div');
-            alertPlaceholder.innerHTML = '<div class="alert alert-danger alert-dismissible fade show" role="alert">' +
-                '<span>' + erroMensagem + '</span>' +
-                '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>' +
-                '</div>';
-            document.querySelector('.container.mt-4').prepend(alertPlaceholder);
-        }*/
     });
     /*]]>*/
 </script>
