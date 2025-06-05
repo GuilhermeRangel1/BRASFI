@@ -1,33 +1,40 @@
-# ☀️ Projeto BRASFI - Plataforma de Financiamentos Sustentáveis
+# ☀️ Projeto BRASFI - Ecossistema de Finanças e Investimentos Sustentáveis
+
+---
 
 ## 📖 Visão Geral do Projeto
 
-A BRASFI (Brasil Sustentável em Finanças e Investimentos) é uma aliança de pesquisadores fundada em abril de 2020, com a missão de construir e compartilhar conhecimento sobre finanças e investimentos sustentáveis. Nosso projeto visa criar uma plataforma digital que serve como um ecossistema financeiro responsável, divulgando eventos sobre financiamentos sustentáveis, conectando uma comunidade engajada e facilitando a comunicação entre seus membros.
+A BRASFI iniciou sua trajetória em **2020** como a Aliança Brasileira de Pesquisa em Finanças e Investimentos Sustentáveis, fundada por um grupo de pesquisadores na Bahia. Com a adição de profissionais do mercado e do setor corporativo, a BRASFI evoluiu para se concentrar no desenvolvimento de um **ecossistema de profissionais** no campo das finanças e investimentos sustentáveis.
 
-Com uma abordagem multidisciplinar, a BRASFI reúne professores, pesquisadores, alunos de graduação, mestrado e doutorado, além de especialistas do mercado, combinando experiências acadêmicas e práticas para impulsionar o desenvolvimento sustentável no setor financeiro.
+Nosso projeto visa criar uma plataforma digital que serve como um ponto central para esse ecossistema, facilitando a **disseminação de conhecimento**, o **desenvolvimento de soluções e projetos**, e a **comunicação** entre todos os nossos stakeholders.
+
+---
 
 ## 🌱 Objetivos da Plataforma
 
-Nossa missão é criar um ecossistema financeiro mais responsável, ajudando nossos usuários a atingirem seus objetivos financeiros enquanto cuidam do futuro do nosso planeta.
+Nossa missão é fortalecer a visibilidade e atualização da BRASFI, facilitando a conexão e a colaboração entre os profissionais e contribuindo para um futuro mais sustentável através das finanças.
 
-* **Inovação**: Implementamos as melhores soluções financeiras com práticas verdes.
-* **Responsabilidade Social**: Divulgamos e investimos em empresas e projetos que têm um impacto positivo no meio ambiente.
-* **Transparência e Ética**: Garantimos que nossos processos sejam claros e acessíveis a todos os envolvidos.
+* **Promover Soluções e Projetos**: Incentivar e apoiar o desenvolvimento de iniciativas em finanças e investimentos sustentáveis.
+* **Disseminar Conhecimento**: Compartilhar informações essenciais e insights para o crescimento contínuo do setor.
+* **Fortalecer Conexões**: Conectar pesquisadores, especialistas de mercado, líderes corporativos e voluntários para impulsionar a área.
+
+---
 
 ## 🚀 Funcionalidades Principais
 
-A plataforma oferece as seguintes funcionalidades:
+A plataforma oferece as seguintes funcionalidades, com gestão de permissões para administradores:
 
 * **Autenticação e Autorização**: Sistema de login e controle de acesso com perfis de **Usuário Comum** e **Administrador**.
 * **Cadastro de Usuários**: Formulário para novos usuários se registrarem na plataforma.
 * **Gestão de Eventos**:
-    * Visualização de eventos futuros (Agenda de Eventos).
-    * Visualização de eventos gravados (Eventos Gravados) com opções de filtragem por categoria.
-    * **Funcionalidades de Administrador**: Criação, edição e exclusão de eventos.
-* **Comunidades**:
+    * **Eventos Futuros (Agenda de Eventos)**: Visualização de eventos futuros. **Administradores** podem criar (com nome, convidados, URL do vídeo), editar e excluir eventos.
+    * **Eventos Gravados**: Visualização de eventos passados com opções de filtragem por categoria. **Administradores** também podem criar, editar e excluir esses eventos.
+* **Comunidades e Chats**:
     * **Participação em Comunidades**: Usuários podem entrar em diversas comunidades de interesse.
-    * **Troca de Mensagens**: Possibilidade de enviar e receber mensagens dentro das comunidades para interagir com outros membros.
-* **Conteúdo Informativo**: Páginas dedicadas a apresentar a empresa (Sobre a BRASFI), e informações gerais (Home).
+    * **Chats Interativos**: Permitem troca de mensagens, solicitação para entrar em chats restritos e anúncio de eventos existentes no site. **Gerentes e Administradores** podem criar diversos chats.
+* **Conteúdo Institucional**: Páginas dedicadas a apresentar a organização (Sobre a BRASFI) e informações gerais (Home).
+
+---
 
 ## ⚙️ Tecnologias Utilizadas
 
@@ -49,6 +56,8 @@ Este projeto foi desenvolvido utilizando as seguintes tecnologias:
     * ![MySQL](https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=mysql&logoColor=white) **MySQL**: Sistema de gerenciamento de banco de dados relacional.
 * **Containers**:
     * ![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white) **Docker** e **Docker Compose**: Para conteinerização da aplicação e do banco de dados, facilitando o ambiente de desenvolvimento.
+
+---
 
 ## ⚙️ Como Rodar o Projeto Localmente
 
