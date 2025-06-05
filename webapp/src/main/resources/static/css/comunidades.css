@@ -44,7 +44,7 @@ body {
     display: flex; /* Use flexbox to center the popup */
     align-items: center; /* Center vertically */
     justify-content: center; /* Center horizontally */
-    z-index: 1000; /* Ensure it's on top of other content */
+    z-index: 100000; /* Ensure it's on top of other content */
     /* Remove display: none; if it was here. Thymeaf's th:if will control rendering. */
 }
 
