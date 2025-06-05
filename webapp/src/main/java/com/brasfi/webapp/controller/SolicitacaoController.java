@@ -11,6 +11,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -121,11 +122,33 @@ public class SolicitacaoController {
             Comunidade comunidade = solicitacao.getComunidadeSolicitada();
             comunidade.getUsuarios().add(user);
             comunidadeRepository.save(comunidade);
+            solicitacaoRepository.delete(solicitacao);
 
             return new ModelAndView("redirect:/");
         }).orElseGet(() -> {
             return new ModelAndView("redirect:/listar-solicitacoes?error=solicitacaoNaoEncontradaParaAdicionar");
         });
 
+    }
+
+    @PostMapping("/excluir-solicitacao")
+    @Transactional
+    @PreAuthorize("hasRole('MANAGER')")
+    public ModelAndView excluirSolicitacao(
+            @RequestParam("solicitacaoId") Long solicitacaoId,
+            RedirectAttributes redirectAttributes
+    ) {
+        ModelAndView mv = new ModelAndView("lista_de_solicitacoes");
+
+        solicitacaoRepository.findById(solicitacaoId).ifPresentOrElse(
+                solicitacao -> {
+                    solicitacaoRepository.delete(solicitacao);
+                    mv.addObject("mensagemSucesso", "Solicitação recusada e excluída com sucesso.");
+                },
+                () -> {
+                    mv.addObject("erroMensagem", "Solicitação não encontrada para exclusão.");
+                }
+        );
+        return mv;
     }
 }
