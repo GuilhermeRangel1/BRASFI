@@ -69,10 +69,9 @@ public class ComunidadeController {
 
         if (comunidadeOpt.isPresent()) {
             Comunidade comunidade = comunidadeOpt.get();
-            User user = (currentUser != null) ? currentUser.getUserEntity() : null; // Get the User entity
+            User user = (currentUser != null) ? currentUser.getUserEntity() : null; 
 
-            // Determine if the user can access the community
-            boolean podeAcessar = comunidadeService.validarAcesso(comunidade.getNivelDePermissao(), user, new ArrayList<>(comunidade.getUsuarios())); // Assuming getNivelDePermissao() and getUsuarios() exist on Comunidade
+            boolean podeAcessar = comunidadeService.validarAcesso(comunidade.getNivelDePermissao(), user, new ArrayList<>(comunidade.getUsuarios())); 
 
             if (currentUser != null) {
                 mv.addObject("usuario", currentUser.getUserEntity());
@@ -80,9 +79,8 @@ public class ComunidadeController {
 
             mv.addObject("comunidade", comunidade);
             mv.addObject("comunidades", comunidadeRepository.findAll());
-            mv.addObject("podeAcessar", podeAcessar); // Add the access flag to the model
+            mv.addObject("podeAcessar", podeAcessar); 
 
-            // Conditional rendering for the "access denied" overlay message
             if (!podeAcessar) {
                 mv.addObject("mensagemAcessoNegado", "Você não tem permissão para acessar esta comunidade. Envie uma solicitação para ter acesso.");
             }

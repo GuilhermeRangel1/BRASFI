@@ -43,11 +43,12 @@
         }
        
         .role-icon {
-            margin-right: 5px; 
+            margin-right: 5px;
+			color: #6c757d; 
         }
 
         .admin-check-icon {
-            color: #28a745; 
+            color: #6c757d; 
         }
 
         .user-dot-icon {
@@ -168,7 +169,7 @@
                     </li>
                     </ul>
             </div>
-            <a class="btn btn-primary" style="margin-bottom: 80px; z-index: 1005;" sec:authorize="hasRole('MANAGER')" role="button" th:href="@{/listar-solicitacoes}">Verificar solicitações</a>
+            <a class="btn btn-primary" style="margin-bottom: 80px; z-index: 1005;" sec:authorize="hasAnyRole('ADMIN', 'MANAGER')" role="button" th:href="@{/listar-solicitacoes}">Verificar solicitações</a>
         </div>
     </div>
 
