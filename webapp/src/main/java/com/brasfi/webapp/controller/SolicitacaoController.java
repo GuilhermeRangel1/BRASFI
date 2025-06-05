@@ -39,14 +39,13 @@ public class SolicitacaoController {
             @RequestParam("comunidadeId-solicitada") Long comunidadeId,
             @RequestParam("solicitacao-usuario") String conteudoSolicitacao,
             @AuthenticationPrincipal CustomUserDetails currentUser,
-            RedirectAttributes redirectAttributes // Used for flash attributes
+            RedirectAttributes redirectAttributes 
     ) {
         ModelAndView mv = new ModelAndView("comunidades_hub");
 
-        // Ensure a user is logged in to create a solicitation
         if (currentUser == null || currentUser.getUserEntity() == null) {
             redirectAttributes.addFlashAttribute("erroMensagem", "Você precisa estar logado para enviar uma solicitação.");
-            return new ModelAndView("redirect:/login"); // Redirect to login page
+            return new ModelAndView("redirect:/login");
         }
 
         User solicitante = currentUser.getUserEntity();
@@ -54,27 +53,24 @@ public class SolicitacaoController {
 
         if (comunidadeOptional.isEmpty()) {
             redirectAttributes.addFlashAttribute("erroMensagem", "Comunidade solicitada não encontrada.");
-            return new ModelAndView("redirect:/comunidades"); // Redirect to home or an error page
+            return new ModelAndView("redirect:/comunidades"); 
         }
 
         Comunidade comunidadeSolicitada = comunidadeOptional.get();
 
-        // Create the new Solicitacao object
         Solicitacao novaSolicitacao = new Solicitacao();
         novaSolicitacao.setUsuarioSolicitante(solicitante);
         novaSolicitacao.setComunidadeSolicitada(comunidadeSolicitada);
-        novaSolicitacao.setDataDeSolicitacao(LocalDate.now()); // Set current date
+        novaSolicitacao.setDataDeSolicitacao(LocalDate.now()); 
         novaSolicitacao.setConteudo(conteudoSolicitacao);
-        // You might want to set an initial status, e.g., SolicitacaoStatus.PENDENTE
-        // novaSolicitacao.setStatus(SolicitacaoStatus.PENDENTE);
 
         solicitacaoRepository.save(novaSolicitacao);
 
         redirectAttributes.addFlashAttribute("mensagemSucesso", "Sua solicitação foi enviada com sucesso!");
-        return new ModelAndView("redirect:/comunidades/1"); // Redirect to the home page after submission
+        return new ModelAndView("redirect:/comunidades/1");
     }
 
-    @PreAuthorize("hasRole('MANAGER')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     @GetMapping("/listar-solicitacoes")
     public ModelAndView listarSolicitacoes() {
         ModelAndView mv = new ModelAndView("lista_de_solicitacoes");
@@ -89,24 +85,19 @@ public class SolicitacaoController {
     public ModelAndView processarSolicitacaoAcao(
             @RequestParam("solicitacaoId") Long solicitacaoId
     ) {
-        ModelAndView mv = new ModelAndView("lista_de_solicitacoes"); // Stay on the same page
+        ModelAndView mv = new ModelAndView("lista_de_solicitacoes"); 
 
-        // Find the solicitation by ID
         solicitacaoRepository.findById(solicitacaoId).ifPresentOrElse(
                 solicitacao -> {
-                    // Add the found solicitation to the model
                     mv.addObject("solicitacaoSelecionada", solicitacao);
-                    // Set a flag to indicate that the pop-up should be shown
                     mv.addObject("mostrarPopup", true);
                 },
                 () -> {
-                    // Handle case where solicitation is not found (e.g., add an error message)
                     mv.addObject("erroMensagem", "Solicitação não encontrada.");
-                    mv.addObject("mostrarPopup", false); // Ensure pop-up doesn't show
+                    mv.addObject("mostrarPopup", false); 
                 }
         );
 
-        // Re-add all solicitations to the model so the list remains visible behind the popup
         List<Solicitacao> todasAsSolicitacoes = solicitacaoRepository.findAll();
         mv.addObject("solicitacoes", todasAsSolicitacoes);
 
@@ -137,7 +128,7 @@ public class SolicitacaoController {
 
     @PostMapping("/excluir-solicitacao")
     @Transactional
-    @PreAuthorize("hasRole('MANAGER')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     public ModelAndView excluirSolicitacao(
             @RequestParam("solicitacaoId") Long solicitacaoId,
             RedirectAttributes redirectAttributes

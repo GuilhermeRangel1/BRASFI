@@ -17,7 +17,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.util.HtmlUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,53 +38,53 @@ public class ComunidadeController {
         this.userRepository = userRepository;
     }
 
-    String mensagemAcessoNegado = "Você não tem acesso a esta página. Por favor\n mande uma solicitacao" +
-            " para nossa secretaria,\n para lhe dar acesso a esta pagina";
-
     @MessageMapping("/create-post")
     public void createPost(@Payload PostEntrada postEntrada) {
         Comunidade comunidade = comunidadeRepository.findById(postEntrada.getComunidadeId()).orElse(null);
         User autor = userRepository.findById(postEntrada.getUsuarioId()).orElse(null);
 
-        Post post = new Post(null, null, postEntrada.getMensagem(), 0, null, comunidade, autor);
-        postService.incluirPost(post);
+        if (comunidade != null && autor != null) {
+            Post post = new Post(null, null, postEntrada.getMensagem(), 0, null, comunidade, autor);
+            postService.incluirPost(post);
 
-        assert autor != null;
-        String conteudo = autor.getName() + "\n" + postEntrada.getMensagem();
+            PostSaida ps = new PostSaida(autor.getName(), postEntrada.getMensagem(), autor.getId());
 
-        PostSaida ps = new PostSaida(autor.getName(), postEntrada.getMensagem(), autor.getId());
+            System.out.println("Enviando mensagem: " + ps.getAuthorName() + " (ID: " + ps.getAuthorId() + ") - " + ps.getMessageContent());
 
-        System.out.println("Enviando mensagem: " + ps.getAuthorName() + " (ID: " + ps.getAuthorId() + ") - " + ps.getMessageContent());
-
-        String destino = "/topic/" + postEntrada.getComunidadeId();
-        System.out.println("Destino WebSocket: " + destino);
-        messagingTemplate.convertAndSend(destino, ps);
+            String destino = "/topic/" + postEntrada.getComunidadeId();
+            System.out.println("Destino WebSocket: " + destino);
+            messagingTemplate.convertAndSend(destino, ps);
+        } else {
+            System.err.println("Falha ao criar post: Comunidade ou Autor não encontrados.");
+        }
     }
 
     @GetMapping("/comunidades/{id}")
     public ModelAndView getComunidades(@PathVariable Long id, @AuthenticationPrincipal CustomUserDetails currentUser) {
-        ModelAndView mv = new ModelAndView("comunidades_hub");
+        ModelAndView mv = new ModelAndView("comunidades_hub"); 
         Optional<Comunidade> comunidadeOpt = comunidadeRepository.findById(id);
 
         if (comunidadeOpt.isPresent()) {
             Comunidade comunidade = comunidadeOpt.get();
-            User user = (currentUser != null) ? currentUser.getUserEntity() : null; 
+            User user = (currentUser != null) ? currentUser.getUserEntity() : null;
 
-            boolean podeAcessar = comunidadeService.validarAcesso(comunidade.getNivelDePermissao(), user, new ArrayList<>(comunidade.getUsuarios())); 
+            boolean podeAcessar = comunidadeService.validarAcesso(comunidade.getNivelDePermissao(), user, new ArrayList<>(comunidade.getUsuarios()));
 
             if (currentUser != null) {
                 mv.addObject("usuario", currentUser.getUserEntity());
+            } else {
+                mv.addObject("usuario", null);
             }
 
             mv.addObject("comunidade", comunidade);
-            mv.addObject("comunidades", comunidadeRepository.findAll());
-            mv.addObject("podeAcessar", podeAcessar); 
+            mv.addObject("comunidades", comunidadeRepository.findAll()); 
+            mv.addObject("podeAcessar", podeAcessar);
 
             if (!podeAcessar) {
                 mv.addObject("mensagemAcessoNegado", "Você não tem permissão para acessar esta comunidade. Envie uma solicitação para ter acesso.");
             }
 
-            System.out.println(podeAcessar);
+            System.out.println("DEBUG - Pode Acessar Comunidade: " + podeAcessar);
 
             mv.addObject("PUBLICA", NivelDePermissaoComunidade.PUBLICA);
             mv.addObject("APENAS_LIDERES", NivelDePermissaoComunidade.APENAS_LIDERES);
@@ -96,7 +95,7 @@ public class ComunidadeController {
             return mv;
         } else {
             System.out.println("DEBUG: Comunidade com ID " + id + " não encontrada. Redirecionando para /comunidades.");
-            return new ModelAndView("redirect:/comunidades");
+            return new ModelAndView("redirect:/comunidades"); 
         }
     }
 
@@ -117,12 +116,12 @@ public class ComunidadeController {
             @RequestParam("Nivel de Permissao") NivelDePermissaoComunidade nivelDePermissao,
             Model model
     ) {
-        System.out.println(nivelDePermissao.getDescricaoDeAcesso());
+        System.out.println("Criando comunidade com Nível de Permissão: " + nivelDePermissao.getDescricaoDeAcesso());
         Comunidade comunidadeAdicionada = comunidadeService.incluirComunidade(new Comunidade(nome, descricao, nivelDePermissao, null));
         if (comunidadeAdicionada != null && comunidadeAdicionada.getId() != null) {
             return new ModelAndView("redirect:/comunidades/" + comunidadeAdicionada.getId());
         }
-        ModelAndView mv = new ModelAndView("criarComunidade");
+        ModelAndView mv = new ModelAndView("criarComunidade"); 
         mv.addObject("erro-criacao", "Não foi possível criar a comunidade. Tente novamente.");
         return mv;
     }
@@ -133,17 +132,17 @@ public class ComunidadeController {
                 .stream()
                 .findFirst()
                 .map(comunidade -> "redirect:/comunidades/" + comunidade.getId())
-                .orElse("redirect:/criarComunidade");
+                .orElse("redirect:/criarComunidade"); 
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     @GetMapping("/criarComunidade")
     public String exibirFormularioCriarComunidade(Model model) {
-        model.addAttribute("comunidade", new Comunidade());
+        model.addAttribute("comunidade", new Comunidade()); 
         model.addAttribute("PUBLICA", NivelDePermissaoComunidade.PUBLICA);
         model.addAttribute("APENAS_LIDERES", NivelDePermissaoComunidade.APENAS_LIDERES);
         model.addAttribute("PERSONALIZADA", NivelDePermissaoComunidade.PERSONALIZADA);
-        return "criarComunidade";
+        return "criarComunidade"; 
     }
 
     @GetMapping("/api/comunidades")

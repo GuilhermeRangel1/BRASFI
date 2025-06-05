@@ -8,7 +8,7 @@ const chatMessagesArea = document.querySelector('.chat-messages-area');
 
 
 function connect() {
-    const socketUrl = "/brasfi-webapp-websocket";
+    const socketUrl = "/brasfi-webapp-websocket"; 
 
     stompClient = new StompJs.Client({
         webSocketFactory: function () {
@@ -44,27 +44,29 @@ function sendMessage() {
         const messagePayload = {
             'mensagem': content,
             'comunidadeId': comunidadeId,
-            'usuarioId': usuarioId 
+            'usuarioId': usuarioId
         };
         stompClient.publish({
-            destination: "/app/create-post",
+            destination: "/app/create-post", 
             body: JSON.stringify(messagePayload)
         });
 
-        messageInput.value = "";
+        messageInput.value = ""; 
         console.log("Mensagem enviada.");
     } else {
         console.warn("Não foi possível enviar a mensagem. Verifique a conexão, conteúdo e IDs.");
-        console.log({connected: connected, content: content, comunidadeId: comunidadeId, usuarioId: usuarioId}); 
+        console.log({connected: connected, content: content, comunidadeId: comunidadeId, usuarioId: usuarioId});
     }
 }
 
-function showPost(authorName, messageContent, messageAuthorId) { 
+function showPost(authorName, messageContent, messageAuthorId) {
     const messageBubble = document.createElement('div');
     messageBubble.classList.add('message-bubble');
 
     if (messageAuthorId === usuarioId) {
-        messageBubble.classList.add('my-message'); 
+        messageBubble.classList.add('my-message');
+    } else {
+        messageBubble.classList.add('other-message'); 
     }
 
     const userAvatar = document.createElement('div');
@@ -91,7 +93,7 @@ function showPost(authorName, messageContent, messageAuthorId) {
     chatMessagesArea.appendChild(messageBubble);
 
     chatMessagesArea.scrollTop = chatMessagesArea.scrollHeight;
-    console.log("Mensagem exibida: " + authorName + " (ID: " + messageAuthorId + ") - " + messageContent); 
+    console.log("Mensagem exibida: " + authorName + " (ID: " + messageAuthorId + ") - " + messageContent);
 }
 
 window.addEventListener("load", () => {

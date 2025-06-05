@@ -4,48 +4,44 @@ body {
     line-height: 1.6;
 }
 .acesso-negado-overlay {
-    position: fixed; /* Fixa na tela */
+    position: fixed; 
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.7); /* Fundo escuro semi-transparente */
-/* Inicialmente escondido */
-    justify-content: center; /* Centraliza horizontalmente */
-    align-items: center; /* Centraliza verticalmente */
-    z-index: 1000; /* Garante que fique acima de outros elementos */
+    background-color: rgba(0, 0, 0, 0.7); 
+    justify-content: center; 
+    align-items: center; 
+    z-index: 1000; 
 }
 
 .acesso-negado-popup {
-    background-color: #f0f0f0; /* Cor de fundo do pop-up */
+    background-color: #f0f0f0; 
     padding: 30px;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     text-align: center;
     max-width: 500px;
     width: 90%;
-    z-index: 1001; /* Acima do overlay */
-/* Inicialmente escondido */
-    position: relative; /* Para posicionar o botão de fechar */
-    color: #333; /* Cor do texto */
-    border: 1px solid #ccc; /* Borda leve */
+    z-index: 1001; 
+    position: relative;
+    color: #333; 
+    border: 1px solid #ccc;
 }
 
-/* comunidades.css or a new CSS file for modals/overlays */
+
 
 .acesso-negado-overlay {
-    /* Ensures it covers the whole screen */
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.7); /* Dark semi-transparent background */
-    display: flex; /* Use flexbox to center the popup */
-    align-items: center; /* Center vertically */
-    justify-content: center; /* Center horizontally */
-    z-index: 100000; /* Ensure it's on top of other content */
-    /* Remove display: none; if it was here. Thymeaf's th:if will control rendering. */
+    background: rgba(0, 0, 0, 0.7); 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    z-index: 100000; 
 }
 
 .acesso-negado-popup {
@@ -54,14 +50,13 @@ body {
     border-radius: 8px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
     text-align: center;
-    max-width: 450px; /* Limit popup width */
-    width: 90%; /* Responsive width */
-    color: #333; /* Default text color */
+    max-width: 450px; 
+    width: 90%; 
+    color: #333; 
 }
 
-/* Your existing styles for popup elements (h3, p, textarea, button) go here */
 .acesso-negado-popup h3 {
-    color: #cc0000; /* Red color for "ATENÇÃO" */
+    color: #cc0000;
     margin-bottom: 20px;
     font-weight: bold;
 }
@@ -72,17 +67,17 @@ body {
 }
 
 .acesso-negado-popup textarea {
-    width: calc(100% - 20px); /* Adjusts width with padding */
+    width: calc(100% - 20px);
     padding: 10px;
     margin-bottom: 20px;
     border: 1px solid #ccc;
     border-radius: 5px;
-    resize: vertical; /* Allows vertical resizing */
+    resize: vertical; 
     min-height: 80px;
 }
 
 .acesso-negado-popup button {
-    background-color: #007bff; /* Send button color */
+    background-color: #007bff; 
     color: white;
     padding: 10px 20px;
     border: none;
@@ -99,7 +94,7 @@ header {
     top: 0;
     left: 0;
     width: 100%;
-    background-color: #f8f9fa; 
+    background-color: #f8f9fa;
     z-index: 1050;
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
@@ -170,11 +165,11 @@ header {
     flex-shrink: 0;
     background-color: #386D6B;
     position: fixed;
-    top: 80px; 
+    top: 80px;
     right: 0;
     bottom: 0px;
-    z-index: 1001; 
-    padding-top: 80px; 
+    z-index: 1001;
+    padding-top: 80px;
     padding-right: 20px;
     padding-bottom: 20px;
     padding-left: 20px;
@@ -185,11 +180,11 @@ header {
 }
 
 .edit-section {
-    margin-top: 10px; 
+    margin-top: 10px;
     padding-bottom: 15px;
     text-align: right;
     position: relative;
-    z-index: auto; 
+    z-index: auto;
 }
 
 .edit-communities-button {
@@ -217,7 +212,6 @@ header {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
-/* Estilos para as opções de gerenciamento de comunidade (Criar, Apagar, Voltar) */
 #communityManagementOptions {
     padding-top: 10px;
 }
@@ -239,7 +233,6 @@ header {
     background-color: rgba(255, 255, 255, 0.2);
 }
 
-/* Estilos para a lista de comunidades (GERAL e as outras) dentro da right-sidebar */
 #communityListSection {
     flex-grow: 1;
     overflow-y: auto;
@@ -309,42 +302,68 @@ header {
     background-color: rgba(255, 255, 255, 0.3);
 }
 
+
 .message-bubble {
     display: flex;
-    align-items: flex-start;
     margin-bottom: 15px;
-}
-
-.message-bubble .user-avatar {
-    font-size: 2.2em;
-    color: #999;
-    margin-right: 10px;
-    flex-shrink: 0;
+    max-width: 80%; 
 }
 
 .message-bubble .message-content {
-    background-color: #e9e9eb;
     padding: 10px 15px;
     border-radius: 18px;
-    max-width: 70%;
-    word-wrap: break-word;
+    word-wrap: break-word; 
     font-family: 'Louis George Cafe', sans-serif;
 }
 
-.message-bubble.my-message {
-    justify-content: flex-end;
+.message-bubble .user-avatar {
+    font-size: 2.2em; 
+    color: #999;
+    flex-shrink: 0; 
+	margin-top: -10px;
+}
+
+.message-bubble.other-message {
+    justify-content: flex-start; 
+    margin-right: auto; 
+    align-items: flex-start; 
+}
+
+.message-bubble.other-message .message-content {
+    background-color: #e9e9eb; 
+    color: #333;
+    margin-left: 10px;
+}
+
+.message-bubble.my-message { 
+    justify-content: flex-end; 
+    margin-left: auto; 
+    align-items: flex-end; 
 }
 
 .message-bubble.my-message .message-content {
-    background-color: #dcf8c6;
+    background-color: #dcf8c6; 
     color: #333;
+    margin-right: 10px;
 }
 
 .message-bubble.my-message .user-avatar {
-    order: 1;
-    margin-right: 0;
-    margin-left: 10px;
+    order: 2; 
 }
+
+.message-author {
+    font-weight: bold;
+    font-size: 0.9em;
+    color: #555;
+    margin-bottom: 4px;
+    display: block;
+}
+
+.message-text {
+    font-size: 1em;
+    line-height: 1.4;
+}
+
 
 .chat-input-area {
     position: fixed;
@@ -520,31 +539,31 @@ header {
 }
 
 #criar-comunidade {
-    display: none; 
-    position: fixed; 
+    display: none;
+    position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.6); 
-    display: flex; 
-    justify-content: center; 
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
     align-items: center;
-    z-index: 9999; 
-    padding: 20px; 
-    box-sizing: border-box; 
+    z-index: 9999;
+    padding: 20px;
+    box-sizing: border-box;
 }
 
 #criar-comunidade-form {
-    background-color: #E0F2F1; 
+    background-color: #E0F2F1;
     padding: 40px;
-    border-radius: 20px; 
-    box-shadow: 0 8px 25px rgba(0,0,0,0.4); 
-    max-width: 500px; 
+    border-radius: 20px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+    max-width: 500px;
     width: 100%;
     position: relative;
-    border: 1px solid #79B8B3; 
-    z-index: 10000; 
+    border: 1px solid #79B8B3;
+    z-index: 10000;
 }
 
 .close-modal-button {
@@ -553,21 +572,21 @@ header {
     right: 15px;
     background: none;
     border: none;
-    font-size: 2em; 
-    color: #555; 
+    font-size: 2em;
+    color: #555;
     cursor: pointer;
     transition: color 0.2s ease;
-    z-index: 10001; 
+    z-index: 10001;
 }
 
 .close-modal-button:hover {
-    color: #333; 
+    color: #333;
 }
 
 #criar-comunidade-form h1 {
     font-family: 'Louis George Cafe', sans-serif;
-    color: #386D6B; 
-    font-size: 2em; 
+    color: #386D6B;
+    font-size: 2em;
     text-align: center;
     margin-bottom: 25px;
     font-weight: bold;
@@ -575,10 +594,10 @@ header {
 
 #criar-comunidade-form .form-label {
     font-weight: bold;
-    color: #386D6B; 
-    margin-bottom: 8px; 
+    color: #386D6B;
+    margin-bottom: 8px;
     font-family: 'Louis George Cafe', sans-serif;
-    font-size: 1.1em; 
+    font-size: 1.1em;
 }
 
 #criar-comunidade-form input[type="text"],
@@ -586,47 +605,47 @@ header {
 #criar-comunidade-form select {
     width: 100%;
     padding: 12px;
-    border: 1px solid #79B8B3; 
-    border-radius: 10px; 
-    font-size: 1.05em; 
-    background-color: #ffffff; 
-    box-sizing: border-box; 
-    font-family: 'Louis George Cafe', sans-serif; 
-    color: #333; 
+    border: 1px solid #79B8B3;
+    border-radius: 10px;
+    font-size: 1.05em;
+    background-color: #ffffff;
+    box-sizing: border-box;
+    font-family: 'Louis George Cafe', sans-serif;
+    color: #333;
 }
 
 #criar-comunidade-form textarea {
     resize: vertical;
-    min-height: 120px; 
+    min-height: 120px;
 }
 
 #criar-comunidade-form .form-check-inline {
-    margin-right: 25px; 
+    margin-right: 25px;
 }
 
 #criar-comunidade-form .form-check-label {
-    font-family: 'Louis George Cafe', sans-serif; 
-    color: #386D6B; 
+    font-family: 'Louis George Cafe', sans-serif;
+    color: #386D6B;
     font-size: 1em;
 }
 
 #criar-comunidade-form input[type="radio"]:checked + .form-check-label {
-    color: #2F5957; 
+    color: #2F5957;
     font-weight: bold;
 }
 
 #criar-comunidade-form button[type="submit"] {
-    background-color: #386D6B; 
+    background-color: #386D6B;
     color: white;
-    padding: 15px 25px; 
+    padding: 15px 25px;
     border: none;
-    border-radius: 10px; 
-    font-size: 1.2em; 
+    border-radius: 10px;
+    font-size: 1.2em;
     cursor: pointer;
     transition: background-color 0.3s ease, transform 0.1s ease;
     width: 100%;
-    box-shadow: 0 4px 10px rgba(56,109,107,0.4); 
-    font-family: 'Louis George Cafe', sans-serif; 
+    box-shadow: 0 4px 10px rgba(56,109,107,0.4);
+    font-family: 'Louis George Cafe', sans-serif;
 }
 
 #criar-comunidade-form button[type="submit"]:hover {
@@ -640,19 +659,19 @@ header {
 }
 
 #apagar-comunidade-modal {
-    display: none; 
-    position: fixed; 
+    display: none;
+    position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.6); 
-    display: flex; 
-    justify-content: center; 
-    align-items: center; 
-    z-index: 9999; 
-    padding: 20px; 
-    box-sizing: border-box; 
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    padding: 20px;
+    box-sizing: border-box;
 }
 
 #apagar-comunidade-form-container {
@@ -662,7 +681,7 @@ header {
     box-shadow: 0 8px 25px rgba(0,0,0,0.4);
     max-width: 500px;
     width: 100%;
-    position: relative; 
+    position: relative;
     border: 1px solid #79B8B3;
     z-index: 10000;
 }
@@ -678,12 +697,12 @@ header {
 
 .community-delete-list-wrapper {
     max-height: 250px;
-    overflow-y: auto; 
+    overflow-y: auto;
     border: 1px solid #79B8B3;
     border-radius: 10px;
     background-color: #ffffff;
     padding: 10px;
-    margin-bottom: 20px; 
+    margin-bottom: 20px;
 }
 
 #deleteCommunityList {
@@ -720,7 +739,7 @@ header {
 }
 
 #confirmDeleteCommunityButton {
-    background-color: #d9534f; 
+    background-color: #d9534f;
     color: white;
     padding: 15px 25px;
     border: none;
@@ -734,12 +753,12 @@ header {
 }
 
 #confirmDeleteCommunityButton:hover {
-    background-color: #c9302c; 
+    background-color: #c9302c;
     transform: translateY(-2px);
 }
 
 #confirmDeleteCommunityButton:active {
-    background-color: #a72320; 
+    background-color: #a72320;
     transform: translateY(0);
     box-shadow: 0 2px 5px rgba(217,83,79,0.2);
 }
@@ -749,10 +768,10 @@ header {
 }
 
 .community-management-popup {
-    position: absolute; 
-    top: 0px; 
-    right: 0; 
-    background-color: #386D6B; 
+    position: absolute;
+    top: 0px;
+    right: 0;
+    background-color: #386D6B;
     border-radius: 8px;
     box-shadow: 0 4px 15px rgba(0,0,0,0.3);
     padding: 15px;
@@ -762,7 +781,7 @@ header {
 }
 
 .community-management-popup p {
-    margin: 0 0 10px 0; 
+    margin: 0 0 10px 0;
 }
 
 .community-management-popup p:last-child {
@@ -770,19 +789,19 @@ header {
 }
 
 .edit-communities-button {
-    position: relative; 
+    position: relative;
 }
 
 .ajuda a {
     text-decoration: none;
-    color: inherit; 
-	color: rgb(255, 255, 255) 
+    color: inherit;
+    color: rgb(255, 255, 255)
 }
 .ajuda {
     position: fixed;
     bottom: 25px;
     right: 2em;
-	font-size: 1.5em;
+    font-size: 1.5em;
     z-index: 1001;
     text-align: center;
     font-family: 'Louis George Cafe', sans-serif;

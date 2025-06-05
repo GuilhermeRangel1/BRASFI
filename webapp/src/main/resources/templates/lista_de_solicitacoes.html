@@ -39,8 +39,22 @@
             z-index: 2;
         }
 
+        .role-icon {
+            margin-right: 5px;
+            color: #6c757d;
+        }
+
+        .admin-check-icon {
+            color: #6c757d;
+        }
+
+        .user-dot-icon {
+            color: #6c757d;
+        }
+
+
         body {
-            padding-top: 150px; 
+            padding-top: 150px;
         }
 
         .request-card {
@@ -51,21 +65,21 @@
             border-radius: 8px;
             text-align: left;
             cursor: pointer;
-            background-color: #ffffff; 
+            background-color: #ffffff;
             box-shadow: 0 4px 8px rgba(0,0,0,0.1);
             transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-            margin-bottom: 20px; 
+            margin-bottom: 20px;
         }
 
         .request-card:hover {
-            transform: translateY(-5px); 
-            box-shadow: 0 6px 12px rgba(0,0,0,0.15); 
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
         }
 
         .request-card h3 {
-            color: #2c3e50; 
+            color: #2c3e50;
             margin-bottom: 15px;
-            border-bottom: 1px solid #eee; 
+            border-bottom: 1px solid #eee;
             padding-bottom: 10px;
         }
 
@@ -76,7 +90,7 @@
         }
 
         .request-card p strong {
-            color: #333; 
+            color: #333;
         }
 
         .back-button-container {
@@ -86,7 +100,7 @@
         }
 
         .back-button-container .btn-secondary {
-            background-color: #6c757d; 
+            background-color: #6c757d;
             border-color: #6c757d;
             padding: 10px 25px;
             font-size: 1.1em;
@@ -95,7 +109,7 @@
         }
 
         .back-button-container .btn-secondary:hover {
-            background-color: #5a6268; 
+            background-color: #5a6268;
             border-color: #545b62;
         }
 
@@ -123,8 +137,21 @@
         </div>
         <div class="user-section">
             <div sec:authorize="isAuthenticated()" class="logged-in-container">
-                <span class="logged-in-username"><i class="fas fa-star"></i> <span sec:authentication="principal.name">Nome do Usuário</span> <span class="user-icon"><i class="fas fa-user-circle"></i></span></span>
-                <a th:href="@{/logout}" class="logout-button">Sair</a> </div>
+                <span class="logged-in-username">
+                    <th:block sec:authorize="hasRole('ADMIN')">
+                        <i class="fas fa-check admin-check-icon" title="Administrador"></i>
+                    </th:block>
+                    <th:block sec:authorize="hasRole('MANAGER') and !hasRole('ADMIN')">
+                        <i class="fas fa-star role-icon" title="Gerente"></i>
+                    </th:block>
+                    <th:block sec:authorize="!hasAnyRole('ADMIN', 'MANAGER')">
+                        <i class="far fa-circle user-dot-icon" title="Usuário Comum"></i>
+                    </th:block>
+                    <span sec:authentication="principal.name">Nome do Usuário</span>
+                    <span class="user-icon"><i class="fas fa-user-circle"></i></span>
+                </span>
+                <a th:href="@{/logout}" class="logout-button">Sair</a>
+            </div>
             <a sec:authorize="!isAuthenticated()" th:href="@{/login}" class="login-button">Login</a>
         </div>
     </div>
