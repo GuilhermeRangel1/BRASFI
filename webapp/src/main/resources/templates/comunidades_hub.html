@@ -170,7 +170,9 @@
                 <li th:each="com : ${comunidades}"
                     th:class="${com != null and (com.id == comunidade.id) ? 'active-community' : ''}">
                     <a th:if="${com.getUsuarios() != null and com.getUsuarios().contains(usuario)}" th:href="@{/comunidades/{id}(id=${com.getId()})}" th:text="${com.nome}"></a>
-                    <i th:unless="${com.getUsuarios() != null and com.getUsuarios().contains(usuario)}"class="fa-solid fa-lock"></i>
+                    <a th:unless="${com.getUsuarios() != null and com.getUsuarios().contains(usuario)}" class="community-lock" th:href="@{/comunidades/{id}(id=${com.getId()})}" th:text="${com.nome}"
+                    style="color: #635e5e">
+                    </a>
                 </li>
             </ul>
         </div>

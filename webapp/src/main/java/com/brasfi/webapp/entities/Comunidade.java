@@ -35,13 +35,10 @@ public class Comunidade implements Serializable {
     private List<User> usuarios = new ArrayList<>(); 
 
 
-    public Comunidade(String nome, String descricao, NivelDePermissaoComunidade nivelDePermissao, List<User> usuarios) {
+    public Comunidade(String nome, String descricao, NivelDePermissaoComunidade nivelDePermissao) {
         this.nome = nome;
         this.descricao = descricao;
         this.nivelDePermissao = nivelDePermissao;
-        if (usuarios != null) {
-            this.usuarios = new ArrayList<>(usuarios);
-        }
     }
 
     public Comunidade() {

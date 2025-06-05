@@ -29,13 +29,19 @@ public class ComunidadeService {
     }
 
     public String incluirUsuariosComunidade(Comunidade comunidade, NivelDePermissaoComunidade nivelDePermissao) {
+        List<User> allUsers = userRepository.findAll();
         switch (nivelDePermissao)
         {
             case PUBLICA:
-                List<User> allUsers = userRepository.findAll();
                 comunidade.setUsuarios(allUsers);
                 return "Todos foram adicionados";
 
+            case APENAS_LIDERES, PERSONALIZADA:
+                for (User usr : allUsers)
+                {
+                    if (usr instanceof Gerente) comunidade.getUsuarios().add(usr);
+                }
+                return "Apenas admins e gerentes foram aidiconados";
         }
         return null;
     }
