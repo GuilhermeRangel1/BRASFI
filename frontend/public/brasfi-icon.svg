@@ -1,0 +1,7 @@
+<svg width="128" height="128" viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="128" height="128" rx="24" fill="#10231C"/>
+  <path d="M34 78C36.5 48 56.5 30 94 25C88.5 63.5 70.5 84 38 86C51 75.5 61.5 64.5 70 51C56 61 45.5 70 34 78Z" fill="#B7DD64"/>
+  <path d="M37 88C51.5 89 66.5 84.5 78 73C70 93.5 55 103.5 33 105C33.5 98.5 34.5 93 37 88Z" fill="#4B8F6A"/>
+  <path d="M36 104C52 87 67 70 83 43" stroke="#F7FBF6" stroke-width="6" stroke-linecap="round"/>
+  <text x="64" y="118" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" font-weight="700" fill="#F7FBF6">BRASFI</text>
+</svg>
