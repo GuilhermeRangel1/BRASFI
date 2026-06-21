@@ -49,9 +49,13 @@ public class UserController {
         Model model
     ) {
         try {
-            if ("ADMIN".equals(tipoConta)) {
+            boolean allowPrivilegedRegistration = Boolean.parseBoolean(
+                    System.getenv().getOrDefault("ALLOW_PRIVILEGED_REGISTRATION", "false")
+            );
+
+            if (allowPrivilegedRegistration && "ADMIN".equals(tipoConta)) {
                 userService.registerAdmin(nome, email, cpf, senha, idade);
-            } else if ("MANAGER".equals(tipoConta)) {
+            } else if (allowPrivilegedRegistration && "MANAGER".equals(tipoConta)) {
                 userService.registerManager(nome, email, cpf, senha, idade);
             } else {
                 userService.registerUser(nome, email, cpf, senha, idade);

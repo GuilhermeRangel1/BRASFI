@@ -6,6 +6,7 @@ import com.brasfi.webapp.repositories.PostRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional; 
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -17,6 +18,9 @@ public class PostService {
     }
 
     public void incluirPost(Post post) {
+        if (post.getDataCriacao() == null) {
+            post.setDataCriacao(LocalDateTime.now());
+        }
         postRepository.save(post);
     }
 

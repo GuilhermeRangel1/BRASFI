@@ -1,6 +1,7 @@
 package com.brasfi.webapp.controller;
 
 import com.brasfi.webapp.entities.*;
+import com.brasfi.webapp.dto.ApiDtos.CommunityResponse;
 import com.brasfi.webapp.repositories.ComunidadeRepository;
 import com.brasfi.webapp.repositories.UserRepository;
 import com.brasfi.webapp.security.CustomUserDetails;
@@ -153,8 +154,11 @@ public class ComunidadeController {
 
     @GetMapping("/api/comunidades")
     @ResponseBody
-    public List<Comunidade> getAllComunidadesApi() {
-        return comunidadeService.listarTodasComunidades();
+    public List<CommunityResponse> getAllComunidadesApi() {
+        return comunidadeService.listarTodasComunidades()
+                .stream()
+                .map(CommunityResponse::from)
+                .toList();
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
