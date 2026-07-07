@@ -10,7 +10,9 @@ import {
   Clock3,
   Compass,
   GraduationCap,
+  Handshake,
   Leaf,
+  Lightbulb,
   LogIn,
   LogOut,
   MessageSquareText,
@@ -18,7 +20,6 @@ import {
   Plus,
   RefreshCw,
   Send,
-  ShieldCheck,
   Sparkles,
   UsersRound,
   Video
@@ -30,11 +31,10 @@ import './styles.css';
 const API_BASE = import.meta.env.VITE_API_BASE_URL ?? '';
 
 const views = [
-  { id: 'dashboard', label: 'Painel', icon: Compass },
+  { id: 'dashboard', label: 'Início', icon: Compass },
   { id: 'learning', label: 'Trilhas', icon: GraduationCap },
   { id: 'events', label: 'Eventos', icon: CalendarDays },
-  { id: 'communities', label: 'Comunidades', icon: UsersRound },
-  { id: 'about', label: 'Sobre', icon: Leaf }
+  { id: 'communities', label: 'Comunidades', icon: UsersRound }
 ];
 
 async function api(path, options = {}) {
@@ -69,6 +69,7 @@ function App() {
   const [posts, setPosts] = useState([]);
   const [auth, setAuth] = useState({ authenticated: false, user: null });
   const [authMode, setAuthMode] = useState('login');
+  const [authOpen, setAuthOpen] = useState(false);
   const [notice, setNotice] = useState('');
   const [loading, setLoading] = useState(true);
 
@@ -156,6 +157,7 @@ function App() {
     });
 
     setNotice('Login realizado.');
+    setAuthOpen(false);
     await loadAll();
   }
 
@@ -173,6 +175,7 @@ function App() {
       })
     });
     setAuthMode('login');
+    setAuthOpen(false);
     setNotice('Cadastro criado. Entre com seu e-mail e senha.');
   }
 
@@ -246,14 +249,14 @@ function App() {
   }
 
   return (
-    <main className="app-shell">
-      <aside className="sidebar">
-        <div className="brand">
+    <main className="site-shell">
+      <header className="site-header">
+        <button className="brand site-brand" type="button" onClick={() => setView('dashboard')}>
           <span className="brand-mark"><Leaf size={22} /></span>
           <span>BRASFI</span>
-        </div>
+        </button>
 
-        <nav className="nav-list" aria-label="Principal">
+        <nav className="nav-list site-nav" aria-label="Principal">
           {views.map((item) => {
             const Icon = item.icon;
             return (
@@ -270,7 +273,7 @@ function App() {
           })}
         </nav>
 
-        <section className="account-panel">
+        <section className={authOpen ? 'account-panel site-account open' : 'account-panel site-account'}>
           {auth.authenticated ? (
             <>
               <div className="account-name">
@@ -283,26 +286,42 @@ function App() {
               </button>
             </>
           ) : (
-            <AuthBox
-              mode={authMode}
-              setMode={setAuthMode}
-              onLogin={handleLogin}
-              onRegister={handleRegister}
-            />
+            <>
+              <button className="member-trigger" type="button" onClick={() => setAuthOpen((current) => !current)}>
+                <CircleUserRound size={18} />
+                Área de membros
+              </button>
+              {authOpen && (
+                <div className="auth-popover">
+                  <div className="member-copy">
+                    <strong>Entre ou crie sua conta</strong>
+                    <span>Use a conta para se inscrever em eventos e participar das comunidades.</span>
+                  </div>
+                  <AuthBox
+                    mode={authMode}
+                    setMode={setAuthMode}
+                    onLogin={handleLogin}
+                    onRegister={handleRegister}
+                  />
+                </div>
+              )}
+            </>
           )}
         </section>
-      </aside>
+      </header>
 
-      <section className="workspace">
-        <header className="topbar">
-          <div>
-            <p className="eyebrow">Ecossistema de finanças sustentáveis</p>
-            <h1>{titleFor(view)}</h1>
-          </div>
-          <button className="icon-button" onClick={() => loadAll()} title="Atualizar dados">
-            <RefreshCw size={18} />
-          </button>
-        </header>
+      <section className="workspace site-workspace">
+        {view !== 'dashboard' && (
+          <header className="topbar">
+            <div>
+              <p className="eyebrow">Ecossistema de finanças sustentáveis</p>
+              <h1>{titleFor(view)}</h1>
+            </div>
+            <button className="icon-button" onClick={() => loadAll()} title="Atualizar dados">
+              <RefreshCw size={18} />
+            </button>
+          </header>
+        )}
 
         {notice && (
           <button className="notice" onClick={() => setNotice('')}>
@@ -339,7 +358,6 @@ function App() {
                 createCommunity={createCommunity}
               />
             )}
-            {view === 'about' && <About />}
           </>
         )}
       </section>
@@ -368,52 +386,170 @@ function AuthBox({ mode, setMode, onLogin, onRegister }) {
 }
 
 function Dashboard({ dashboard, setView }) {
-  const stats = [
-    ['Eventos', dashboard?.totalEventos ?? 0, CalendarDays],
-    ['Futuros', dashboard?.eventosFuturos ?? 0, Sparkles],
-    ['Gravados', dashboard?.eventosGravados ?? 0, Video],
-    ['Comunidades', dashboard?.totalComunidades ?? 0, UsersRound]
+  const impactItems = [
+    ['15 estados e 10 países', 'presença nacional e conexões internacionais'],
+    ['+200', 'profissionais capacitados desde 2020'],
+    ['+40', 'conexões qualificadas com o mercado'],
+    ['+15', 'instituições parceiras brasileiras e internacionais']
   ];
 
+  const paths = [
+    ['Aprenda', 'Siga trilhas guiadas para entrar nos temas centrais de finanças sustentáveis.', 'learning', GraduationCap],
+    ['Participe', 'Acompanhe a agenda, inscreva-se em eventos e acesse conteúdos gravados.', 'events', CalendarDays],
+    ['Conecte-se', 'Entre nas comunidades para compartilhar dúvidas, referências e oportunidades.', 'communities', UsersRound]
+  ];
+
+  const pillars = [
+    ['Disseminação de conhecimento', 'Estudos, pesquisas e metodologias ajudam a orientar decisões em ESG, finanças climáticas e investimentos sustentáveis.', Lightbulb],
+    ['Formação de lideranças', 'A rede aproxima especialistas, estudantes e decisores para ampliar repertório técnico e capacidade de atuação.', Sparkles],
+    ['Viabilização de soluções', 'Projetos, parcerias e suporte técnico conectam conhecimento e capital aos desafios reais da agenda climática.', Handshake]
+  ];
+
+  const hubs = [
+    ['Hub de Projetos', 'Transforma ideias em iniciativas concretas por meio de grupos de trabalho, pesquisa aplicada, parcerias e produção técnica.'],
+    ['Hub de Networking', 'Promove mentorias, eventos, rodas de conversa e articulações regionais para fortalecer talentos e trocas entre gerações.']
+  ];
+
+  const homeNav = [
+    ['Quem somos', 'home-about'],
+    ['Como fazemos', 'home-how'],
+    ['Nosso impacto', 'home-impact'],
+    ['Depoimentos', 'home-voices']
+  ];
+
+  function scrollHomeSection(sectionId) {
+    document.getElementById(sectionId)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
   return (
-    <div className="dashboard-grid">
-      <section className="hero-band">
-        <div>
-          <span className="hero-kicker"><ShieldCheck size={18} /> Rede colaborativa</span>
-          <h2>Conhecimento, eventos e comunidades em uma plataforma mais clara.</h2>
-          <p>Um painel para acompanhar a agenda da BRASFI, entrar em conversas e aproximar pesquisa, mercado e impacto.</p>
-          <button className="primary-button" onClick={() => setView('learning')}>
-            <BookOpenCheck size={18} /> Começar trilha
+    <div className="home-page">
+      <nav className="home-local-nav" aria-label="Seções da página inicial">
+        {homeNav.map(([label, sectionId]) => (
+          <button key={sectionId} onClick={() => scrollHomeSection(sectionId)}>
+            {label}
           </button>
+        ))}
+        <button className="home-contact-button" onClick={() => setView('communities')}>
+          Participar da rede
+        </button>
+      </nav>
+
+      <section className="home-hero">
+        <div className="wave-line wave-line-one" />
+        <div className="wave-line wave-line-two" />
+        <div>
+          <span className="hero-kicker"><Leaf size={18} /> BRASFI</span>
+          <h1>Desenvolvendo lideranças, viabilizando soluções.</h1>
+          <p>
+            A BRASFI conecta conhecimento, liderança e capital para acelerar finanças e investimentos
+            sustentáveis no Brasil. Aqui, a experiência digital organiza trilhas, eventos e comunidades
+            para aproximar aprendizado, rede e prática.
+          </p>
+          <div className="hero-actions">
+            <button className="primary-button" onClick={() => setView('learning')}>
+              <BookOpenCheck size={18} /> Começar por uma trilha
+            </button>
+            <button className="secondary-button" onClick={() => scrollHomeSection('home-about')}>
+              <Leaf size={18} /> Conhecer a BRASFI
+            </button>
+          </div>
         </div>
       </section>
 
-      <section className="stat-grid">
-        {stats.map(([label, value, Icon]) => (
-          <article className="metric-card" key={label}>
-            <Icon size={22} />
+      <div className="ticker-strip">
+        <span>Aliança Brasileira em Finanças e Investimentos Sustentáveis</span>
+        <span>Conhecimento</span>
+        <span>Liderança</span>
+        <span>Capital para impacto</span>
+        <span>Finanças climáticas</span>
+      </div>
+
+      <section className="intro-section organic-section" id="home-about">
+        <div>
+          <p className="eyebrow">Quem somos</p>
+          <h2>Uma rede para fortalecer a agenda climática e de investimentos no Brasil.</h2>
+        </div>
+        <p>
+          A BRASFI atua na intersecção entre desenvolvimento de capital humano e estruturação de projetos
+          de impacto. Sua atuação combina diversidade regional, articulação multissetorial e conhecimento
+          técnico para conectar desafios complexos a lideranças preparadas para construir soluções.
+        </p>
+      </section>
+
+      <section className="pillar-grid organic-pillars" id="home-how">
+        {pillars.map(([title, description, Icon]) => (
+          <article className="pillar-card" key={title}>
+            <Icon size={42} />
+            <h3>{title}</h3>
+            <p>{description}</p>
+          </article>
+        ))}
+      </section>
+
+      <section className="hub-section organic-band">
+        <div>
+          <p className="eyebrow">Como fazemos</p>
+          <h2>Dois hubs para transformar rede em ação.</h2>
+        </div>
+        <div className="hub-grid">
+          {hubs.map(([title, description]) => (
+            <article className="hub-card" key={title}>
+              <h3>{title}</h3>
+              <p>{description}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="impact-strip organic-impact" id="home-impact">
+        {impactItems.map(([value, label]) => (
+          <article className="impact-item" key={label}>
             <strong>{value}</strong>
             <span>{label}</span>
           </article>
         ))}
       </section>
 
-      <section className="content-column">
-        <SectionHeader icon={CalendarDays} title="Próximos eventos" />
-        <div className="event-list">
-          {(dashboard?.proximosEventos ?? []).map((event) => <EventItem key={event.id} event={event} />)}
-        </div>
+      <section className="path-grid organic-paths">
+        {paths.map(([title, description, target, Icon]) => (
+          <button className="path-card" key={title} onClick={() => setView(target)}>
+            <Icon size={22} />
+            <strong>{title}</strong>
+            <span>{description}</span>
+            <small>Explorar <ArrowRight size={14} /></small>
+          </button>
+        ))}
       </section>
 
-      <section className="content-column">
-        <SectionHeader icon={UsersRound} title="Comunidades ativas" />
-        <div className="community-mini-list">
-          {(dashboard?.comunidades ?? []).map((community) => (
-            <div className="mini-row" key={community.id}>
-              <strong>{community.nome}</strong>
-              <span>{community.totalPosts} posts</span>
-            </div>
-          ))}
+      <section className="voice-section organic-voice" id="home-voices">
+        <div>
+          <p className="eyebrow">Depoimentos</p>
+          <h2>Vozes que constroem a BRASFI.</h2>
+        </div>
+        <blockquote>
+          Participantes destacam a BRASFI como uma rede que aproxima propósito, carreira,
+          conhecimento aplicado e conexões no ecossistema de finanças sustentáveis.
+        </blockquote>
+      </section>
+
+      <section className="home-feature organic-feature">
+        <div>
+          <SectionHeader icon={CalendarDays} title="Próximos encontros" />
+          <div className="event-list">
+            {(dashboard?.proximosEventos ?? []).slice(0, 2).map((event) => <EventItem key={event.id} event={event} />)}
+            {(dashboard?.proximosEventos ?? []).length === 0 && <EmptyState text="Nenhum evento futuro cadastrado." />}
+          </div>
+        </div>
+        <div className="community-preview">
+          <SectionHeader icon={UsersRound} title="Comunidades em movimento" />
+          <div className="community-mini-list">
+            {(dashboard?.comunidades ?? []).slice(0, 4).map((community) => (
+              <button className="mini-row interactive" key={community.id} onClick={() => setView('communities')}>
+                <strong>{community.nome}</strong>
+                <span>{community.totalPosts} posts</span>
+              </button>
+            ))}
+          </div>
         </div>
       </section>
     </div>
@@ -636,24 +772,6 @@ function Communities({
   );
 }
 
-function About() {
-  return (
-    <section className="about-panel">
-      <span className="hero-kicker"><Leaf size={18} /> BRASFI</span>
-      <h2>Uma plataforma para fortalecer pesquisa, mercado e investimentos sustentáveis.</h2>
-      <p>
-        A experiência renovada organiza eventos, gravações e comunidades em uma interface única,
-        preparada para evoluir com novos módulos sem depender de páginas acopladas ao servidor.
-      </p>
-      <div className="principles">
-        <span>Colaboração</span>
-        <span>Conhecimento aplicado</span>
-        <span>Impacto sustentável</span>
-      </div>
-    </section>
-  );
-}
-
 function EventItem({ event, auth, toggleEventRegistration }) {
   const canRegister = event.futuro && toggleEventRegistration;
 
@@ -703,11 +821,10 @@ function EmptyState({ text }) {
 
 function titleFor(view) {
   return {
-    dashboard: 'Painel BRASFI',
+    dashboard: 'Início BRASFI',
     learning: 'Trilhas de aprendizagem',
     events: 'Eventos',
-    communities: 'Comunidades',
-    about: 'Sobre a plataforma'
+    communities: 'Comunidades'
   }[view];
 }
 
