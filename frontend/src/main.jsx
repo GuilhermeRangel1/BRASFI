@@ -1,14 +1,20 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import {
+  ArrowRight,
+  BookOpenCheck,
   CalendarDays,
   Check,
+  CheckCircle2,
   CircleUserRound,
+  Clock3,
   Compass,
+  GraduationCap,
   Leaf,
   LogIn,
   LogOut,
   MessageSquareText,
+  PlayCircle,
   Plus,
   RefreshCw,
   Send,
@@ -25,6 +31,7 @@ const API_BASE = import.meta.env.VITE_API_BASE_URL ?? '';
 
 const views = [
   { id: 'dashboard', label: 'Painel', icon: Compass },
+  { id: 'learning', label: 'Trilhas', icon: GraduationCap },
   { id: 'events', label: 'Eventos', icon: CalendarDays },
   { id: 'communities', label: 'Comunidades', icon: UsersRound },
   { id: 'about', label: 'Sobre', icon: Leaf }
@@ -46,7 +53,7 @@ async function api(path, options = {}) {
 
   const data = await response.json().catch(() => ({}));
   if (!response.ok) {
-    throw new Error(data.message || 'Nao foi possivel concluir a acao.');
+    throw new Error(data.message || 'Não foi possível concluir a ação.');
   }
 
   return data;
@@ -57,6 +64,7 @@ function App() {
   const [dashboard, setDashboard] = useState(null);
   const [events, setEvents] = useState([]);
   const [communities, setCommunities] = useState([]);
+  const [learningTracks, setLearningTracks] = useState([]);
   const [selectedCommunityId, setSelectedCommunityId] = useState(null);
   const [posts, setPosts] = useState([]);
   const [auth, setAuth] = useState({ authenticated: false, user: null });
@@ -75,16 +83,18 @@ function App() {
   async function loadAll() {
     setLoading(true);
     try {
-      const [me, dash, allEvents, allCommunities] = await Promise.all([
+      const [me, dash, allEvents, allCommunities, allLearningTracks] = await Promise.all([
         api('/api/v1/auth/me'),
         api('/api/v1/dashboard'),
         api('/api/v1/events'),
-        api('/api/v1/communities')
+        api('/api/v1/communities'),
+        api('/api/v1/learning-tracks')
       ]);
       setAuth(me);
       setDashboard(dash);
       setEvents(allEvents);
       setCommunities(allCommunities);
+      setLearningTracks(allLearningTracks);
       setSelectedCommunityId((current) => current ?? allCommunities[0]?.id ?? null);
     } finally {
       setLoading(false);
@@ -141,7 +151,7 @@ function App() {
     }).then(async (response) => {
       if (!response.ok) {
         const data = await response.json().catch(() => ({}));
-        throw new Error(data.message || 'Email ou senha invalidos.');
+        throw new Error(data.message || 'E-mail ou senha inválidos.');
       }
     });
 
@@ -163,7 +173,7 @@ function App() {
       })
     });
     setAuthMode('login');
-    setNotice('Cadastro criado. Entre com seu email e senha.');
+    setNotice('Cadastro criado. Entre com seu e-mail e senha.');
   }
 
   async function handleLogout() {
@@ -173,7 +183,7 @@ function App() {
       headers: { 'X-Requested-With': 'XMLHttpRequest', Accept: 'application/json' }
     });
     setAuth({ authenticated: false, user: null });
-    setNotice('Voce saiu da conta.');
+    setNotice('Você saiu da conta.');
   }
 
   async function createEvent(event) {
@@ -273,7 +283,7 @@ function App() {
       <section className="workspace">
         <header className="topbar">
           <div>
-            <p className="eyebrow">Ecossistema de financas sustentaveis</p>
+            <p className="eyebrow">Ecossistema de finanças sustentáveis</p>
             <h1>{titleFor(view)}</h1>
           </div>
           <button className="icon-button" onClick={() => loadAll()} title="Atualizar dados">
@@ -292,7 +302,8 @@ function App() {
           <div className="loading-state">Carregando plataforma...</div>
         ) : (
           <>
-            {view === 'dashboard' && <Dashboard dashboard={dashboard} events={events} setView={setView} />}
+            {view === 'dashboard' && <Dashboard dashboard={dashboard} setView={setView} />}
+            {view === 'learning' && <LearningTracks tracks={learningTracks} setView={setView} />}
             {view === 'events' && <Events events={events} isAdmin={isAdmin} createEvent={createEvent} />}
             {view === 'communities' && (
               <Communities
@@ -324,8 +335,8 @@ function AuthBox({ mode, setMode, onLogin, onRegister }) {
         <button type="button" className={!isLogin ? 'active' : ''} onClick={() => setMode('register')}>Criar</button>
       </div>
       {!isLogin && <input name="nome" placeholder="Nome" required />}
-      <input name="email" type="email" placeholder="Email" required />
-      {!isLogin && <input name="cpf" placeholder="CPF com 11 numeros" minLength="11" maxLength="11" required />}
+      <input name="email" type="email" placeholder="E-mail" required />
+      {!isLogin && <input name="cpf" placeholder="CPF com 11 números" minLength="11" maxLength="11" required />}
       {!isLogin && <input name="idade" type="number" min="1" placeholder="Idade" required />}
       <input name="password" type="password" placeholder="Senha" required />
       <button className="primary-button" type="submit">
@@ -335,7 +346,7 @@ function AuthBox({ mode, setMode, onLogin, onRegister }) {
   );
 }
 
-function Dashboard({ dashboard, events, setView }) {
+function Dashboard({ dashboard, setView }) {
   const stats = [
     ['Eventos', dashboard?.totalEventos ?? 0, CalendarDays],
     ['Futuros', dashboard?.eventosFuturos ?? 0, Sparkles],
@@ -350,8 +361,8 @@ function Dashboard({ dashboard, events, setView }) {
           <span className="hero-kicker"><ShieldCheck size={18} /> Rede colaborativa</span>
           <h2>Conhecimento, eventos e comunidades em uma plataforma mais clara.</h2>
           <p>Um painel para acompanhar a agenda da BRASFI, entrar em conversas e aproximar pesquisa, mercado e impacto.</p>
-          <button className="primary-button" onClick={() => setView('communities')}>
-            <MessageSquareText size={18} /> Abrir comunidades
+          <button className="primary-button" onClick={() => setView('learning')}>
+            <BookOpenCheck size={18} /> Começar trilha
           </button>
         </div>
       </section>
@@ -367,7 +378,7 @@ function Dashboard({ dashboard, events, setView }) {
       </section>
 
       <section className="content-column">
-        <SectionHeader icon={CalendarDays} title="Proximos eventos" />
+        <SectionHeader icon={CalendarDays} title="Próximos eventos" />
         <div className="event-list">
           {(dashboard?.proximosEventos ?? []).map((event) => <EventItem key={event.id} event={event} />)}
         </div>
@@ -384,6 +395,101 @@ function Dashboard({ dashboard, events, setView }) {
           ))}
         </div>
       </section>
+    </div>
+  );
+}
+
+function LearningTracks({ tracks, setView }) {
+  const currentTrack = tracks[0];
+
+  if (!currentTrack) {
+    return <EmptyState text="Nenhuma trilha de aprendizagem disponível." />;
+  }
+
+  const recommendedEvents = currentTrack.recommendedEvents ?? [];
+  const recommendedCommunities = currentTrack.recommendedCommunities ?? [];
+
+  return (
+    <div className="learning-layout">
+      {tracks.map((track) => (
+        <section className="track-hero" key={track.id}>
+          <div>
+            <span className="hero-kicker"><GraduationCap size={18} /> Trilha guiada</span>
+            <h2>{track.title}</h2>
+            <p>{track.description}</p>
+            <div className="track-meta">
+              <span><Clock3 size={16} /> {track.duration}</span>
+              <span><Sparkles size={16} /> {track.level}</span>
+              <span><CheckCircle2 size={16} /> {track.steps.length} etapas</span>
+            </div>
+          </div>
+          <button className="primary-button" onClick={() => setView('events')}>
+            <CalendarDays size={17} /> Ver eventos da trilha
+          </button>
+        </section>
+      ))}
+
+      <section className="track-steps">
+        <SectionHeader icon={BookOpenCheck} title="Roteiro de aprendizagem" />
+        <div className="step-list">
+          {currentTrack.steps.map((step, index) => (
+            <article className="step-item" key={step.title}>
+              <span className="step-number">{index + 1}</span>
+              <div>
+                <h3>{step.title}</h3>
+                <p>{step.description}</p>
+                <span className="step-action">{step.action}</span>
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <aside className="track-sidebar">
+        <section className="content-column">
+          <SectionHeader icon={PlayCircle} title="Eventos recomendados" />
+          <div className="compact-list">
+            {recommendedEvents.map((event) => (
+              <button className="compact-row" key={event.id} onClick={() => setView('events')}>
+                <strong>{event.titulo}</strong>
+                <span>{formatDate(event.dataEvento)} <ArrowRight size={15} /></span>
+              </button>
+            ))}
+            {recommendedEvents.length === 0 && <EmptyState text="Nenhum evento futuro disponível." />}
+          </div>
+        </section>
+
+        <section className="content-column">
+          <SectionHeader icon={MessageSquareText} title="Comunidades para praticar" />
+          <div className="compact-list">
+            {recommendedCommunities.map((community) => (
+              <button className="compact-row" key={community.id} onClick={() => setView('communities')}>
+                <strong>{community.nome}</strong>
+                <span>{community.totalPosts} posts <ArrowRight size={15} /></span>
+              </button>
+            ))}
+            {recommendedCommunities.length === 0 && <EmptyState text="Nenhuma comunidade disponível." />}
+          </div>
+        </section>
+
+        <section className="content-column">
+          <SectionHeader icon={BookOpenCheck} title="Materiais de apoio" />
+          <ul className="outcome-list">
+            {currentTrack.resources.map((resource) => (
+              <li key={resource}><Check size={16} /> {resource}</li>
+            ))}
+          </ul>
+        </section>
+
+        <section className="content-column">
+          <SectionHeader icon={CheckCircle2} title="Ao concluir" />
+          <ul className="outcome-list">
+            {currentTrack.outcomes.map((outcome) => (
+              <li key={outcome}><Check size={16} /> {outcome}</li>
+            ))}
+          </ul>
+        </section>
+      </aside>
     </div>
   );
 }
@@ -414,16 +520,16 @@ function Events({ events, isAdmin, createEvent }) {
         <section className="editor-panel">
           <SectionHeader icon={Plus} title="Novo evento" />
           <form className="stack-form" onSubmit={createEvent}>
-            <input name="titulo" placeholder="Titulo" required />
+            <input name="titulo" placeholder="Título" required />
             <input name="dataEvento" type="date" required />
             <input name="convidados" placeholder="Convidados" required />
-            <textarea name="conteudo" placeholder="Descricao" rows="4" required />
+            <textarea name="conteudo" placeholder="Descrição" rows="4" required />
             <select name="categoria" defaultValue="PALESTRA">
               <option value="PALESTRA">Palestra</option>
               <option value="WORKSHOP">Workshop</option>
               <option value="AULA">Aula</option>
             </select>
-            <input name="urlVideo" type="url" placeholder="URL do video" required />
+            <input name="urlVideo" type="url" placeholder="URL do vídeo" required />
             <button className="primary-button" type="submit"><Plus size={17} /> Publicar</button>
           </form>
         </section>
@@ -469,7 +575,7 @@ function Communities({
               <time>{formatDateTime(post.dataCriacao)}</time>
             </article>
           ))}
-          {posts.length === 0 && <EmptyState text="Ainda nao ha mensagens nesta comunidade." />}
+          {posts.length === 0 && <EmptyState text="Ainda não há mensagens nesta comunidade." />}
         </div>
         {auth.authenticated ? (
           <form className="message-form" onSubmit={sendPost}>
@@ -488,10 +594,10 @@ function Communities({
           <SectionHeader icon={Plus} title="Nova comunidade" />
           <form className="stack-form" onSubmit={createCommunity}>
             <input name="nome" placeholder="Nome" required />
-            <textarea name="descricao" rows="4" placeholder="Descricao" required />
+            <textarea name="descricao" rows="4" placeholder="Descrição" required />
             <select name="nivelDePermissao" defaultValue="PUBLICA">
-              <option value="PUBLICA">Publica</option>
-              <option value="APENAS_LIDERES">Apenas lideres</option>
+              <option value="PUBLICA">Pública</option>
+              <option value="APENAS_LIDERES">Apenas líderes</option>
               <option value="PERSONALIZADA">Personalizada</option>
             </select>
             <button className="primary-button" type="submit"><Plus size={17} /> Criar</button>
@@ -506,15 +612,15 @@ function About() {
   return (
     <section className="about-panel">
       <span className="hero-kicker"><Leaf size={18} /> BRASFI</span>
-      <h2>Uma plataforma para fortalecer pesquisa, mercado e investimentos sustentaveis.</h2>
+      <h2>Uma plataforma para fortalecer pesquisa, mercado e investimentos sustentáveis.</h2>
       <p>
-        A experiencia renovada organiza eventos, gravacoes e comunidades em uma interface unica,
-        preparada para evoluir com novos modulos sem depender de paginas acopladas ao servidor.
+        A experiência renovada organiza eventos, gravações e comunidades em uma interface única,
+        preparada para evoluir com novos módulos sem depender de páginas acopladas ao servidor.
       </p>
       <div className="principles">
-        <span>Colaboracao</span>
+        <span>Colaboração</span>
         <span>Conhecimento aplicado</span>
-        <span>Impacto sustentavel</span>
+        <span>Impacto sustentável</span>
       </div>
     </section>
   );
@@ -535,7 +641,7 @@ function EventItem({ event }) {
           <span>{event.convidados}</span>
         </div>
       </div>
-      <a href={event.urlVideo} target="_blank" rel="noreferrer" className="icon-link" title="Abrir video">
+      <a href={event.urlVideo} target="_blank" rel="noreferrer" className="icon-link" title="Abrir vídeo">
         <Video size={18} />
       </a>
     </article>
@@ -558,10 +664,21 @@ function EmptyState({ text }) {
 function titleFor(view) {
   return {
     dashboard: 'Painel BRASFI',
+    learning: 'Trilhas de aprendizagem',
     events: 'Eventos',
     communities: 'Comunidades',
     about: 'Sobre a plataforma'
   }[view];
+}
+
+function formatDate(value) {
+  if (!value) {
+    return '';
+  }
+  return new Date(`${value}T00:00:00`).toLocaleDateString('pt-BR', {
+    day: '2-digit',
+    month: 'short'
+  });
 }
 
 function formatDateTime(value) {

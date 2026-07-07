@@ -29,7 +29,7 @@ public class SecurityConfig {
             .authorizeHttpRequests(authorize -> authorize
                 .requestMatchers("/", "/login", "/register", "/sobre", "/css/**", "/js/**", "/img/**", "/error").permitAll()
                 .requestMatchers("/api/v1/auth/register", "/api/v1/auth/me").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/v1/dashboard", "/api/v1/events/**", "/api/v1/communities/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/v1/dashboard", "/api/v1/learning-tracks", "/api/v1/events/**", "/api/v1/communities/**").permitAll()
                 .anyRequest().authenticated()
             )
             .formLogin(form -> form

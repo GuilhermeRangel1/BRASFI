@@ -1,8 +1,8 @@
 package com.brasfi.webapp.entities;
 
 public enum NivelDePermissaoComunidade {
-    PUBLICA(1, "Publica"),
-    APENAS_LIDERES(2, "Apenas para lideres"),
+    PUBLICA(1, "Pública"),
+    APENAS_LIDERES(2, "Apenas para líderes"),
     PERSONALIZADA(3, "Personalizada");
 
     private int codigo;

@@ -128,6 +128,23 @@ public final class ApiDtos {
     ) {
     }
 
+    public record LearningStepResponse(String title, String description, String action) {
+    }
+
+    public record LearningTrackResponse(
+            String id,
+            String title,
+            String level,
+            String duration,
+            String description,
+            List<String> outcomes,
+            List<LearningStepResponse> steps,
+            List<String> resources,
+            List<EventResponse> recommendedEvents,
+            List<CommunityResponse> recommendedCommunities
+    ) {
+    }
+
     public static String roleOf(User user) {
         if (user instanceof Administrador) {
             return "ADMIN";

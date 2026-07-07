@@ -84,6 +84,7 @@ Altere essas credenciais no `.env` antes de usar fora de ambiente local.
 Endpoints principais:
 
 - `GET /api/v1/dashboard`
+- `GET /api/v1/learning-tracks`
 - `GET /api/v1/events`
 - `POST /api/v1/events` somente admin
 - `GET /api/v1/communities`

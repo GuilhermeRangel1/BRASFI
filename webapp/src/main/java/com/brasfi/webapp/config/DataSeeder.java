@@ -11,6 +11,7 @@ import com.brasfi.webapp.repositories.EventoRepository;
 import com.brasfi.webapp.repositories.UserRepository;
 import com.brasfi.webapp.service.PostService;
 import com.brasfi.webapp.service.UserService;
+import com.brasfi.webapp.service.LearningTrackService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
@@ -23,19 +24,22 @@ public class DataSeeder implements CommandLineRunner {
     private final ComunidadeRepository comunidadeRepository;
     private final UserService userService;
     private final PostService postService;
+    private final LearningTrackService learningTrackService;
 
     public DataSeeder(
             UserRepository userRepository,
             EventoRepository eventoRepository,
             ComunidadeRepository comunidadeRepository,
             UserService userService,
-            PostService postService
+            PostService postService,
+            LearningTrackService learningTrackService
     ) {
         this.userRepository = userRepository;
         this.eventoRepository = eventoRepository;
         this.comunidadeRepository = comunidadeRepository;
         this.userService = userService;
         this.postService = postService;
+        this.learningTrackService = learningTrackService;
     }
 
     @Override
@@ -56,10 +60,10 @@ public class DataSeeder implements CommandLineRunner {
         if (eventoRepository.count() == 0) {
             eventoRepository.save(new Evento(
                     null,
-                    "Financas sustentaveis na pratica",
+                    "Finanças sustentáveis na prática",
                     LocalDate.now().plusDays(10),
                     "Especialistas BRASFI e convidados do mercado",
-                    "Uma conversa aplicada sobre investimentos responsaveis, indicadores ESG e tomada de decisao.",
+                    "Uma conversa aplicada sobre investimentos responsáveis, indicadores ESG e tomada de decisão.",
                     EventoCategoria.PALESTRA,
                     "https://www.youtube.com/"
             ));
@@ -67,8 +71,8 @@ public class DataSeeder implements CommandLineRunner {
                     null,
                     "Workshop de indicadores ESG",
                     LocalDate.now().plusDays(24),
-                    "Comunidade academica e profissionais de dados",
-                    "Atividade para estruturar metricas, comparar criterios e transformar pesquisa em solucao.",
+                    "Comunidade acadêmica e profissionais de dados",
+                    "Atividade para estruturar métricas, comparar critérios e transformar pesquisa em solução.",
                     EventoCategoria.WORKSHOP,
                     "https://www.youtube.com/"
             ));
@@ -77,7 +81,7 @@ public class DataSeeder implements CommandLineRunner {
                     "Aula aberta: mercado de carbono",
                     LocalDate.now().minusDays(20),
                     "Rede BRASFI",
-                    "Gravacao introdutoria sobre precificacao, regulacao e oportunidades ligadas ao mercado de carbono.",
+                    "Gravação introdutória sobre precificação, regulação e oportunidades ligadas ao mercado de carbono.",
                     EventoCategoria.AULA,
                     "https://www.youtube.com/"
             ));
@@ -85,8 +89,8 @@ public class DataSeeder implements CommandLineRunner {
 
         if (comunidadeRepository.count() == 0) {
             Comunidade pesquisa = comunidadeRepository.save(new Comunidade(
-                    "Pesquisa e Inovacao",
-                    "Espaco para conectar pesquisadores, projetos e referencias em financas sustentaveis.",
+                    "Pesquisa e Inovação",
+                    "Espaço para conectar pesquisadores, projetos e referências em finanças sustentáveis.",
                     NivelDePermissaoComunidade.PUBLICA,
                     null
             ));
@@ -98,7 +102,9 @@ public class DataSeeder implements CommandLineRunner {
             ));
 
             postService.incluirPost(new Post(null, "Boas-vindas", "Compartilhe aqui pesquisas, eventos e perguntas para a rede.", 0, null, pesquisa, admin));
-            postService.incluirPost(new Post(null, "Conexoes", "Use este espaco para divulgar oportunidades e colaborar com outros membros.", 0, null, mercado, admin));
+            postService.incluirPost(new Post(null, "Conexões", "Use este espaço para divulgar oportunidades e colaborar com outros membros.", 0, null, mercado, admin));
         }
+
+        learningTrackService.criarTrilhaInicialSeNecessario();
     }
 }

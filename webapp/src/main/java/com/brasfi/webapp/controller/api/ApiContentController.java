@@ -7,6 +7,7 @@ import com.brasfi.webapp.dto.ApiDtos.DashboardResponse;
 import com.brasfi.webapp.dto.ApiDtos.ErrorResponse;
 import com.brasfi.webapp.dto.ApiDtos.EventRequest;
 import com.brasfi.webapp.dto.ApiDtos.EventResponse;
+import com.brasfi.webapp.dto.ApiDtos.LearningTrackResponse;
 import com.brasfi.webapp.dto.ApiDtos.PostRequest;
 import com.brasfi.webapp.dto.ApiDtos.PostResponse;
 import com.brasfi.webapp.entities.Comunidade;
@@ -18,6 +19,7 @@ import com.brasfi.webapp.repositories.ComunidadeRepository;
 import com.brasfi.webapp.security.CustomUserDetails;
 import com.brasfi.webapp.service.ComunidadeService;
 import com.brasfi.webapp.service.EventoService;
+import com.brasfi.webapp.service.LearningTrackService;
 import com.brasfi.webapp.service.PostService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -47,19 +49,22 @@ public class ApiContentController {
     private final ComunidadeRepository comunidadeRepository;
     private final PostService postService;
     private final SimpMessagingTemplate messagingTemplate;
+    private final LearningTrackService learningTrackService;
 
     public ApiContentController(
             EventoService eventoService,
             ComunidadeService comunidadeService,
             ComunidadeRepository comunidadeRepository,
             PostService postService,
-            SimpMessagingTemplate messagingTemplate
+            SimpMessagingTemplate messagingTemplate,
+            LearningTrackService learningTrackService
     ) {
         this.eventoService = eventoService;
         this.comunidadeService = comunidadeService;
         this.comunidadeRepository = comunidadeRepository;
         this.postService = postService;
         this.messagingTemplate = messagingTemplate;
+        this.learningTrackService = learningTrackService;
     }
 
     @GetMapping("/dashboard")
@@ -105,6 +110,11 @@ public class ApiContentController {
         return Arrays.stream(EventoCategoria.values())
                 .map(categoria -> new CategoryResponse(categoria.name(), categoria.getDisplayName()))
                 .toList();
+    }
+
+    @GetMapping("/learning-tracks")
+    public List<LearningTrackResponse> learningTracks() {
+        return learningTrackService.listarTrilhas();
     }
 
     @PreAuthorize("hasRole('ADMIN')")
