@@ -28,12 +28,6 @@ button {
   cursor: pointer;
 }
 
-.app-shell {
-  min-height: 100vh;
-  display: grid;
-  grid-template-columns: 292px minmax(0, 1fr);
-}
-
 .site-shell {
   min-height: 100vh;
   background:
@@ -53,19 +47,6 @@ button {
   border-bottom: 1px solid rgba(78, 104, 87, 0.14);
   background: rgba(248, 250, 246, 0.9);
   backdrop-filter: blur(14px);
-}
-
-.sidebar {
-  position: sticky;
-  top: 0;
-  height: 100vh;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  gap: 22px;
-  padding: 24px;
-  background: #10231c;
-  color: #f7fbf6;
 }
 
 .brand {
@@ -415,12 +396,6 @@ h1 {
   background: rgba(255, 255, 255, 0.55);
 }
 
-.dashboard-grid {
-  display: grid;
-  grid-template-columns: minmax(0, 1.2fr) minmax(300px, 0.8fr);
-  gap: 18px;
-}
-
 .home-page {
   display: grid;
   gap: 0;
@@ -462,20 +437,6 @@ h1 {
   grid-template-columns: minmax(0, 1fr) 360px;
   gap: 18px;
   align-items: start;
-}
-
-.hero-band {
-  min-height: 360px;
-  grid-column: 1 / -1;
-  display: flex;
-  align-items: end;
-  padding: 34px;
-  border-radius: 8px;
-  overflow: hidden;
-  background:
-    linear-gradient(90deg, rgba(16, 35, 28, 0.92), rgba(16, 35, 28, 0.48)),
-    url('/img/brasfi.jpg') center / cover;
-  color: #ffffff;
 }
 
 .home-hero {
@@ -558,8 +519,6 @@ h1 {
     url('/img/matagal.jpg') center / cover;
 }
 
-.hero-band h2,
-.about-panel h2,
 .track-hero h2 {
   max-width: 760px;
   margin-bottom: 12px;
@@ -574,8 +533,6 @@ h1 {
   line-height: 0.98;
 }
 
-.hero-band p,
-.about-panel p,
 .track-hero p {
   max-width: 660px;
   color: #e4efe2;
@@ -620,22 +577,6 @@ h1 {
   align-items: end;
   padding: clamp(74px, 8vw, 124px) 0 clamp(50px, 6vw, 84px);
   scroll-margin-top: 120px;
-}
-
-.organic-section {
-  position: relative;
-}
-
-.organic-section::before {
-  content: "";
-  position: absolute;
-  top: 52px;
-  left: min(38vw, 520px);
-  width: 180px;
-  height: 1px;
-  background: #9acb5a;
-  transform: rotate(-8deg);
-  transform-origin: left center;
 }
 
 .intro-section h2 {
@@ -905,19 +846,10 @@ h1 {
   color: #dff58f;
 }
 
-.stat-grid {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(130px, 1fr));
-  gap: 12px;
-  grid-column: 1 / -1;
-}
-
-.metric-card,
 .content-column,
 .editor-panel,
 .chat-panel,
 .community-list,
-.about-panel,
 .track-steps {
   border: 1px solid #e2e8df;
   border-radius: 8px;
@@ -925,23 +857,6 @@ h1 {
   box-shadow: 0 18px 42px rgba(37, 52, 43, 0.08);
 }
 
-.metric-card {
-  min-height: 126px;
-  display: grid;
-  align-content: center;
-  gap: 6px;
-  padding: 18px;
-}
-
-.metric-card svg {
-  color: #287556;
-}
-
-.metric-card strong {
-  font-size: 2.1rem;
-}
-
-.metric-card span,
 .muted,
 .meta-line,
 .mini-row span,
@@ -953,7 +868,6 @@ h1 {
 .editor-panel,
 .chat-panel,
 .community-list,
-.about-panel,
 .track-steps {
   padding: 18px;
 }
@@ -1265,46 +1179,7 @@ h1 {
   margin-top: 14px;
 }
 
-.about-panel {
-  min-height: 58vh;
-  display: grid;
-  align-content: end;
-  padding: 40px;
-  color: #ffffff;
-  background:
-    linear-gradient(90deg, rgba(16, 35, 28, 0.9), rgba(16, 35, 28, 0.42)),
-    url('/img/matagal.jpg') center / cover;
-}
-
-.principles {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-top: 18px;
-}
-
-.principles span {
-  padding: 10px 12px;
-  border-radius: 999px;
-  color: #10231c;
-  background: #dff58f;
-  font-weight: 800;
-}
-
 @media (max-width: 1180px) {
-  .app-shell {
-    grid-template-columns: 1fr;
-  }
-
-  .sidebar {
-    position: sticky;
-    top: 0;
-    z-index: 2;
-    height: auto;
-    display: grid;
-    grid-template-columns: auto 1fr;
-  }
-
   .account-panel {
     grid-column: 1 / -1;
     margin-top: 0;
@@ -1317,7 +1192,6 @@ h1 {
   }
 
   .community-layout,
-  .dashboard-grid,
   .home-feature,
   .hub-section,
   .intro-section,
@@ -1366,13 +1240,9 @@ h1 {
     flex-direction: column;
   }
 
-  .stat-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
 }
 
 @media (max-width: 720px) {
-  .sidebar,
   .workspace {
     padding: 16px;
   }
@@ -1405,9 +1275,7 @@ h1 {
     grid-template-columns: 1fr;
   }
 
-  .hero-band,
   .home-hero,
-  .about-panel,
   .track-hero {
     min-height: 420px;
     padding: 22px;
@@ -1434,10 +1302,6 @@ h1 {
   .home-local-nav {
     justify-content: start;
     overflow-x: auto;
-  }
-
-  .stat-grid {
-    grid-template-columns: 1fr;
   }
 
   .impact-strip,
