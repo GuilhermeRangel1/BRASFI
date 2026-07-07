@@ -2,6 +2,7 @@ package com.brasfi.webapp.repositories;
 
 import com.brasfi.webapp.entities.Comunidade;
 import com.brasfi.webapp.entities.Post;
+import com.brasfi.webapp.entities.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying; 
 import org.springframework.data.jpa.repository.Query; 
@@ -14,6 +15,10 @@ import java.util.List;
 @Repository
 public interface PostRepository extends JpaRepository<Post, Long> {
     List<Post> findByComunidade(Comunidade comunidade);
+
+    List<Post> findTop5ByAutorOrderByDataCriacaoDesc(User autor);
+
+    long countByAutor(User autor);
 
     @Modifying
     @Transactional 

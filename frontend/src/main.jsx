@@ -41,6 +41,7 @@ const views = [
   { id: 'communities', label: 'Comunidades', icon: UsersRound }
 ];
 
+const profileView = { id: 'profile', label: 'Minha jornada', icon: CircleUserRound };
 const adminView = { id: 'admin', label: 'Admin', icon: Settings };
 
 async function api(path, options = {}) {
@@ -71,6 +72,7 @@ function App() {
   const [events, setEvents] = useState([]);
   const [communities, setCommunities] = useState([]);
   const [learningTracks, setLearningTracks] = useState([]);
+  const [profile, setProfile] = useState(null);
   const [selectedCommunityId, setSelectedCommunityId] = useState(null);
   const [posts, setPosts] = useState([]);
   const [auth, setAuth] = useState({ authenticated: false, user: null });
@@ -87,23 +89,26 @@ function App() {
   const isAdmin = auth.user?.role === 'ADMIN';
   const canManageCommunities = auth.user?.role === 'ADMIN' || auth.user?.role === 'MANAGER';
   const canAccessAdmin = isAdmin || canManageCommunities;
-  const visibleViews = canAccessAdmin ? [...views, adminView] : views;
+  const memberViews = auth.authenticated ? [...views, profileView] : views;
+  const visibleViews = canAccessAdmin ? [...memberViews, adminView] : memberViews;
 
   async function loadAll() {
     setLoading(true);
     try {
-      const [me, dash, allEvents, allCommunities, allLearningTracks] = await Promise.all([
-        api('/api/v1/auth/me'),
+      const me = await api('/api/v1/auth/me');
+      const [dash, allEvents, allCommunities, allLearningTracks, currentProfile] = await Promise.all([
         api('/api/v1/dashboard'),
         api('/api/v1/events'),
         api('/api/v1/communities'),
-        api('/api/v1/learning-tracks')
+        api('/api/v1/learning-tracks'),
+        me.authenticated ? api('/api/v1/profile') : Promise.resolve(null)
       ]);
       setAuth(me);
       setDashboard(dash);
       setEvents(allEvents);
       setCommunities(allCommunities);
       setLearningTracks(allLearningTracks);
+      setProfile(currentProfile);
       setSelectedCommunityId((current) => current ?? allCommunities[0]?.id ?? null);
     } finally {
       setLoading(false);
@@ -128,6 +133,12 @@ function App() {
       setView('dashboard');
     }
   }, [canAccessAdmin, view]);
+
+  useEffect(() => {
+    if (view === 'profile' && !auth.authenticated) {
+      setView('dashboard');
+    }
+  }, [auth.authenticated, view]);
 
   useEffect(() => {
     if (!selectedCommunityId) {
@@ -208,6 +219,10 @@ function App() {
       headers: { 'X-Requested-With': 'XMLHttpRequest', Accept: 'application/json' }
     });
     setAuth({ authenticated: false, user: null });
+    setProfile(null);
+    if (view === 'profile') {
+      setView('dashboard');
+    }
     setNotice('Você saiu da conta.');
   }
 
@@ -412,11 +427,11 @@ function App() {
         <section className={authOpen ? 'account-panel site-account open' : 'account-panel site-account'}>
           {auth.authenticated ? (
             <>
-              <div className="account-name">
+              <button className="account-name account-button" type="button" onClick={() => setView('profile')}>
                 <CircleUserRound size={20} />
                 <span>{auth.user.name}</span>
-              </div>
-              <span className="role-pill">{auth.user.role}</span>
+              </button>
+              {canAccessAdmin && <span className="role-pill">{auth.user.role}</span>}
               <button className="ghost-button" onClick={handleLogout}>
                 <LogOut size={17} /> Sair
               </button>
@@ -471,6 +486,13 @@ function App() {
         ) : (
           <>
             {view === 'dashboard' && <Dashboard dashboard={dashboard} setView={setView} />}
+            {view === 'profile' && auth.authenticated && (
+              <ProfilePage
+                profile={profile}
+                setView={setView}
+                setSelectedCommunityId={setSelectedCommunityId}
+              />
+            )}
             {view === 'learning' && (
               <LearningTracks
                 tracks={learningTracks}
@@ -553,6 +575,141 @@ function AuthBox({ mode, setMode, onLogin, onRegister }) {
   );
 }
 
+function ProfilePage({ profile, setView, setSelectedCommunityId }) {
+  if (!profile) {
+    return <div className="loading-state">Carregando sua jornada...</div>;
+  }
+
+  const startedTracks = profile.trilhas ?? [];
+  const registeredEvents = profile.eventos ?? [];
+  const recentMessages = profile.mensagensRecentes ?? [];
+  const nextTrack = startedTracks.find((track) => !track.progress?.completed) ?? startedTracks[0];
+
+  return (
+    <div className="profile-page">
+      <section className="profile-hero">
+        <div>
+          <span className="hero-kicker"><CircleUserRound size={18} /> Perfil do usuário</span>
+          <h2>{profile.user.name}</h2>
+          <p>{profile.user.email}</p>
+          <div className="profile-tags">
+            <span>{profile.user.role}</span>
+            <span>{profile.user.idade} anos</span>
+          </div>
+        </div>
+        <div className="profile-highlight">
+          <span>Próximo passo</span>
+          <strong>{nextTrack ? nextTrack.title : 'Começar uma trilha'}</strong>
+          <button className="primary-button" type="button" onClick={() => setView('learning')}>
+            <ArrowRight size={17} /> Continuar
+          </button>
+        </div>
+      </section>
+
+      <section className="profile-metrics">
+        <MetricCard value={profile.stats.trilhasIniciadas} label="trilhas iniciadas" />
+        <MetricCard value={profile.stats.trilhasConcluidas} label="trilhas concluídas" />
+        <MetricCard value={profile.stats.eventosInscritos} label="eventos inscritos" />
+        <MetricCard value={profile.stats.mensagensEnviadas} label="mensagens enviadas" />
+      </section>
+
+      <div className="profile-grid">
+        <section className="content-column profile-card">
+          <SectionHeader icon={GraduationCap} title="Trilhas em andamento" />
+          <div className="profile-track-list">
+            {startedTracks.map((track) => (
+              <article className="profile-track" key={track.id}>
+                <div>
+                  <strong>{track.title}</strong>
+                  <span>{track.level} · {track.duration}</span>
+                </div>
+                <div className="progress-bar" aria-label={`Progresso: ${track.progress?.percent ?? 0}%`}>
+                  <span style={{ width: `${track.progress?.percent ?? 0}%` }} />
+                </div>
+                <p>{track.progress?.completedCount ?? 0} de {track.progress?.totalSteps ?? track.steps.length} etapas concluídas.</p>
+              </article>
+            ))}
+            {startedTracks.length === 0 && (
+              <EmptyAction
+                text="Você ainda não iniciou nenhuma trilha."
+                action="Ver trilhas"
+                onClick={() => setView('learning')}
+              />
+            )}
+          </div>
+        </section>
+
+        <section className="content-column profile-card">
+          <SectionHeader icon={CalendarDays} title="Eventos inscritos" />
+          <div className="compact-list">
+            {registeredEvents.map((event) => (
+              <button className="compact-row" key={event.id} onClick={() => setView('events')}>
+                <strong>{event.titulo}</strong>
+                <span>{formatDate(event.dataEvento)} · {event.categoriaLabel} <ArrowRight size={15} /></span>
+              </button>
+            ))}
+            {registeredEvents.length === 0 && (
+              <EmptyAction
+                text="Nenhuma inscrição em evento por enquanto."
+                action="Ver agenda"
+                onClick={() => setView('events')}
+              />
+            )}
+          </div>
+        </section>
+
+        <section className="content-column profile-card profile-wide-card">
+          <SectionHeader icon={MessageSquareText} title="Atividade nas comunidades" />
+          <div className="message-history">
+            {recentMessages.map((message) => (
+              <button
+                className="message-history-item"
+                type="button"
+                key={message.id}
+                onClick={() => {
+                  setSelectedCommunityId(message.comunidadeId);
+                  setView('communities');
+                }}
+              >
+                <strong>{message.comunidadeNome}</strong>
+                <p>{message.mensagem}</p>
+                <time>{formatDateTime(message.dataCriacao)}</time>
+              </button>
+            ))}
+            {recentMessages.length === 0 && (
+              <EmptyAction
+                text="Suas mensagens recentes vão aparecer aqui."
+                action="Participar"
+                onClick={() => setView('communities')}
+              />
+            )}
+          </div>
+        </section>
+      </div>
+    </div>
+  );
+}
+
+function MetricCard({ value, label }) {
+  return (
+    <article className="metric-card">
+      <strong>{value}</strong>
+      <span>{label}</span>
+    </article>
+  );
+}
+
+function EmptyAction({ text, action, onClick }) {
+  return (
+    <div className="empty-action">
+      <span>{text}</span>
+      <button className="ghost-button surface compact" type="button" onClick={onClick}>
+        {action} <ArrowRight size={15} />
+      </button>
+    </div>
+  );
+}
+
 function Dashboard({ dashboard, setView }) {
   const impactItems = [
     ['15 estados e 10 países', 'presença nacional e conexões internacionais'],
@@ -597,9 +754,6 @@ function Dashboard({ dashboard, setView }) {
             {label}
           </button>
         ))}
-        <button className="home-contact-button" onClick={() => setView('communities')}>
-          Participar da rede
-        </button>
       </nav>
 
       <section className="home-hero">
@@ -1627,6 +1781,7 @@ function EmptyState({ text }) {
 function titleFor(view) {
   return {
     dashboard: 'Início BRASFI',
+    profile: 'Minha jornada',
     learning: 'Trilhas de aprendizagem',
     events: 'Eventos',
     communities: 'Comunidades',

@@ -126,6 +126,42 @@ public final class ApiDtos {
         }
     }
 
+    public record ProfilePostResponse(
+            Long id,
+            String mensagem,
+            LocalDateTime dataCriacao,
+            Long comunidadeId,
+            String comunidadeNome
+    ) {
+        public static ProfilePostResponse from(Post post) {
+            Comunidade comunidade = post.getComunidade();
+            return new ProfilePostResponse(
+                    post.getId(),
+                    post.getDescricao(),
+                    post.getDataCriacao(),
+                    comunidade == null ? null : comunidade.getId(),
+                    comunidade == null ? "Comunidade" : comunidade.getNome()
+            );
+        }
+    }
+
+    public record ProfileStatsResponse(
+            long trilhasIniciadas,
+            long trilhasConcluidas,
+            long eventosInscritos,
+            long mensagensEnviadas
+    ) {
+    }
+
+    public record ProfileResponse(
+            UserResponse user,
+            ProfileStatsResponse stats,
+            List<LearningTrackResponse> trilhas,
+            List<EventResponse> eventos,
+            List<ProfilePostResponse> mensagensRecentes
+    ) {
+    }
+
     public record DashboardResponse(
             long totalEventos,
             long eventosFuturos,

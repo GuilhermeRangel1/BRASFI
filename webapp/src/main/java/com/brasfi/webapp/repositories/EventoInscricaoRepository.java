@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
+import java.util.List;
 
 @Repository
 public interface EventoInscricaoRepository extends JpaRepository<EventoInscricao, Long> {
@@ -15,6 +16,8 @@ public interface EventoInscricaoRepository extends JpaRepository<EventoInscricao
     boolean existsByEventoAndUsuario(Evento evento, User usuario);
 
     Optional<EventoInscricao> findByEventoAndUsuario(Evento evento, User usuario);
+
+    List<EventoInscricao> findByUsuarioOrderByDataInscricaoDesc(User usuario);
 
     void deleteByEvento(Evento evento);
 }

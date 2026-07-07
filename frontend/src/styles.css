@@ -225,6 +225,18 @@ button {
   font-weight: 700;
 }
 
+.account-button {
+  border: 0;
+  padding: 0;
+  color: #10231c;
+  background: transparent;
+  text-align: left;
+}
+
+.account-button:hover {
+  color: #246b4f;
+}
+
 .role-pill {
   width: fit-content;
   padding: 5px 9px;
@@ -1121,6 +1133,183 @@ h1 {
   color: #3e5748;
 }
 
+.profile-page {
+  display: grid;
+  gap: 22px;
+}
+
+.profile-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 360px);
+  gap: 24px;
+  align-items: end;
+  min-height: 320px;
+  padding: 34px;
+  border-radius: 8px;
+  color: #ffffff;
+  background:
+    linear-gradient(110deg, rgba(16, 35, 28, 0.96), rgba(36, 107, 79, 0.78)),
+    url("https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&w=1800&q=80") center/cover;
+  box-shadow: 0 22px 58px rgba(29, 50, 38, 0.18);
+}
+
+.profile-hero h2 {
+  max-width: 780px;
+  margin-bottom: 10px;
+  font-size: clamp(2rem, 5vw, 4rem);
+  line-height: 1;
+}
+
+.profile-hero p {
+  margin-bottom: 16px;
+  color: #e3eee1;
+}
+
+.profile-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.profile-tags span {
+  padding: 7px 10px;
+  border-radius: 999px;
+  color: #10231c;
+  background: #dff58f;
+  font-weight: 800;
+  font-size: 0.84rem;
+}
+
+.profile-highlight {
+  display: grid;
+  gap: 12px;
+  padding: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(12px);
+}
+
+.profile-highlight span {
+  color: #dff58f;
+  font-size: 0.82rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.profile-highlight strong {
+  font-size: 1.18rem;
+  line-height: 1.25;
+}
+
+.profile-metrics {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.metric-card {
+  display: grid;
+  gap: 4px;
+  padding: 18px;
+  border: 1px solid #dfe9d9;
+  border-radius: 8px;
+  background: #ffffff;
+  box-shadow: 0 14px 34px rgba(37, 52, 43, 0.07);
+}
+
+.metric-card strong {
+  color: #246b4f;
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.metric-card span {
+  color: #627267;
+  font-weight: 700;
+}
+
+.profile-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(320px, 0.9fr);
+  gap: 18px;
+}
+
+.profile-card {
+  min-width: 0;
+}
+
+.profile-wide-card {
+  grid-column: 1 / -1;
+}
+
+.profile-track-list,
+.message-history {
+  display: grid;
+  gap: 12px;
+}
+
+.profile-track {
+  display: grid;
+  gap: 10px;
+  padding: 14px;
+  border: 1px solid #e2e8df;
+  border-radius: 8px;
+  background: #fbfdf9;
+}
+
+.profile-track strong {
+  display: block;
+  margin-bottom: 4px;
+}
+
+.profile-track span,
+.profile-track p {
+  margin: 0;
+  color: #627267;
+}
+
+.message-history-item {
+  display: grid;
+  gap: 7px;
+  width: 100%;
+  padding: 14px;
+  border: 1px solid #e2e8df;
+  border-radius: 8px;
+  color: #18201c;
+  text-align: left;
+  background: #fbfdf9;
+}
+
+.message-history-item:hover {
+  border-color: #9dc69d;
+  background: #f2f8ed;
+}
+
+.message-history-item p {
+  margin: 0;
+  color: #3e5748;
+  line-height: 1.45;
+}
+
+.message-history-item time {
+  color: #68796e;
+  font-size: 0.8rem;
+}
+
+.empty-action {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 18px;
+  border: 1px dashed #c7d4c1;
+  border-radius: 8px;
+  color: #647366;
+  background: rgba(255, 255, 255, 0.55);
+}
+
 .event-item {
   display: grid;
   grid-template-columns: 62px minmax(0, 1fr) 42px;
@@ -1632,13 +1821,16 @@ h1 {
   .hub-section,
   .intro-section,
   .learning-layout,
+  .profile-grid,
+  .profile-hero,
   .split-layout {
     grid-template-columns: 1fr;
   }
 
   .impact-strip,
   .pillar-grid,
-  .path-grid {
+  .path-grid,
+  .profile-metrics {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
@@ -1744,6 +1936,7 @@ h1 {
 
   .home-hero,
   .admin-hero,
+  .profile-hero,
   .track-hero {
     min-height: 420px;
     padding: 22px;
@@ -1774,7 +1967,8 @@ h1 {
 
   .impact-strip,
   .pillar-grid,
-  .path-grid {
+  .path-grid,
+  .profile-metrics {
     grid-template-columns: 1fr;
   }
 

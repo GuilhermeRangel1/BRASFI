@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.Comparator;
+import java.util.List;
 
 @Service
 public class EventoInscricaoService {
@@ -22,6 +24,16 @@ public class EventoInscricaoService {
         long totalInscritos = eventoInscricaoRepository.countByEvento(evento);
         boolean inscrito = usuario != null && eventoInscricaoRepository.existsByEventoAndUsuario(evento, usuario);
         return EventResponse.from(evento, totalInscritos, inscrito);
+    }
+
+    @Transactional(readOnly = true)
+    public List<EventResponse> listarEventosDoUsuario(User usuario) {
+        return eventoInscricaoRepository.findByUsuarioOrderByDataInscricaoDesc(usuario)
+                .stream()
+                .map(EventoInscricao::getEvento)
+                .sorted(Comparator.comparing(Evento::getDataEvento))
+                .map(evento -> toResponse(evento, usuario))
+                .toList();
     }
 
     @Transactional

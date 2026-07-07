@@ -12,6 +12,10 @@ import com.brasfi.webapp.dto.ApiDtos.LearningTrackRequest;
 import com.brasfi.webapp.dto.ApiDtos.LearningTrackResponse;
 import com.brasfi.webapp.dto.ApiDtos.PostRequest;
 import com.brasfi.webapp.dto.ApiDtos.PostResponse;
+import com.brasfi.webapp.dto.ApiDtos.ProfilePostResponse;
+import com.brasfi.webapp.dto.ApiDtos.ProfileResponse;
+import com.brasfi.webapp.dto.ApiDtos.ProfileStatsResponse;
+import com.brasfi.webapp.dto.ApiDtos.UserResponse;
 import com.brasfi.webapp.entities.Comunidade;
 import com.brasfi.webapp.entities.Evento;
 import com.brasfi.webapp.entities.EventoCategoria;
@@ -95,6 +99,36 @@ public class ApiContentController {
                 comunidades.size(),
                 proximosEventos,
                 comunidades
+        );
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/profile")
+    public ProfileResponse profile(@AuthenticationPrincipal CustomUserDetails currentUser) {
+        var usuario = currentUser.getUserEntity();
+        List<LearningTrackResponse> trilhas = learningTrackService.listarTrilhas(usuario)
+                .stream()
+                .filter(track -> track.progress() != null && track.progress().enrolled())
+                .toList();
+        List<EventResponse> eventos = eventoInscricaoService.listarEventosDoUsuario(usuario);
+        List<ProfilePostResponse> mensagensRecentes = postService.buscarRecentesPorAutor(usuario)
+                .stream()
+                .map(ProfilePostResponse::from)
+                .toList();
+
+        ProfileStatsResponse stats = new ProfileStatsResponse(
+                trilhas.size(),
+                trilhas.stream().filter(track -> track.progress() != null && track.progress().completed()).count(),
+                eventos.size(),
+                postService.contarPorAutor(usuario)
+        );
+
+        return new ProfileResponse(
+                UserResponse.from(usuario),
+                stats,
+                trilhas,
+                eventos,
+                mensagensRecentes
         );
     }
 
