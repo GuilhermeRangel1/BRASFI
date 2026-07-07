@@ -18,6 +18,7 @@ import com.brasfi.webapp.entities.Post;
 import com.brasfi.webapp.repositories.ComunidadeRepository;
 import com.brasfi.webapp.security.CustomUserDetails;
 import com.brasfi.webapp.service.ComunidadeService;
+import com.brasfi.webapp.service.EventoInscricaoService;
 import com.brasfi.webapp.service.EventoService;
 import com.brasfi.webapp.service.LearningTrackService;
 import com.brasfi.webapp.service.PostService;
@@ -50,6 +51,7 @@ public class ApiContentController {
     private final PostService postService;
     private final SimpMessagingTemplate messagingTemplate;
     private final LearningTrackService learningTrackService;
+    private final EventoInscricaoService eventoInscricaoService;
 
     public ApiContentController(
             EventoService eventoService,
@@ -57,7 +59,8 @@ public class ApiContentController {
             ComunidadeRepository comunidadeRepository,
             PostService postService,
             SimpMessagingTemplate messagingTemplate,
-            LearningTrackService learningTrackService
+            LearningTrackService learningTrackService,
+            EventoInscricaoService eventoInscricaoService
     ) {
         this.eventoService = eventoService;
         this.comunidadeService = comunidadeService;
@@ -65,16 +68,18 @@ public class ApiContentController {
         this.postService = postService;
         this.messagingTemplate = messagingTemplate;
         this.learningTrackService = learningTrackService;
+        this.eventoInscricaoService = eventoInscricaoService;
     }
 
     @GetMapping("/dashboard")
-    public DashboardResponse dashboard() {
+    public DashboardResponse dashboard(@AuthenticationPrincipal CustomUserDetails currentUser) {
+        var usuario = currentUser == null ? null : currentUser.getUserEntity();
         List<Evento> eventos = eventoService.listarEventos();
         List<EventResponse> proximosEventos = eventoService.listarEventosAtuaisOuFuturos()
                 .stream()
                 .sorted(Comparator.comparing(Evento::getDataEvento))
                 .limit(4)
-                .map(EventResponse::from)
+                .map(evento -> eventoInscricaoService.toResponse(evento, usuario))
                 .toList();
         List<CommunityResponse> comunidades = comunidadeService.listarTodasComunidades()
                 .stream()
@@ -92,7 +97,11 @@ public class ApiContentController {
     }
 
     @GetMapping("/events")
-    public List<EventResponse> events(@RequestParam(value = "type", defaultValue = "all") String type) {
+    public List<EventResponse> events(
+            @RequestParam(value = "type", defaultValue = "all") String type,
+            @AuthenticationPrincipal CustomUserDetails currentUser
+    ) {
+        var usuario = currentUser == null ? null : currentUser.getUserEntity();
         List<Evento> eventos = switch (type) {
             case "upcoming" -> eventoService.listarEventosAtuaisOuFuturos();
             case "past" -> eventoService.listarEventosPassados();
@@ -101,7 +110,7 @@ public class ApiContentController {
 
         return eventos.stream()
                 .sorted(Comparator.comparing(Evento::getDataEvento))
-                .map(EventResponse::from)
+                .map(evento -> eventoInscricaoService.toResponse(evento, usuario))
                 .toList();
     }
 
@@ -144,11 +153,40 @@ public class ApiContentController {
     @DeleteMapping("/events/{id}")
     public ResponseEntity<?> deleteEvent(@PathVariable Long id) {
         try {
+            eventoService.findById(id).ifPresent(eventoInscricaoService::excluirInscricoesDoEvento);
             eventoService.excluirEvento(id);
             return ResponseEntity.noContent().build();
         } catch (RuntimeException exception) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(exception.getMessage()));
         }
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @PostMapping("/events/{id}/registrations")
+    public ResponseEntity<?> registerForEvent(
+            @PathVariable Long id,
+            @AuthenticationPrincipal CustomUserDetails currentUser
+    ) {
+        return eventoService.findById(id)
+                .<ResponseEntity<?>>map(evento -> {
+                    try {
+                        return ResponseEntity.ok(eventoInscricaoService.inscrever(evento, currentUser.getUserEntity()));
+                    } catch (RuntimeException exception) {
+                        return ResponseEntity.badRequest().body(new ErrorResponse(exception.getMessage()));
+                    }
+                })
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse("Evento não encontrado.")));
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @DeleteMapping("/events/{id}/registrations")
+    public ResponseEntity<?> cancelEventRegistration(
+            @PathVariable Long id,
+            @AuthenticationPrincipal CustomUserDetails currentUser
+    ) {
+        return eventoService.findById(id)
+                .<ResponseEntity<?>>map(evento -> ResponseEntity.ok(eventoInscricaoService.cancelarInscricao(evento, currentUser.getUserEntity())))
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse("Evento não encontrado.")));
     }
 
     @GetMapping("/communities")

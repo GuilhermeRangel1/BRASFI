@@ -205,6 +205,19 @@ function App() {
     await loadAll();
   }
 
+  async function toggleEventRegistration(eventId, isRegistered) {
+    if (!auth.authenticated) {
+      setNotice('Entre na sua conta para se inscrever em eventos.');
+      return;
+    }
+
+    await api(`/api/v1/events/${eventId}/registrations`, {
+      method: isRegistered ? 'DELETE' : 'POST'
+    });
+    setNotice(isRegistered ? 'Inscrição cancelada.' : 'Inscrição confirmada.');
+    await loadAll();
+  }
+
   async function createCommunity(event) {
     event.preventDefault();
     const form = new FormData(event.currentTarget);
@@ -304,7 +317,15 @@ function App() {
           <>
             {view === 'dashboard' && <Dashboard dashboard={dashboard} setView={setView} />}
             {view === 'learning' && <LearningTracks tracks={learningTracks} setView={setView} />}
-            {view === 'events' && <Events events={events} isAdmin={isAdmin} createEvent={createEvent} />}
+            {view === 'events' && (
+              <Events
+                events={events}
+                auth={auth}
+                isAdmin={isAdmin}
+                createEvent={createEvent}
+                toggleEventRegistration={toggleEventRegistration}
+              />
+            )}
             {view === 'communities' && (
               <Communities
                 communities={communities}
@@ -494,7 +515,7 @@ function LearningTracks({ tracks, setView }) {
   );
 }
 
-function Events({ events, isAdmin, createEvent }) {
+function Events({ events, auth, isAdmin, createEvent, toggleEventRegistration }) {
   const upcoming = events.filter((event) => event.futuro);
   const past = events.filter((event) => !event.futuro);
 
@@ -503,7 +524,14 @@ function Events({ events, isAdmin, createEvent }) {
       <section className="content-column">
         <SectionHeader icon={CalendarDays} title="Agenda" />
         <div className="event-list">
-          {upcoming.map((event) => <EventItem key={event.id} event={event} />)}
+          {upcoming.map((event) => (
+            <EventItem
+              key={event.id}
+              event={event}
+              auth={auth}
+              toggleEventRegistration={toggleEventRegistration}
+            />
+          ))}
           {upcoming.length === 0 && <EmptyState text="Nenhum evento futuro cadastrado." />}
         </div>
       </section>
@@ -626,7 +654,9 @@ function About() {
   );
 }
 
-function EventItem({ event }) {
+function EventItem({ event, auth, toggleEventRegistration }) {
+  const canRegister = event.futuro && toggleEventRegistration;
+
   return (
     <article className="event-item">
       <div className="date-box">
@@ -639,7 +669,17 @@ function EventItem({ event }) {
         <div className="meta-line">
           <span>{event.categoriaLabel}</span>
           <span>{event.convidados}</span>
+          <span>{event.totalInscritos ?? 0} inscritos</span>
         </div>
+        {canRegister && (
+          <button
+            className={event.inscrito ? 'event-register-button active' : 'event-register-button'}
+            onClick={() => toggleEventRegistration(event.id, event.inscrito)}
+          >
+            <CheckCircle2 size={16} />
+            {event.inscrito ? 'Inscrito' : auth?.authenticated ? 'Inscrever-se' : 'Entrar para se inscrever'}
+          </button>
+        )}
       </div>
       <a href={event.urlVideo} target="_blank" rel="noreferrer" className="icon-link" title="Abrir vídeo">
         <Video size={18} />

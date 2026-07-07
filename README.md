@@ -87,6 +87,8 @@ Endpoints principais:
 - `GET /api/v1/learning-tracks`
 - `GET /api/v1/events`
 - `POST /api/v1/events` somente admin
+- `POST /api/v1/events/{id}/registrations` autenticado
+- `DELETE /api/v1/events/{id}/registrations` autenticado
 - `GET /api/v1/communities`
 - `GET /api/v1/communities/{id}/posts`
 - `POST /api/v1/communities/{id}/posts` autenticado

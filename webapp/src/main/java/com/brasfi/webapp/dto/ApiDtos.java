@@ -49,9 +49,15 @@ public final class ApiDtos {
             String categoria,
             String categoriaLabel,
             String urlVideo,
-            boolean futuro
+            boolean futuro,
+            long totalInscritos,
+            boolean inscrito
     ) {
         public static EventResponse from(Evento evento) {
+            return from(evento, 0, false);
+        }
+
+        public static EventResponse from(Evento evento, long totalInscritos, boolean inscrito) {
             return new EventResponse(
                     evento.getId(),
                     evento.getTitulo(),
@@ -61,7 +67,9 @@ public final class ApiDtos {
                     evento.getCategoria().name(),
                     evento.getCategoria().getDisplayName(),
                     evento.getUrlVideo(),
-                    !evento.getDataEvento().isBefore(LocalDate.now())
+                    !evento.getDataEvento().isBefore(LocalDate.now()),
+                    totalInscritos,
+                    inscrito
             );
         }
     }
