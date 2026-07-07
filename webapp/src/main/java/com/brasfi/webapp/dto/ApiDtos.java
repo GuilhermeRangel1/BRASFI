@@ -139,6 +139,34 @@ public final class ApiDtos {
     public record LearningStepResponse(String title, String description, String action) {
     }
 
+    public record LearningStepRequest(String title, String description, String action) {
+    }
+
+    public record LearningProgressResponse(
+            boolean enrolled,
+            List<Integer> completedSteps,
+            int completedCount,
+            int totalSteps,
+            int percent,
+            boolean completed
+    ) {
+    }
+
+    public record LearningProgressRequest(List<Integer> completedSteps) {
+    }
+
+    public record LearningTrackRequest(
+            String id,
+            String title,
+            String level,
+            String duration,
+            String description,
+            List<String> outcomes,
+            List<LearningStepRequest> steps,
+            List<String> resources
+    ) {
+    }
+
     public record LearningTrackResponse(
             String id,
             String title,
@@ -148,6 +176,7 @@ public final class ApiDtos {
             List<String> outcomes,
             List<LearningStepResponse> steps,
             List<String> resources,
+            LearningProgressResponse progress,
             List<EventResponse> recommendedEvents,
             List<CommunityResponse> recommendedCommunities
     ) {

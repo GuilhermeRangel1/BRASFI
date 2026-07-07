@@ -7,6 +7,8 @@ import com.brasfi.webapp.dto.ApiDtos.DashboardResponse;
 import com.brasfi.webapp.dto.ApiDtos.ErrorResponse;
 import com.brasfi.webapp.dto.ApiDtos.EventRequest;
 import com.brasfi.webapp.dto.ApiDtos.EventResponse;
+import com.brasfi.webapp.dto.ApiDtos.LearningProgressRequest;
+import com.brasfi.webapp.dto.ApiDtos.LearningTrackRequest;
 import com.brasfi.webapp.dto.ApiDtos.LearningTrackResponse;
 import com.brasfi.webapp.dto.ApiDtos.PostRequest;
 import com.brasfi.webapp.dto.ApiDtos.PostResponse;
@@ -122,8 +124,66 @@ public class ApiContentController {
     }
 
     @GetMapping("/learning-tracks")
-    public List<LearningTrackResponse> learningTracks() {
-        return learningTrackService.listarTrilhas();
+    public List<LearningTrackResponse> learningTracks(@AuthenticationPrincipal CustomUserDetails currentUser) {
+        return learningTrackService.listarTrilhas(currentUser == null ? null : currentUser.getUserEntity());
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @PostMapping("/learning-tracks/{slug}/enrollment")
+    public ResponseEntity<?> enrollLearningTrack(
+            @PathVariable String slug,
+            @AuthenticationPrincipal CustomUserDetails currentUser
+    ) {
+        try {
+            return ResponseEntity.ok(learningTrackService.entrarNaTrilha(slug, currentUser.getUserEntity()));
+        } catch (RuntimeException exception) {
+            return ResponseEntity.badRequest().body(new ErrorResponse(exception.getMessage()));
+        }
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @PutMapping("/learning-tracks/{slug}/progress")
+    public ResponseEntity<?> updateLearningTrackProgress(
+            @PathVariable String slug,
+            @RequestBody LearningProgressRequest request,
+            @AuthenticationPrincipal CustomUserDetails currentUser
+    ) {
+        try {
+            return ResponseEntity.ok(learningTrackService.atualizarProgresso(slug, currentUser.getUserEntity(), request));
+        } catch (RuntimeException exception) {
+            return ResponseEntity.badRequest().body(new ErrorResponse(exception.getMessage()));
+        }
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/learning-tracks")
+    public ResponseEntity<?> createLearningTrack(@RequestBody LearningTrackRequest request) {
+        try {
+            return ResponseEntity.status(HttpStatus.CREATED).body(learningTrackService.criarTrilha(request));
+        } catch (RuntimeException exception) {
+            return ResponseEntity.badRequest().body(new ErrorResponse(exception.getMessage()));
+        }
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @PutMapping("/learning-tracks/{slug}")
+    public ResponseEntity<?> updateLearningTrack(@PathVariable String slug, @RequestBody LearningTrackRequest request) {
+        try {
+            return ResponseEntity.ok(learningTrackService.atualizarTrilha(slug, request));
+        } catch (RuntimeException exception) {
+            return ResponseEntity.badRequest().body(new ErrorResponse(exception.getMessage()));
+        }
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @DeleteMapping("/learning-tracks/{slug}")
+    public ResponseEntity<?> deleteLearningTrack(@PathVariable String slug) {
+        try {
+            learningTrackService.excluirTrilha(slug);
+            return ResponseEntity.noContent().build();
+        } catch (RuntimeException exception) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(exception.getMessage()));
+        }
     }
 
     @PreAuthorize("hasRole('ADMIN')")

@@ -16,13 +16,17 @@ import {
   LogIn,
   LogOut,
   MessageSquareText,
+  Pencil,
   PlayCircle,
   Plus,
   RefreshCw,
   Send,
+  Settings,
   Sparkles,
+  Trash2,
   UsersRound,
-  Video
+  Video,
+  X
 } from 'lucide-react';
 import SockJS from 'sockjs-client';
 import { Client } from '@stomp/stompjs';
@@ -36,6 +40,8 @@ const views = [
   { id: 'events', label: 'Eventos', icon: CalendarDays },
   { id: 'communities', label: 'Comunidades', icon: UsersRound }
 ];
+
+const adminView = { id: 'admin', label: 'Admin', icon: Settings };
 
 async function api(path, options = {}) {
   const response = await fetch(`${API_BASE}${path}`, {
@@ -80,6 +86,8 @@ function App() {
 
   const isAdmin = auth.user?.role === 'ADMIN';
   const canManageCommunities = auth.user?.role === 'ADMIN' || auth.user?.role === 'MANAGER';
+  const canAccessAdmin = isAdmin || canManageCommunities;
+  const visibleViews = canAccessAdmin ? [...views, adminView] : views;
 
   async function loadAll() {
     setLoading(true);
@@ -105,6 +113,21 @@ function App() {
   useEffect(() => {
     loadAll().catch((error) => setNotice(error.message));
   }, []);
+
+  useEffect(() => {
+    if (!notice) {
+      return undefined;
+    }
+
+    const timer = window.setTimeout(() => setNotice(''), 3600);
+    return () => window.clearTimeout(timer);
+  }, [notice]);
+
+  useEffect(() => {
+    if (view === 'admin' && !canAccessAdmin) {
+      setView('dashboard');
+    }
+  }, [canAccessAdmin, view]);
 
   useEffect(() => {
     if (!selectedCommunityId) {
@@ -156,7 +179,6 @@ function App() {
       }
     });
 
-    setNotice('Login realizado.');
     setAuthOpen(false);
     await loadAll();
   }
@@ -191,8 +213,9 @@ function App() {
 
   async function createEvent(event) {
     event.preventDefault();
-    const form = new FormData(event.currentTarget);
-    await api('/api/v1/events', {
+    const formElement = event.currentTarget;
+    const form = new FormData(formElement);
+    const created = await api('/api/v1/events', {
       method: 'POST',
       body: JSON.stringify({
         titulo: form.get('titulo'),
@@ -203,9 +226,38 @@ function App() {
         urlVideo: form.get('urlVideo')
       })
     });
-    event.currentTarget.reset();
+    formElement.reset();
+    setEvents((current) => sortEvents([...current, created]));
     setNotice('Evento publicado.');
-    await loadAll();
+    loadAll().catch((error) => setNotice(error.message));
+    return created;
+  }
+
+  async function updateEvent(eventId, event) {
+    event.preventDefault();
+    const form = new FormData(event.currentTarget);
+    const updated = await api(`/api/v1/events/${eventId}`, {
+      method: 'PUT',
+      body: JSON.stringify({
+        titulo: form.get('titulo'),
+        dataEvento: form.get('dataEvento'),
+        convidados: form.get('convidados'),
+        conteudo: form.get('conteudo'),
+        categoria: form.get('categoria'),
+        urlVideo: form.get('urlVideo')
+      })
+    });
+    setEvents((current) => sortEvents(current.map((item) => (item.id === eventId ? updated : item))));
+    setNotice('Evento atualizado.');
+    loadAll().catch((error) => setNotice(error.message));
+    return updated;
+  }
+
+  async function deleteEvent(eventId) {
+    await api(`/api/v1/events/${eventId}`, { method: 'DELETE' });
+    setEvents((current) => current.filter((event) => event.id !== eventId));
+    setNotice('Evento removido.');
+    loadAll().catch((error) => setNotice(error.message));
   }
 
   async function toggleEventRegistration(eventId, isRegistered) {
@@ -223,7 +275,8 @@ function App() {
 
   async function createCommunity(event) {
     event.preventDefault();
-    const form = new FormData(event.currentTarget);
+    const formElement = event.currentTarget;
+    const form = new FormData(formElement);
     const community = await api('/api/v1/communities', {
       method: 'POST',
       body: JSON.stringify({
@@ -232,20 +285,103 @@ function App() {
         nivelDePermissao: form.get('nivelDePermissao')
       })
     });
-    event.currentTarget.reset();
+    formElement.reset();
     setNotice('Comunidade criada.');
     await loadAll();
     setSelectedCommunityId(community.id);
   }
 
-  async function sendPost(event) {
+  async function deleteCommunity(communityId) {
+    await api(`/api/v1/communities/${communityId}`, { method: 'DELETE' });
+    setNotice('Comunidade removida.');
+    await loadAll();
+    setSelectedCommunityId((current) => (current === communityId ? null : current));
+  }
+
+  async function createLearningTrack(event) {
+    event.preventDefault();
+    const formElement = event.currentTarget;
+    const form = new FormData(formElement);
+    const created = await api('/api/v1/learning-tracks', {
+      method: 'POST',
+      body: JSON.stringify({
+        id: form.get('id'),
+        title: form.get('title'),
+        level: form.get('level'),
+        duration: form.get('duration'),
+        description: form.get('description'),
+        outcomes: readNamedList(form, 'outcomes[]'),
+        resources: readNamedList(form, 'resources[]'),
+        steps: readStepFields(form)
+      })
+    });
+    formElement.reset();
+    setLearningTracks((current) => [created, ...current.filter((track) => track.id !== created.id)]);
+    setNotice('Trilha criada.');
+    loadAll().catch((error) => setNotice(error.message));
+    return created;
+  }
+
+  async function updateLearningTrack(trackId, event) {
     event.preventDefault();
     const form = new FormData(event.currentTarget);
+    const updated = await api(`/api/v1/learning-tracks/${trackId}`, {
+      method: 'PUT',
+      body: JSON.stringify({
+        id: form.get('id'),
+        title: form.get('title'),
+        level: form.get('level'),
+        duration: form.get('duration'),
+        description: form.get('description'),
+        outcomes: readNamedList(form, 'outcomes[]'),
+        resources: readNamedList(form, 'resources[]'),
+        steps: readStepFields(form)
+      })
+    });
+    setLearningTracks((current) => current.map((track) => (track.id === trackId ? updated : track)));
+    setNotice('Trilha atualizada.');
+    loadAll().catch((error) => setNotice(error.message));
+    return updated;
+  }
+
+  async function deleteLearningTrack(trackId) {
+    await api(`/api/v1/learning-tracks/${trackId}`, { method: 'DELETE' });
+    setLearningTracks((current) => current.filter((track) => track.id !== trackId));
+    setNotice('Trilha removida.');
+    loadAll().catch((error) => setNotice(error.message));
+  }
+
+  async function enrollLearningTrack(trackId) {
+    if (!auth.authenticated) {
+      setNotice('Entre na sua conta para começar uma trilha.');
+      setAuthOpen(true);
+      return null;
+    }
+
+    const updated = await api(`/api/v1/learning-tracks/${trackId}/enrollment`, { method: 'POST' });
+    setLearningTracks((current) => current.map((track) => (track.id === trackId ? mergeTrack(track, updated) : track)));
+    setNotice('Trilha iniciada.');
+    return updated;
+  }
+
+  async function saveLearningProgress(trackId, completedSteps) {
+    const updated = await api(`/api/v1/learning-tracks/${trackId}/progress`, {
+      method: 'PUT',
+      body: JSON.stringify({ completedSteps })
+    });
+    setLearningTracks((current) => current.map((track) => (track.id === trackId ? mergeTrack(track, updated) : track)));
+    return updated;
+  }
+
+  async function sendPost(event) {
+    event.preventDefault();
+    const formElement = event.currentTarget;
+    const form = new FormData(formElement);
     await api(`/api/v1/communities/${selectedCommunityId}/posts`, {
       method: 'POST',
       body: JSON.stringify({ mensagem: form.get('mensagem') })
     });
-    event.currentTarget.reset();
+    formElement.reset();
   }
 
   return (
@@ -257,7 +393,7 @@ function App() {
         </button>
 
         <nav className="nav-list site-nav" aria-label="Principal">
-          {views.map((item) => {
+          {visibleViews.map((item) => {
             const Icon = item.icon;
             return (
               <button
@@ -335,13 +471,27 @@ function App() {
         ) : (
           <>
             {view === 'dashboard' && <Dashboard dashboard={dashboard} setView={setView} />}
-            {view === 'learning' && <LearningTracks tracks={learningTracks} setView={setView} />}
+            {view === 'learning' && (
+              <LearningTracks
+                tracks={learningTracks}
+                auth={auth}
+                isAdmin={isAdmin}
+                setView={setView}
+                createLearningTrack={createLearningTrack}
+                updateLearningTrack={updateLearningTrack}
+                deleteLearningTrack={deleteLearningTrack}
+                enrollLearningTrack={enrollLearningTrack}
+                saveLearningProgress={saveLearningProgress}
+              />
+            )}
             {view === 'events' && (
               <Events
                 events={events}
                 auth={auth}
                 isAdmin={isAdmin}
                 createEvent={createEvent}
+                updateEvent={updateEvent}
+                deleteEvent={deleteEvent}
                 toggleEventRegistration={toggleEventRegistration}
               />
             )}
@@ -356,6 +506,24 @@ function App() {
                 sendPost={sendPost}
                 canManageCommunities={canManageCommunities}
                 createCommunity={createCommunity}
+              />
+            )}
+            {view === 'admin' && canAccessAdmin && (
+              <AdminPanel
+                events={events}
+                communities={communities}
+                learningTracks={learningTracks}
+                isAdmin={isAdmin}
+                canManageCommunities={canManageCommunities}
+                createEvent={createEvent}
+                updateEvent={updateEvent}
+                deleteEvent={deleteEvent}
+                createCommunity={createCommunity}
+                deleteCommunity={deleteCommunity}
+                createLearningTrack={createLearningTrack}
+                updateLearningTrack={updateLearningTrack}
+                deleteLearningTrack={deleteLearningTrack}
+                setView={setView}
               />
             )}
           </>
@@ -556,148 +724,580 @@ function Dashboard({ dashboard, setView }) {
   );
 }
 
-function LearningTracks({ tracks, setView }) {
-  const currentTrack = tracks[0];
+function LearningTracks({
+  tracks,
+  auth,
+  isAdmin,
+  setView,
+  createLearningTrack,
+  updateLearningTrack,
+  deleteLearningTrack,
+  enrollLearningTrack,
+  saveLearningProgress
+}) {
+  const [selectedTrackId, setSelectedTrackId] = useState(tracks[0]?.id ?? null);
+  const [editingTrack, setEditingTrack] = useState(null);
+  const [trackModalOpen, setTrackModalOpen] = useState(false);
+  const [savingProgress, setSavingProgress] = useState(false);
+
+  const currentTrack = tracks.find((track) => track.id === selectedTrackId) ?? tracks[0];
+
+  useEffect(() => {
+    if (!currentTrack && tracks[0]) {
+      setSelectedTrackId(tracks[0].id);
+    }
+  }, [currentTrack, tracks]);
 
   if (!currentTrack) {
-    return <EmptyState text="Nenhuma trilha de aprendizagem disponível." />;
+    return (
+      <section className="learning-empty">
+        <EmptyState text="Nenhuma trilha de aprendizagem disponível." />
+        {isAdmin && (
+          <button className="primary-button" type="button" onClick={() => setTrackModalOpen(true)}>
+            <Plus size={17} /> Criar primeira trilha
+          </button>
+        )}
+        {trackModalOpen && (
+          <TrackFormModal
+            onClose={() => setTrackModalOpen(false)}
+            onSubmit={async (event) => {
+              const created = await createLearningTrack(event);
+              setSelectedTrackId(created.id);
+              setTrackModalOpen(false);
+            }}
+          />
+        )}
+      </section>
+    );
   }
 
   const recommendedEvents = currentTrack.recommendedEvents ?? [];
   const recommendedCommunities = currentTrack.recommendedCommunities ?? [];
+  const progress = currentTrack.progress ?? { enrolled: false, completedSteps: [], completedCount: 0, totalSteps: currentTrack.steps.length, percent: 0 };
+  const completedSteps = progress.completedSteps ?? [];
+
+  async function toggleStep(index) {
+    if (!progress.enrolled) {
+      const enrolled = await enrollLearningTrack(currentTrack.id);
+      if (!enrolled) {
+        return;
+      }
+    }
+
+    setSavingProgress(true);
+    try {
+      const nextSteps = completedSteps.includes(index)
+        ? completedSteps.filter((stepIndex) => stepIndex !== index)
+        : [...completedSteps, index];
+      await saveLearningProgress(currentTrack.id, nextSteps);
+    } finally {
+      setSavingProgress(false);
+    }
+  }
+
+  async function handleTrackSubmit(event) {
+    if (editingTrack) {
+      const updated = await updateLearningTrack(editingTrack.id, event);
+      setSelectedTrackId(updated.id);
+    } else {
+      const created = await createLearningTrack(event);
+      setSelectedTrackId(created.id);
+    }
+    setTrackModalOpen(false);
+    setEditingTrack(null);
+  }
 
   return (
-    <div className="learning-layout">
-      {tracks.map((track) => (
-        <section className="track-hero" key={track.id}>
+    <>
+      {isAdmin && (
+        <section className="event-admin-strip">
           <div>
-            <span className="hero-kicker"><GraduationCap size={18} /> Trilha guiada</span>
-            <h2>{track.title}</h2>
-            <p>{track.description}</p>
-            <div className="track-meta">
-              <span><Clock3 size={16} /> {track.duration}</span>
-              <span><Sparkles size={16} /> {track.level}</span>
-              <span><CheckCircle2 size={16} /> {track.steps.length} etapas</span>
-            </div>
+            <span className="hero-kicker"><Settings size={17} /> Modo administrador</span>
+            <strong>Crie, edite e acompanhe trilhas de aprendizagem publicadas.</strong>
           </div>
-          <button className="primary-button" onClick={() => setView('events')}>
-            <CalendarDays size={17} /> Ver eventos da trilha
+          <button className="primary-button" type="button" onClick={() => {
+            setEditingTrack(null);
+            setTrackModalOpen(true);
+          }}>
+            <Plus size={17} /> Nova trilha
           </button>
         </section>
-      ))}
+      )}
 
-      <section className="track-steps">
-        <SectionHeader icon={BookOpenCheck} title="Roteiro de aprendizagem" />
-        <div className="step-list">
-          {currentTrack.steps.map((step, index) => (
-            <article className="step-item" key={step.title}>
-              <span className="step-number">{index + 1}</span>
+      <div className="learning-layout">
+        <section className="track-picker">
+          <SectionHeader icon={GraduationCap} title="Trilhas disponíveis" />
+          <div className="track-picker-list">
+            {tracks.map((track) => {
+              const trackProgress = track.progress ?? { percent: 0, enrolled: false };
+              return (
+                <button
+                  key={track.id}
+                  className={currentTrack.id === track.id ? 'track-picker-card active' : 'track-picker-card'}
+                  onClick={() => setSelectedTrackId(track.id)}
+                >
+                  <strong>{track.title}</strong>
+                  <span>{track.level} · {track.duration}</span>
+                  <small>{trackProgress.enrolled ? `${trackProgress.percent}% concluído` : 'Não iniciada'}</small>
+                </button>
+              );
+            })}
+          </div>
+        </section>
+
+        <section className="track-hero">
+          <div>
+            <span className="hero-kicker"><GraduationCap size={18} /> Trilha guiada</span>
+            <h2>{currentTrack.title}</h2>
+            <p>{currentTrack.description}</p>
+            <div className="track-meta">
+              <span><Clock3 size={16} /> {currentTrack.duration}</span>
+              <span><Sparkles size={16} /> {currentTrack.level}</span>
+              <span><CheckCircle2 size={16} /> {currentTrack.steps.length} etapas</span>
+            </div>
+          </div>
+          <div className="track-hero-actions">
+            {isAdmin && (
+              <>
+                <button className="ghost-button surface" type="button" onClick={() => {
+                  setEditingTrack(currentTrack);
+                  setTrackModalOpen(true);
+                }}>
+                  <Pencil size={17} /> Editar
+                </button>
+                <button className="danger-button compact" type="button" onClick={() => deleteLearningTrack(currentTrack.id)}>
+                  <Trash2 size={17} /> Remover
+                </button>
+              </>
+            )}
+            <button className="primary-button" onClick={() => progress.enrolled ? setView('events') : enrollLearningTrack(currentTrack.id)}>
+              {progress.enrolled ? <CalendarDays size={17} /> : <PlayCircle size={17} />}
+              {progress.enrolled ? 'Ver eventos da trilha' : auth.authenticated ? 'Começar trilha' : 'Entrar para começar'}
+            </button>
+          </div>
+        </section>
+
+        <section className="track-progress-panel">
+          <div>
+            <span>Progresso</span>
+            <strong>{progress.percent ?? 0}%</strong>
+          </div>
+          <div className="progress-bar" aria-label={`Progresso da trilha: ${progress.percent ?? 0}%`}>
+            <span style={{ width: `${progress.percent ?? 0}%` }} />
+          </div>
+          <p>{progress.enrolled ? `${progress.completedCount} de ${progress.totalSteps} etapas concluídas.` : 'Comece a trilha para salvar seu avanço.'}</p>
+        </section>
+
+        <section className="track-steps">
+          <SectionHeader icon={BookOpenCheck} title="Roteiro de aprendizagem" />
+          <div className="step-list">
+            {currentTrack.steps.map((step, index) => {
+              const completed = completedSteps.includes(index);
+              return (
+                <article className={completed ? 'step-item completed' : 'step-item'} key={`${currentTrack.id}-${step.title}`}>
+                  <button className="step-number" type="button" onClick={() => toggleStep(index)} disabled={savingProgress}>
+                    {completed ? <Check size={18} /> : index + 1}
+                  </button>
+                  <div>
+                    <h3>{step.title}</h3>
+                    <p>{step.description}</p>
+                    <button className="step-action" type="button" onClick={() => toggleStep(index)} disabled={savingProgress}>
+                      {completed ? 'Concluída' : step.action}
+                    </button>
+                  </div>
+                </article>
+              );
+            })}
+          </div>
+        </section>
+
+        <aside className="track-sidebar">
+          <section className="content-column">
+            <SectionHeader icon={PlayCircle} title="Eventos recomendados" />
+            <div className="compact-list">
+              {recommendedEvents.map((event) => (
+                <button className="compact-row" key={event.id} onClick={() => setView('events')}>
+                  <strong>{event.titulo}</strong>
+                  <span>{formatDate(event.dataEvento)} <ArrowRight size={15} /></span>
+                </button>
+              ))}
+              {recommendedEvents.length === 0 && <EmptyState text="Nenhum evento futuro disponível." />}
+            </div>
+          </section>
+
+          <section className="content-column">
+            <SectionHeader icon={MessageSquareText} title="Comunidades para praticar" />
+            <div className="compact-list">
+              {recommendedCommunities.map((community) => (
+                <button className="compact-row" key={community.id} onClick={() => setView('communities')}>
+                  <strong>{community.nome}</strong>
+                  <span>{community.totalPosts} posts <ArrowRight size={15} /></span>
+                </button>
+              ))}
+              {recommendedCommunities.length === 0 && <EmptyState text="Nenhuma comunidade disponível." />}
+            </div>
+          </section>
+
+          <section className="content-column">
+            <SectionHeader icon={CheckCircle2} title="Ao concluir" />
+            <ul className="outcome-list">
+              {currentTrack.outcomes.map((outcome) => (
+                <li key={outcome}><Check size={16} /> {outcome}</li>
+              ))}
+            </ul>
+          </section>
+
+          <section className="content-column">
+            <SectionHeader icon={BookOpenCheck} title="Materiais de apoio" />
+            <ul className="outcome-list">
+              {currentTrack.resources.map((resource) => (
+                <li key={resource}><Check size={16} /> {resource}</li>
+              ))}
+            </ul>
+          </section>
+        </aside>
+      </div>
+
+      {trackModalOpen && (
+        <TrackFormModal
+          track={editingTrack}
+          onClose={() => {
+            setTrackModalOpen(false);
+            setEditingTrack(null);
+          }}
+          onSubmit={handleTrackSubmit}
+        />
+      )}
+    </>
+  );
+}
+
+function TrackFormModal({ track, onClose, onSubmit }) {
+  const isEditing = Boolean(track);
+  const [outcomes, setOutcomes] = useState(track?.outcomes?.length ? track.outcomes : ['']);
+  const [resources, setResources] = useState(track?.resources?.length ? track.resources : ['']);
+  const [steps, setSteps] = useState(track?.steps?.length ? track.steps : [{ title: '', description: '', action: '' }]);
+
+  function addOutcome() {
+    setOutcomes((current) => [...current, '']);
+  }
+
+  function updateOutcome(index, value) {
+    setOutcomes((current) => current.map((item, itemIndex) => (itemIndex === index ? value : item)));
+  }
+
+  function removeOutcome(index) {
+    setOutcomes((current) => current.length === 1 ? [''] : current.filter((_, itemIndex) => itemIndex !== index));
+  }
+
+  function addResource() {
+    setResources((current) => [...current, '']);
+  }
+
+  function updateResource(index, value) {
+    setResources((current) => current.map((item, itemIndex) => (itemIndex === index ? value : item)));
+  }
+
+  function removeResource(index) {
+    setResources((current) => current.length === 1 ? [''] : current.filter((_, itemIndex) => itemIndex !== index));
+  }
+
+  function addStep() {
+    setSteps((current) => [...current, { title: '', description: '', action: '' }]);
+  }
+
+  function updateStep(index, field, value) {
+    setSteps((current) => current.map((step, stepIndex) => (
+      stepIndex === index ? { ...step, [field]: value } : step
+    )));
+  }
+
+  function removeStep(index) {
+    setSteps((current) => current.length === 1 ? current : current.filter((_, stepIndex) => stepIndex !== index));
+  }
+
+  return (
+    <div className="modal-backdrop" role="presentation" onMouseDown={onClose}>
+      <section className="event-modal track-modal" role="dialog" aria-modal="true" aria-labelledby="track-modal-title" onMouseDown={(clickEvent) => clickEvent.stopPropagation()}>
+        <header className="modal-header">
+          <div>
+            <span className="hero-kicker"><GraduationCap size={17} /> Trilha</span>
+            <h2 id="track-modal-title">{isEditing ? 'Editar trilha' : 'Nova trilha'}</h2>
+          </div>
+          <button className="icon-button" type="button" onClick={onClose} title="Fechar">
+            <X size={18} />
+          </button>
+        </header>
+
+        <form className="stack-form" onSubmit={onSubmit}>
+          <label className="field-label">
+            Identificador
+            <input name="id" placeholder="ex: financas-sustentaveis" pattern="[a-z0-9]+(-[a-z0-9]+)*" defaultValue={track?.id ?? ''} required />
+          </label>
+          <label className="field-label">
+            Título da trilha
+            <input name="title" placeholder="Ex: Fundamentos de finanças sustentáveis" defaultValue={track?.title ?? ''} required />
+          </label>
+          <div className="form-pair">
+            <label className="field-label">
+              Nível
+              <input name="level" placeholder="Iniciante, Intermediário..." defaultValue={track?.level ?? ''} required />
+            </label>
+            <label className="field-label">
+              Duração
+              <input name="duration" placeholder="4 semanas" defaultValue={track?.duration ?? ''} required />
+            </label>
+          </div>
+          <label className="field-label">
+            Descrição
+            <textarea name="description" placeholder="Explique o propósito da trilha" rows="4" defaultValue={track?.description ?? ''} required />
+          </label>
+
+          <DynamicListEditor
+            title="Resultados esperados"
+            description="O que a pessoa deve conseguir ao concluir a trilha."
+            items={outcomes}
+            name="outcomes[]"
+            placeholder="Ex: Entender os conceitos centrais"
+            onAdd={addOutcome}
+            onUpdate={updateOutcome}
+            onRemove={removeOutcome}
+          />
+
+          <DynamicListEditor
+            title="Materiais de apoio"
+            description="Links, checklists, leituras ou referências úteis."
+            items={resources}
+            name="resources[]"
+            placeholder="Ex: Glossário ESG e finanças sustentáveis"
+            onAdd={addResource}
+            onUpdate={updateResource}
+            onRemove={removeResource}
+          />
+
+          <section className="form-section">
+            <div className="form-section-heading">
               <div>
-                <h3>{step.title}</h3>
-                <p>{step.description}</p>
-                <span className="step-action">{step.action}</span>
+                <h3>Etapas da trilha</h3>
+                <p>Crie uma etapa por atividade. Cada etapa vira um item marcável na tela de aprendizagem.</p>
               </div>
-            </article>
-          ))}
-        </div>
+              <button className="ghost-button surface compact" type="button" onClick={addStep}>
+                <Plus size={16} /> Adicionar etapa
+              </button>
+            </div>
+            <div className="step-editor-list">
+              {steps.map((step, index) => (
+                <article className="step-editor-card" key={`step-editor-${index}`}>
+                  <div className="step-editor-header">
+                    <strong>Etapa {index + 1}</strong>
+                    <button className="danger-button compact" type="button" onClick={() => removeStep(index)} disabled={steps.length === 1}>
+                      <Trash2 size={15} /> Remover
+                    </button>
+                  </div>
+                  <input
+                    name="stepTitle[]"
+                    placeholder="Título da etapa"
+                    value={step.title}
+                    onChange={(event) => updateStep(index, 'title', event.target.value)}
+                    required
+                  />
+                  <textarea
+                    name="stepDescription[]"
+                    placeholder="Descrição da etapa"
+                    rows="3"
+                    value={step.description}
+                    onChange={(event) => updateStep(index, 'description', event.target.value)}
+                    required
+                  />
+                  <input
+                    name="stepAction[]"
+                    placeholder="Chamada para ação"
+                    value={step.action}
+                    onChange={(event) => updateStep(index, 'action', event.target.value)}
+                    required
+                  />
+                </article>
+              ))}
+            </div>
+          </section>
+
+          <div className="modal-actions">
+            <button className="ghost-button surface" type="button" onClick={onClose}>Cancelar</button>
+            <button className="primary-button" type="submit">
+              {isEditing ? <Pencil size={17} /> : <Plus size={17} />}
+              {isEditing ? 'Salvar trilha' : 'Publicar trilha'}
+            </button>
+          </div>
+        </form>
       </section>
-
-      <aside className="track-sidebar">
-        <section className="content-column">
-          <SectionHeader icon={PlayCircle} title="Eventos recomendados" />
-          <div className="compact-list">
-            {recommendedEvents.map((event) => (
-              <button className="compact-row" key={event.id} onClick={() => setView('events')}>
-                <strong>{event.titulo}</strong>
-                <span>{formatDate(event.dataEvento)} <ArrowRight size={15} /></span>
-              </button>
-            ))}
-            {recommendedEvents.length === 0 && <EmptyState text="Nenhum evento futuro disponível." />}
-          </div>
-        </section>
-
-        <section className="content-column">
-          <SectionHeader icon={MessageSquareText} title="Comunidades para praticar" />
-          <div className="compact-list">
-            {recommendedCommunities.map((community) => (
-              <button className="compact-row" key={community.id} onClick={() => setView('communities')}>
-                <strong>{community.nome}</strong>
-                <span>{community.totalPosts} posts <ArrowRight size={15} /></span>
-              </button>
-            ))}
-            {recommendedCommunities.length === 0 && <EmptyState text="Nenhuma comunidade disponível." />}
-          </div>
-        </section>
-
-        <section className="content-column">
-          <SectionHeader icon={BookOpenCheck} title="Materiais de apoio" />
-          <ul className="outcome-list">
-            {currentTrack.resources.map((resource) => (
-              <li key={resource}><Check size={16} /> {resource}</li>
-            ))}
-          </ul>
-        </section>
-
-        <section className="content-column">
-          <SectionHeader icon={CheckCircle2} title="Ao concluir" />
-          <ul className="outcome-list">
-            {currentTrack.outcomes.map((outcome) => (
-              <li key={outcome}><Check size={16} /> {outcome}</li>
-            ))}
-          </ul>
-        </section>
-      </aside>
     </div>
   );
 }
 
-function Events({ events, auth, isAdmin, createEvent, toggleEventRegistration }) {
+function DynamicListEditor({ title, description, items, name, placeholder, onAdd, onUpdate, onRemove }) {
+  return (
+    <section className="form-section">
+      <div className="form-section-heading">
+        <div>
+          <h3>{title}</h3>
+          <p>{description}</p>
+        </div>
+        <button className="ghost-button surface compact" type="button" onClick={onAdd}>
+          <Plus size={16} /> Adicionar
+        </button>
+      </div>
+      <div className="dynamic-field-list">
+        {items.map((item, index) => (
+          <div className="dynamic-field-row" key={`${name}-${index}`}>
+            <input
+              name={name}
+              placeholder={placeholder}
+              value={item}
+              onChange={(event) => onUpdate(index, event.target.value)}
+            />
+            <button className="danger-button compact" type="button" onClick={() => onRemove(index)} disabled={items.length === 1}>
+              <Trash2 size={15} />
+            </button>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function Events({ events, auth, isAdmin, createEvent, updateEvent, deleteEvent, toggleEventRegistration }) {
+  const [editingEvent, setEditingEvent] = useState(null);
+  const [eventModalOpen, setEventModalOpen] = useState(false);
+  const [eventSaving, setEventSaving] = useState(false);
   const upcoming = events.filter((event) => event.futuro);
   const past = events.filter((event) => !event.futuro);
 
+  function openCreateModal() {
+    setEditingEvent(null);
+    setEventModalOpen(true);
+  }
+
+  function openEditModal(event) {
+    setEditingEvent(event);
+    setEventModalOpen(true);
+  }
+
+  async function handleModalSubmit(event) {
+    setEventSaving(true);
+    try {
+      if (editingEvent) {
+        await updateEvent(editingEvent.id, event);
+      } else {
+        await createEvent(event);
+      }
+      setEventModalOpen(false);
+      setEditingEvent(null);
+    } finally {
+      setEventSaving(false);
+    }
+  }
+
   return (
-    <div className="split-layout">
-      <section className="content-column">
-        <SectionHeader icon={CalendarDays} title="Agenda" />
-        <div className="event-list">
-          {upcoming.map((event) => (
-            <EventItem
-              key={event.id}
-              event={event}
-              auth={auth}
-              toggleEventRegistration={toggleEventRegistration}
-            />
-          ))}
-          {upcoming.length === 0 && <EmptyState text="Nenhum evento futuro cadastrado." />}
-        </div>
-      </section>
-
-      <section className="content-column">
-        <SectionHeader icon={Video} title="Gravados" />
-        <div className="event-list">
-          {past.map((event) => <EventItem key={event.id} event={event} />)}
-          {past.length === 0 && <EmptyState text="Nenhum evento gravado cadastrado." />}
-        </div>
-      </section>
-
+    <>
       {isAdmin && (
-        <section className="editor-panel">
-          <SectionHeader icon={Plus} title="Novo evento" />
-          <form className="stack-form" onSubmit={createEvent}>
-            <input name="titulo" placeholder="Título" required />
-            <input name="dataEvento" type="date" required />
-            <input name="convidados" placeholder="Convidados" required />
-            <textarea name="conteudo" placeholder="Descrição" rows="4" required />
-            <select name="categoria" defaultValue="PALESTRA">
-              <option value="PALESTRA">Palestra</option>
-              <option value="WORKSHOP">Workshop</option>
-              <option value="AULA">Aula</option>
-            </select>
-            <input name="urlVideo" type="url" placeholder="URL do vídeo" required />
-            <button className="primary-button" type="submit"><Plus size={17} /> Publicar</button>
-          </form>
+        <section className="event-admin-strip">
+          <div>
+            <span className="hero-kicker"><Settings size={17} /> Modo administrador</span>
+            <strong>Gerencie a agenda sem sair da página de eventos.</strong>
+          </div>
+          <button className="primary-button" type="button" onClick={openCreateModal}>
+            <Plus size={17} /> Novo evento
+          </button>
         </section>
       )}
+
+      <div className="split-layout">
+        <section className="content-column">
+          <SectionHeader icon={CalendarDays} title="Agenda" />
+          <div className="event-list">
+            {upcoming.map((event) => (
+              <EventItem
+                key={event.id}
+                event={event}
+                auth={auth}
+                isAdmin={isAdmin}
+                onEdit={openEditModal}
+                onDelete={deleteEvent}
+                toggleEventRegistration={toggleEventRegistration}
+              />
+            ))}
+            {upcoming.length === 0 && <EmptyState text="Nenhum evento futuro cadastrado." />}
+          </div>
+        </section>
+
+        <section className="content-column">
+          <SectionHeader icon={Video} title="Gravados" />
+          <div className="event-list">
+            {past.map((event) => (
+              <EventItem
+                key={event.id}
+                event={event}
+                isAdmin={isAdmin}
+                onEdit={openEditModal}
+                onDelete={deleteEvent}
+              />
+            ))}
+            {past.length === 0 && <EmptyState text="Nenhum evento gravado cadastrado." />}
+          </div>
+        </section>
+      </div>
+
+      {eventModalOpen && (
+        <EventFormModal
+          event={editingEvent}
+          saving={eventSaving}
+          onClose={() => {
+            setEventModalOpen(false);
+            setEditingEvent(null);
+          }}
+          onSubmit={handleModalSubmit}
+        />
+      )}
+    </>
+  );
+}
+
+function EventFormModal({ event, saving, onClose, onSubmit }) {
+  const isEditing = Boolean(event);
+
+  return (
+    <div className="modal-backdrop" role="presentation" onMouseDown={onClose}>
+      <section className="event-modal" role="dialog" aria-modal="true" aria-labelledby="event-modal-title" onMouseDown={(clickEvent) => clickEvent.stopPropagation()}>
+        <header className="modal-header">
+          <div>
+            <span className="hero-kicker"><CalendarDays size={17} /> Evento</span>
+            <h2 id="event-modal-title">{isEditing ? 'Editar evento' : 'Novo evento'}</h2>
+          </div>
+          <button className="icon-button" type="button" onClick={onClose} title="Fechar" disabled={saving}>
+            <X size={18} />
+          </button>
+        </header>
+
+        <form className="stack-form" onSubmit={onSubmit}>
+          <input name="titulo" placeholder="Título" defaultValue={event?.titulo ?? ''} required />
+          <input name="dataEvento" type="date" defaultValue={event?.dataEvento ?? ''} required />
+          <input name="convidados" placeholder="Convidados" defaultValue={event?.convidados ?? ''} required />
+          <textarea name="conteudo" placeholder="Descrição" rows="4" defaultValue={event?.conteudo ?? ''} required />
+          <select name="categoria" defaultValue={event?.categoria ?? 'PALESTRA'}>
+            <option value="PALESTRA">Palestra</option>
+            <option value="WORKSHOP">Workshop</option>
+            <option value="AULA">Aula</option>
+          </select>
+          <input name="urlVideo" type="url" placeholder="URL do vídeo" defaultValue={event?.urlVideo ?? ''} required />
+          <div className="modal-actions">
+            <button className="ghost-button surface" type="button" onClick={onClose} disabled={saving}>Cancelar</button>
+            <button className="primary-button" type="submit" disabled={saving}>
+              {isEditing ? <Pencil size={17} /> : <Plus size={17} />}
+              {saving ? 'Salvando...' : isEditing ? 'Salvar alterações' : 'Publicar evento'}
+            </button>
+          </div>
+        </form>
+      </section>
     </div>
   );
 }
@@ -772,8 +1372,203 @@ function Communities({
   );
 }
 
-function EventItem({ event, auth, toggleEventRegistration }) {
-  const canRegister = event.futuro && toggleEventRegistration;
+function AdminPanel({
+  events,
+  communities,
+  learningTracks,
+  isAdmin,
+  canManageCommunities,
+  createEvent,
+  deleteEvent,
+  createCommunity,
+  deleteCommunity,
+  createLearningTrack,
+  updateLearningTrack,
+  deleteLearningTrack,
+  setView
+}) {
+  const [section, setSection] = useState(isAdmin ? 'events' : 'communities');
+  const [editingTrack, setEditingTrack] = useState(null);
+  const [trackModalOpen, setTrackModalOpen] = useState(false);
+
+  useEffect(() => {
+    if (!isAdmin && section !== 'communities') {
+      setSection('communities');
+    }
+  }, [isAdmin, section]);
+
+  const sections = [
+    ...(isAdmin ? [['events', 'Eventos'], ['tracks', 'Trilhas']] : []),
+    ...(canManageCommunities ? [['communities', 'Comunidades']] : [])
+  ];
+
+  async function handleAdminTrackSubmit(event) {
+    if (editingTrack) {
+      await updateLearningTrack(editingTrack.id, event);
+    } else {
+      const created = await createLearningTrack(event);
+      setTrackModalOpen(false);
+      setEditingTrack(null);
+      window.setTimeout(() => setView('learning'), 0);
+      return created;
+    }
+    setTrackModalOpen(false);
+    setEditingTrack(null);
+    return null;
+  }
+
+  return (
+    <div className="admin-layout">
+      <section className="admin-hero">
+        <div>
+          <span className="hero-kicker"><Settings size={18} /> Administração</span>
+          <h2>Gerencie conteúdo publicado na plataforma.</h2>
+          <p>Crie e remova eventos, trilhas e comunidades com dados salvos no backend.</p>
+        </div>
+      </section>
+
+      <nav className="admin-tabs" aria-label="Áreas administrativas">
+        {sections.map(([id, label]) => (
+          <button key={id} className={section === id ? 'active' : ''} onClick={() => setSection(id)}>
+            {label}
+          </button>
+        ))}
+      </nav>
+
+      {section === 'events' && isAdmin && (
+        <section className="admin-grid">
+          <article className="admin-editor">
+            <SectionHeader icon={CalendarDays} title="Novo evento" />
+            <form className="stack-form" onSubmit={createEvent}>
+              <input name="titulo" placeholder="Título" required />
+              <input name="dataEvento" type="date" required />
+              <input name="convidados" placeholder="Convidados" required />
+              <textarea name="conteudo" placeholder="Descrição" rows="4" required />
+              <select name="categoria" defaultValue="PALESTRA">
+                <option value="PALESTRA">Palestra</option>
+                <option value="WORKSHOP">Workshop</option>
+                <option value="AULA">Aula</option>
+              </select>
+              <input name="urlVideo" type="url" placeholder="URL do vídeo" required />
+              <button className="primary-button" type="submit"><Plus size={17} /> Publicar evento</button>
+            </form>
+          </article>
+
+          <article className="admin-list">
+            <SectionHeader icon={Video} title="Eventos publicados" />
+            {events.map((event) => (
+              <div className="admin-row" key={event.id}>
+                <div>
+                  <strong>{event.titulo}</strong>
+                  <span>{formatDate(event.dataEvento)} · {event.categoriaLabel} · {event.totalInscritos ?? 0} inscritos</span>
+                </div>
+                <button className="danger-button" onClick={() => deleteEvent(event.id)} title="Remover evento">
+                  <Trash2 size={17} />
+                </button>
+              </div>
+            ))}
+            {events.length === 0 && <EmptyState text="Nenhum evento cadastrado." />}
+          </article>
+        </section>
+      )}
+
+      {section === 'tracks' && isAdmin && (
+        <>
+          <section className="admin-action-panel">
+            <div>
+              <SectionHeader icon={GraduationCap} title="Trilhas de aprendizagem" />
+              <p>Crie trilhas com etapas, materiais, resultados esperados e progresso salvo por usuário.</p>
+            </div>
+            <button className="primary-button" type="button" onClick={() => {
+              setEditingTrack(null);
+              setTrackModalOpen(true);
+            }}>
+              <Plus size={17} /> Nova trilha
+            </button>
+          </section>
+
+          <article className="admin-list">
+            <SectionHeader icon={BookOpenCheck} title="Trilhas publicadas" />
+            {learningTracks.map((track) => (
+              <div className="admin-row admin-row-expanded" key={track.id}>
+                <div>
+                  <strong>{track.title}</strong>
+                  <span>{track.level} · {track.duration} · {track.steps.length} etapas · {track.progress?.enrolled ? `${track.progress.percent}% em andamento` : 'sem progresso iniciado nesta sessão'}</span>
+                </div>
+                <div className="admin-row-actions">
+                  <button className="ghost-button surface compact" type="button" onClick={() => {
+                    setEditingTrack(track);
+                    setTrackModalOpen(true);
+                  }}>
+                    <Pencil size={16} /> Editar
+                  </button>
+                  <button className="ghost-button surface compact" type="button" onClick={() => setView('learning')}>
+                    <ArrowRight size={16} /> Ver
+                  </button>
+                  <button className="danger-button compact" onClick={() => deleteLearningTrack(track.id)} title="Remover trilha">
+                    <Trash2 size={16} /> Remover
+                  </button>
+                </div>
+              </div>
+            ))}
+            {learningTracks.length === 0 && <EmptyState text="Nenhuma trilha cadastrada." />}
+          </article>
+          {trackModalOpen && (
+            <TrackFormModal
+              track={editingTrack}
+              onClose={() => {
+                setTrackModalOpen(false);
+                setEditingTrack(null);
+              }}
+              onSubmit={async (event) => {
+                await handleAdminTrackSubmit(event);
+                setTrackModalOpen(false);
+                setEditingTrack(null);
+              }}
+            />
+          )}
+        </>
+      )}
+
+      {section === 'communities' && canManageCommunities && (
+        <section className="admin-grid">
+          <article className="admin-editor">
+            <SectionHeader icon={UsersRound} title="Nova comunidade" />
+            <form className="stack-form" onSubmit={createCommunity}>
+              <input name="nome" placeholder="Nome" required />
+              <textarea name="descricao" rows="4" placeholder="Descrição" required />
+              <select name="nivelDePermissao" defaultValue="PUBLICA">
+                <option value="PUBLICA">Pública</option>
+                <option value="APENAS_LIDERES">Apenas líderes</option>
+                <option value="PERSONALIZADA">Personalizada</option>
+              </select>
+              <button className="primary-button" type="submit"><Plus size={17} /> Criar comunidade</button>
+            </form>
+          </article>
+
+          <article className="admin-list">
+            <SectionHeader icon={MessageSquareText} title="Comunidades publicadas" />
+            {communities.map((community) => (
+              <div className="admin-row" key={community.id}>
+                <div>
+                  <strong>{community.nome}</strong>
+                  <span>{community.nivelLabel} · {community.totalPosts} posts · {community.totalMembros} membros</span>
+                </div>
+                <button className="danger-button" onClick={() => deleteCommunity(community.id)} title="Remover comunidade">
+                  <Trash2 size={17} />
+                </button>
+              </div>
+            ))}
+            {communities.length === 0 && <EmptyState text="Nenhuma comunidade cadastrada." />}
+          </article>
+        </section>
+      )}
+    </div>
+  );
+}
+
+function EventItem({ event, auth, isAdmin = false, onEdit, onDelete, toggleEventRegistration }) {
+  const canRegister = !isAdmin && event.futuro && toggleEventRegistration;
 
   return (
     <article className="event-item">
@@ -797,6 +1592,16 @@ function EventItem({ event, auth, toggleEventRegistration }) {
             <CheckCircle2 size={16} />
             {event.inscrito ? 'Inscrito' : auth?.authenticated ? 'Inscrever-se' : 'Entrar para se inscrever'}
           </button>
+        )}
+        {isAdmin && (
+          <div className="event-admin-actions">
+            <button className="ghost-button surface compact" type="button" onClick={() => onEdit(event)}>
+              <Pencil size={16} /> Editar
+            </button>
+            <button className="danger-button compact" type="button" onClick={() => onDelete(event.id)} title="Remover evento">
+              <Trash2 size={16} /> Remover
+            </button>
+          </div>
         )}
       </div>
       <a href={event.urlVideo} target="_blank" rel="noreferrer" className="icon-link" title="Abrir vídeo">
@@ -824,8 +1629,57 @@ function titleFor(view) {
     dashboard: 'Início BRASFI',
     learning: 'Trilhas de aprendizagem',
     events: 'Eventos',
-    communities: 'Comunidades'
+    communities: 'Comunidades',
+    admin: 'Administração'
   }[view];
+}
+
+function sortEvents(events) {
+  return [...events].sort((first, second) => (
+    new Date(`${first.dataEvento}T00:00:00`) - new Date(`${second.dataEvento}T00:00:00`)
+  ));
+}
+
+function mergeTrack(currentTrack, updatedTrack) {
+  return {
+    ...currentTrack,
+    ...updatedTrack,
+    recommendedEvents: updatedTrack.recommendedEvents?.length ? updatedTrack.recommendedEvents : currentTrack.recommendedEvents,
+    recommendedCommunities: updatedTrack.recommendedCommunities?.length ? updatedTrack.recommendedCommunities : currentTrack.recommendedCommunities
+  };
+}
+
+function parseLines(value) {
+  return String(value ?? '')
+    .split('\n')
+    .map((line) => line.trim())
+    .filter(Boolean);
+}
+
+function readNamedList(form, name) {
+  return form.getAll(name)
+    .map((value) => String(value ?? '').trim())
+    .filter(Boolean);
+}
+
+function readStepFields(form) {
+  const titles = form.getAll('stepTitle[]');
+  const descriptions = form.getAll('stepDescription[]');
+  const actions = form.getAll('stepAction[]');
+  const total = Math.max(titles.length, descriptions.length, actions.length);
+
+  return Array.from({ length: total }, (_, index) => ({
+    title: String(titles[index] ?? '').trim(),
+    description: String(descriptions[index] ?? '').trim(),
+    action: String(actions[index] ?? '').trim()
+  })).filter((step) => step.title || step.description || step.action);
+}
+
+function parseStepLines(value) {
+  return parseLines(value).map((line) => {
+    const [title = '', description = '', action = ''] = line.split('|').map((part) => part.trim());
+    return { title, description, action };
+  });
 }
 
 function formatDate(value) {

@@ -96,7 +96,7 @@ public class DataSeeder implements CommandLineRunner {
             ));
             Comunidade mercado = comunidadeRepository.save(new Comunidade(
                     "Mercado e Carreiras",
-                    "Comunidade para oportunidades, debates de carreira e pontes com organizacoes parceiras.",
+                    "Comunidade para oportunidades, debates de carreira e pontes com organizações parceiras.",
                     NivelDePermissaoComunidade.PUBLICA,
                     null
             ));
