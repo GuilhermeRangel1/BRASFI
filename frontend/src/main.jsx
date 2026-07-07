@@ -431,7 +431,7 @@ function App() {
                 <CircleUserRound size={20} />
                 <span>{auth.user.name}</span>
               </button>
-              {canAccessAdmin && <span className="role-pill">{auth.user.role}</span>}
+              {canAccessAdmin && <span className="role-pill">{roleLabel(auth.user.role)}</span>}
               <button className="ghost-button" onClick={handleLogout}>
                 <LogOut size={17} /> Sair
               </button>
@@ -557,19 +557,40 @@ function App() {
 
 function AuthBox({ mode, setMode, onLogin, onRegister }) {
   const isLogin = mode === 'login';
+  const [message, setMessage] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+
+  async function handleSubmit(event) {
+    setMessage('');
+    setSubmitting(true);
+    try {
+      await (isLogin ? onLogin(event) : onRegister(event));
+    } catch (error) {
+      setMessage(error.message || 'Não foi possível concluir. Confira os dados e tente novamente.');
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  function switchMode(nextMode) {
+    setMessage('');
+    setMode(nextMode);
+  }
+
   return (
-    <form className="auth-box" onSubmit={isLogin ? onLogin : onRegister}>
+    <form className="auth-box" onSubmit={handleSubmit}>
       <div className="auth-tabs">
-        <button type="button" className={isLogin ? 'active' : ''} onClick={() => setMode('login')}>Entrar</button>
-        <button type="button" className={!isLogin ? 'active' : ''} onClick={() => setMode('register')}>Criar</button>
+        <button type="button" className={isLogin ? 'active' : ''} onClick={() => switchMode('login')}>Entrar</button>
+        <button type="button" className={!isLogin ? 'active' : ''} onClick={() => switchMode('register')}>Criar</button>
       </div>
       {!isLogin && <input name="nome" placeholder="Nome" required />}
       <input name="email" type="email" placeholder="E-mail" required />
       {!isLogin && <input name="cpf" placeholder="CPF com 11 números" minLength="11" maxLength="11" required />}
       {!isLogin && <input name="idade" type="number" min="1" placeholder="Idade" required />}
       <input name="password" type="password" placeholder="Senha" required />
-      <button className="primary-button" type="submit">
-        <LogIn size={17} /> {isLogin ? 'Entrar' : 'Cadastrar'}
+      {message && <p className="auth-message" role="alert">{message}</p>}
+      <button className="primary-button" type="submit" disabled={submitting}>
+        <LogIn size={17} /> {submitting ? 'Verificando...' : isLogin ? 'Entrar' : 'Cadastrar'}
       </button>
     </form>
   );
@@ -593,7 +614,7 @@ function ProfilePage({ profile, setView, setSelectedCommunityId }) {
           <h2>{profile.user.name}</h2>
           <p>{profile.user.email}</p>
           <div className="profile-tags">
-            <span>{profile.user.role}</span>
+            <span>{roleLabel(profile.user.role)}</span>
             <span>{profile.user.idade} anos</span>
           </div>
         </div>
@@ -1787,6 +1808,14 @@ function titleFor(view) {
     communities: 'Comunidades',
     admin: 'Administração'
   }[view];
+}
+
+function roleLabel(role) {
+  return {
+    USER: 'Usuário',
+    ADMIN: 'Administrador',
+    MANAGER: 'Gerente'
+  }[role] ?? 'Usuário';
 }
 
 function sortEvents(events) {
