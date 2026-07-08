@@ -44,6 +44,43 @@ const views = [
 const profileView = { id: 'profile', label: 'Minha jornada', icon: CircleUserRound };
 const adminView = { id: 'admin', label: 'Admin', icon: Settings };
 
+function routeStateFromLocation() {
+  const pathname = window.location.pathname;
+  const eventDetailMatch = pathname.match(/^\/eventos\/(\d+)$/);
+
+  if (eventDetailMatch) {
+    return { view: 'event-detail', eventId: Number(eventDetailMatch[1]) };
+  }
+
+  const viewByPath = {
+    '/': 'dashboard',
+    '/trilhas': 'learning',
+    '/eventos': 'events',
+    '/comunidades': 'communities',
+    '/perfil': 'profile',
+    '/admin': 'admin'
+  };
+
+  return { view: viewByPath[pathname] ?? 'dashboard', eventId: null };
+}
+
+function pathFromView(view, eventId) {
+  if (view === 'event-detail' && eventId) {
+    return `/eventos/${eventId}`;
+  }
+
+  const pathByView = {
+    dashboard: '/',
+    learning: '/trilhas',
+    events: '/eventos',
+    communities: '/comunidades',
+    profile: '/perfil',
+    admin: '/admin'
+  };
+
+  return pathByView[view] ?? '/';
+}
+
 async function api(path, options = {}) {
   const response = await fetch(`${API_BASE}${path}`, {
     credentials: 'include',
@@ -85,13 +122,13 @@ async function uploadFile(path, file) {
 }
 
 function App() {
-  const [view, setView] = useState('dashboard');
+  const [view, setViewState] = useState(() => routeStateFromLocation().view);
   const [dashboard, setDashboard] = useState(null);
   const [events, setEvents] = useState([]);
   const [communities, setCommunities] = useState([]);
   const [learningTracks, setLearningTracks] = useState([]);
   const [profile, setProfile] = useState(null);
-  const [selectedEventId, setSelectedEventId] = useState(null);
+  const [selectedEventId, setSelectedEventId] = useState(() => routeStateFromLocation().eventId);
   const [eventDetail, setEventDetail] = useState(null);
   const [eventDetailLoading, setEventDetailLoading] = useState(false);
   const [selectedCommunityId, setSelectedCommunityId] = useState(null);
@@ -101,6 +138,7 @@ function App() {
   const [authOpen, setAuthOpen] = useState(false);
   const [notice, setNotice] = useState('');
   const [loading, setLoading] = useState(true);
+  const [routeHydrated, setRouteHydrated] = useState(false);
 
   const selectedCommunity = useMemo(
     () => communities.find((community) => community.id === selectedCommunityId),
@@ -112,6 +150,10 @@ function App() {
   const canAccessAdmin = isAdmin || canManageCommunities;
   const memberViews = auth.authenticated ? [...views, profileView] : views;
   const visibleViews = canAccessAdmin ? [...memberViews, adminView] : memberViews;
+
+  function setView(nextView) {
+    setViewState((current) => (typeof nextView === 'function' ? nextView(current) : nextView));
+  }
 
   async function loadAll() {
     setLoading(true);
@@ -141,6 +183,39 @@ function App() {
   }, []);
 
   useEffect(() => {
+    const handleRouteChange = () => {
+      const routeState = routeStateFromLocation();
+      setSelectedEventId(routeState.eventId);
+      setViewState(routeState.view);
+    };
+
+    window.addEventListener('popstate', handleRouteChange);
+    return () => window.removeEventListener('popstate', handleRouteChange);
+  }, []);
+
+  useEffect(() => {
+    if (loading || !routeHydrated) {
+      return;
+    }
+
+    const nextPath = pathFromView(view, selectedEventId);
+    if (window.location.pathname !== nextPath) {
+      window.history.pushState({}, '', nextPath);
+    }
+  }, [loading, routeHydrated, selectedEventId, view]);
+
+  useEffect(() => {
+    if (loading) {
+      return;
+    }
+
+    const routeState = routeStateFromLocation();
+    setSelectedEventId(routeState.eventId);
+    setViewState(routeState.view);
+    setRouteHydrated(true);
+  }, [loading]);
+
+  useEffect(() => {
     if (!notice) {
       return undefined;
     }
@@ -148,18 +223,6 @@ function App() {
     const timer = window.setTimeout(() => setNotice(''), 3600);
     return () => window.clearTimeout(timer);
   }, [notice]);
-
-  useEffect(() => {
-    if (view === 'admin' && !canAccessAdmin) {
-      setView('dashboard');
-    }
-  }, [canAccessAdmin, view]);
-
-  useEffect(() => {
-    if (view === 'profile' && !auth.authenticated) {
-      setView('dashboard');
-    }
-  }, [auth.authenticated, view]);
 
   useEffect(() => {
     if (view !== 'event-detail' || !selectedEventId) {
@@ -611,6 +674,9 @@ function App() {
                 setSelectedCommunityId={setSelectedCommunityId}
               />
             )}
+            {view === 'profile' && !auth.authenticated && (
+              <Dashboard dashboard={dashboard} setView={setView} openEventDetail={openEventDetail} />
+            )}
             {view === 'learning' && (
               <LearningTracks
                 tracks={learningTracks}
@@ -687,6 +753,9 @@ function App() {
                 uploadLearningMaterial={uploadLearningMaterial}
                 setView={setView}
               />
+            )}
+            {view === 'admin' && !canAccessAdmin && (
+              <Dashboard dashboard={dashboard} setView={setView} openEventDetail={openEventDetail} />
             )}
           </>
         )}

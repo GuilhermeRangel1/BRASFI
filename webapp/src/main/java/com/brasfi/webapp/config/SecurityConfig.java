@@ -47,7 +47,7 @@ public class SecurityConfig {
                     if (wantsJson(request.getHeader("X-Requested-With"), request.getHeader("Accept"))) {
                         response.setStatus(401);
                         response.setContentType("application/json");
-                        response.getWriter().write("{\"message\":\"Email ou senha invalidos.\"}");
+                        response.getWriter().write("{\"message\":\"E-mail ou senha inválidos.\"}");
                     } else {
                         response.sendRedirect("/login?error");
                     }
