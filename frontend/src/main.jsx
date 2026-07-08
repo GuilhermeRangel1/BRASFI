@@ -216,7 +216,7 @@ function App() {
     stompClient.activate();
 
     return () => stompClient.deactivate();
-  }, [selectedCommunityId]);
+  }, [auth.authenticated, selectedCommunityId]);
 
   async function handleLogin(event) {
     event.preventDefault();
@@ -371,6 +371,24 @@ function App() {
     setNotice('Comunidade criada.');
     await loadAll();
     setSelectedCommunityId(community.id);
+    return community;
+  }
+
+  async function updateCommunity(communityId, event) {
+    event.preventDefault();
+    const form = new FormData(event.currentTarget);
+    const updated = await api(`/api/v1/communities/${communityId}`, {
+      method: 'PUT',
+      body: JSON.stringify({
+        nome: form.get('nome'),
+        descricao: form.get('descricao'),
+        nivelDePermissao: form.get('nivelDePermissao')
+      })
+    });
+    setCommunities((current) => current.map((community) => (community.id === communityId ? updated : community)));
+    setNotice('Comunidade atualizada.');
+    loadAll().catch((error) => setNotice(error.message));
+    return updated;
   }
 
   async function deleteCommunity(communityId) {
@@ -378,6 +396,34 @@ function App() {
     setNotice('Comunidade removida.');
     await loadAll();
     setSelectedCommunityId((current) => (current === communityId ? null : current));
+  }
+
+  async function toggleCommunityMembership(communityId, isMember) {
+    if (!auth.authenticated) {
+      setNotice('Entre na sua conta para participar da comunidade.');
+      setAuthOpen(true);
+      return null;
+    }
+
+    const updated = await api(`/api/v1/communities/${communityId}/membership`, {
+      method: isMember ? 'DELETE' : 'POST'
+    });
+    setCommunities((current) => current.map((community) => (community.id === communityId ? updated : community)));
+    setNotice(isMember ? 'Você saiu da comunidade.' : 'Você entrou na comunidade.');
+    if (isMember && selectedCommunityId === communityId) {
+      setPosts([]);
+    } else if (!isMember && selectedCommunityId === communityId) {
+      api(`/api/v1/communities/${communityId}/posts`).then(setPosts).catch((error) => setNotice(error.message));
+    }
+    loadAll().catch((error) => setNotice(error.message));
+    return updated;
+  }
+
+  async function deleteCommunityPost(communityId, postId) {
+    await api(`/api/v1/communities/${communityId}/posts/${postId}`, { method: 'DELETE' });
+    setPosts((current) => current.filter((post) => post.id !== postId));
+    setNotice('Mensagem removida.');
+    loadAll().catch((error) => setNotice(error.message));
   }
 
   async function createLearningTrack(event) {
@@ -616,6 +662,10 @@ function App() {
                 sendPost={sendPost}
                 canManageCommunities={canManageCommunities}
                 createCommunity={createCommunity}
+                updateCommunity={updateCommunity}
+                deleteCommunity={deleteCommunity}
+                toggleCommunityMembership={toggleCommunityMembership}
+                deleteCommunityPost={deleteCommunityPost}
               />
             )}
             {view === 'admin' && canAccessAdmin && (
@@ -629,6 +679,7 @@ function App() {
                 updateEvent={updateEvent}
                 deleteEvent={deleteEvent}
                 createCommunity={createCommunity}
+                updateCommunity={updateCommunity}
                 deleteCommunity={deleteCommunity}
                 createLearningTrack={createLearningTrack}
                 updateLearningTrack={updateLearningTrack}
@@ -1852,8 +1903,37 @@ function Communities({
   auth,
   sendPost,
   canManageCommunities,
-  createCommunity
+  createCommunity,
+  updateCommunity,
+  deleteCommunity,
+  toggleCommunityMembership,
+  deleteCommunityPost
 }) {
+  const [editingCommunity, setEditingCommunity] = useState(null);
+  const [communityModalOpen, setCommunityModalOpen] = useState(false);
+  const canPost = Boolean(selectedCommunity?.podePostar);
+
+  function openCreateCommunity() {
+    setEditingCommunity(null);
+    setCommunityModalOpen(true);
+  }
+
+  function openEditCommunity() {
+    setEditingCommunity(selectedCommunity);
+    setCommunityModalOpen(true);
+  }
+
+  async function handleCommunitySubmit(event) {
+    if (editingCommunity) {
+      await updateCommunity(editingCommunity.id, event);
+    } else {
+      const created = await createCommunity(event);
+      setSelectedCommunityId(created.id);
+    }
+    setCommunityModalOpen(false);
+    setEditingCommunity(null);
+  }
+
   return (
     <div className="community-layout">
       <section className="community-list">
@@ -1865,6 +1945,7 @@ function Communities({
           >
             <strong>{community.nome}</strong>
             <span>{community.nivelLabel}</span>
+            <small>{community.totalMembros} membros · {community.totalPosts} posts</small>
           </button>
         ))}
       </section>
@@ -1872,23 +1953,71 @@ function Communities({
       <section className="chat-panel">
         <SectionHeader icon={MessageSquareText} title={selectedCommunity?.nome ?? 'Comunidade'} />
         <p className="muted">{selectedCommunity?.descricao}</p>
+        {selectedCommunity && (
+          <div className="community-toolbar">
+            <div className="community-meta">
+              <span>{selectedCommunity.nivelLabel}</span>
+              <span>{selectedCommunity.totalMembros} membros</span>
+              <span>{selectedCommunity.totalPosts} posts</span>
+            </div>
+            <div className="community-actions">
+              <button
+                className={selectedCommunity.membro ? 'ghost-button surface compact' : 'primary-button compact'}
+                type="button"
+                onClick={() => toggleCommunityMembership(selectedCommunity.id, selectedCommunity.membro)}
+              >
+                {selectedCommunity.membro ? <LogOut size={16} /> : <Plus size={16} />}
+                {selectedCommunity.membro ? 'Sair' : 'Entrar'}
+              </button>
+              {canManageCommunities && (
+                <>
+                  <button className="ghost-button surface compact" type="button" onClick={openEditCommunity}>
+                    <Pencil size={16} /> Editar
+                  </button>
+                  <button className="danger-button compact" type="button" onClick={() => deleteCommunity(selectedCommunity.id)}>
+                    <Trash2 size={16} /> Remover
+                  </button>
+                </>
+              )}
+            </div>
+          </div>
+        )}
         <div className="post-stream">
           {posts.map((post) => (
             <article className="post-bubble" key={`${post.id}-${post.dataCriacao}`}>
-              <strong>{post.autorNome}</strong>
+              <div className="post-bubble-header">
+                <strong>{post.autorNome}</strong>
+                {canManageCommunities && (
+                  <button
+                    className="post-delete-button"
+                    type="button"
+                    onClick={() => deleteCommunityPost(selectedCommunityId, post.id)}
+                    title="Remover mensagem"
+                  >
+                    <Trash2 size={14} />
+                  </button>
+                )}
+              </div>
               <p>{post.mensagem}</p>
               <time>{formatDateTime(post.dataCriacao)}</time>
             </article>
           ))}
           {posts.length === 0 && <EmptyState text="Ainda não há mensagens nesta comunidade." />}
         </div>
-        {auth.authenticated ? (
+        {auth.authenticated && canPost ? (
           <form className="message-form" onSubmit={sendPost}>
             <input name="mensagem" placeholder="Escreva uma mensagem" required />
             <button className="icon-button filled" type="submit" title="Enviar">
               <Send size={18} />
             </button>
           </form>
+        ) : auth.authenticated && selectedCommunity ? (
+          <div className="signin-callout community-join-callout">
+            <span>Entre na comunidade para enviar mensagens.</span>
+            <button className="primary-button compact" type="button" onClick={() => toggleCommunityMembership(selectedCommunity.id, false)}>
+              <Plus size={16} /> Entrar
+            </button>
+          </div>
         ) : (
           <div className="signin-callout">Entre na sua conta para participar da conversa.</div>
         )}
@@ -1909,6 +2038,54 @@ function Communities({
           </form>
         </section>
       )}
+
+      {communityModalOpen && (
+        <CommunityFormModal
+          community={editingCommunity}
+          onClose={() => {
+            setCommunityModalOpen(false);
+            setEditingCommunity(null);
+          }}
+          onSubmit={handleCommunitySubmit}
+        />
+      )}
+    </div>
+  );
+}
+
+function CommunityFormModal({ community, onClose, onSubmit }) {
+  const isEditing = Boolean(community);
+
+  return (
+    <div className="modal-backdrop" role="presentation" onMouseDown={onClose}>
+      <section className="event-modal community-modal" role="dialog" aria-modal="true" aria-labelledby="community-modal-title" onMouseDown={(clickEvent) => clickEvent.stopPropagation()}>
+        <header className="modal-header">
+          <div>
+            <span className="hero-kicker"><UsersRound size={17} /> Comunidade</span>
+            <h2 id="community-modal-title">{isEditing ? 'Editar comunidade' : 'Nova comunidade'}</h2>
+          </div>
+          <button className="icon-button" type="button" onClick={onClose} title="Fechar">
+            <X size={18} />
+          </button>
+        </header>
+
+        <form className="stack-form" onSubmit={onSubmit}>
+          <input name="nome" placeholder="Nome" defaultValue={community?.nome ?? ''} required />
+          <textarea name="descricao" rows="4" placeholder="Descrição" defaultValue={community?.descricao ?? ''} required />
+          <select name="nivelDePermissao" defaultValue={community?.nivelDePermissao ?? 'PUBLICA'}>
+            <option value="PUBLICA">Pública</option>
+            <option value="APENAS_LIDERES">Apenas líderes</option>
+            <option value="PERSONALIZADA">Personalizada</option>
+          </select>
+          <div className="modal-actions">
+            <button className="ghost-button surface" type="button" onClick={onClose}>Cancelar</button>
+            <button className="primary-button" type="submit">
+              {isEditing ? <Pencil size={17} /> : <Plus size={17} />}
+              {isEditing ? 'Salvar alterações' : 'Criar comunidade'}
+            </button>
+          </div>
+        </form>
+      </section>
     </div>
   );
 }

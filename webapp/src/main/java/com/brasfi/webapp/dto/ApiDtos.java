@@ -90,9 +90,18 @@ public final class ApiDtos {
             String nivelDePermissao,
             String nivelLabel,
             int totalPosts,
-            int totalMembros
+            int totalMembros,
+            boolean membro,
+            boolean podePostar,
+            boolean podeGerenciar
     ) {
         public static CommunityResponse from(Comunidade comunidade) {
+            return from(comunidade, null);
+        }
+
+        public static CommunityResponse from(Comunidade comunidade, User usuario) {
+            boolean manager = usuario instanceof Administrador || usuario instanceof Gerente;
+            boolean member = usuario != null && comunidade.getUsuarios() != null && comunidade.getUsuarios().contains(usuario);
             return new CommunityResponse(
                     comunidade.getId(),
                     comunidade.getNome(),
@@ -100,7 +109,10 @@ public final class ApiDtos {
                     comunidade.getNivelDePermissao().name(),
                     comunidade.getNivelDePermissao().getDescricaoDeAcesso(),
                     comunidade.getPosts() == null ? 0 : comunidade.getPosts().size(),
-                    comunidade.getUsuarios() == null ? 0 : comunidade.getUsuarios().size()
+                    comunidade.getUsuarios() == null ? 0 : comunidade.getUsuarios().size(),
+                    member,
+                    manager || member,
+                    manager
             );
         }
     }

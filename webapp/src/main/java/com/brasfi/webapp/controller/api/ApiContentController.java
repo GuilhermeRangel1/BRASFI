@@ -312,21 +312,31 @@ public class ApiContentController {
     }
 
     @GetMapping("/communities")
-    public List<CommunityResponse> communities() {
+    public List<CommunityResponse> communities(@AuthenticationPrincipal CustomUserDetails currentUser) {
+        var usuario = currentUser == null ? null : currentUser.getUserEntity();
         return comunidadeService.listarTodasComunidades()
                 .stream()
-                .map(CommunityResponse::from)
+                .map(comunidade -> CommunityResponse.from(comunidade, usuario))
                 .toList();
     }
 
     @GetMapping("/communities/{id}/posts")
-    public ResponseEntity<?> communityPosts(@PathVariable Long id) {
+    public ResponseEntity<?> communityPosts(
+            @PathVariable Long id,
+            @AuthenticationPrincipal CustomUserDetails currentUser
+    ) {
+        var usuario = currentUser == null ? null : currentUser.getUserEntity();
         return comunidadeRepository.findById(id)
-                .<ResponseEntity<?>>map(comunidade -> ResponseEntity.ok(postService.buscarPorComunidade(comunidade)
-                        .stream()
-                        .sorted(Comparator.comparing(Post::getDataCriacao, Comparator.nullsLast(Comparator.naturalOrder())))
-                        .map(PostResponse::from)
-                        .toList()))
+                .<ResponseEntity<?>>map(comunidade -> {
+                    if (!comunidadeService.validarAcesso(comunidade.getNivelDePermissao(), usuario, comunidade.getUsuarios())) {
+                        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ErrorResponse("Entre na comunidade para acessar as mensagens."));
+                    }
+                    return ResponseEntity.ok(postService.buscarPorComunidade(comunidade)
+                            .stream()
+                            .sorted(Comparator.comparing(Post::getDataCriacao, Comparator.nullsLast(Comparator.naturalOrder())))
+                            .map(PostResponse::from)
+                            .toList());
+                })
                 .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse("Comunidade nao encontrada.")));
     }
 
@@ -343,6 +353,9 @@ public class ApiContentController {
 
         return comunidadeRepository.findById(id)
                 .<ResponseEntity<?>>map(comunidade -> {
+                    if (!comunidadeService.podePublicar(comunidade, currentUser.getUserEntity())) {
+                        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ErrorResponse("Entre na comunidade antes de enviar mensagens."));
+                    }
                     Post post = new Post(null, null, request.mensagem().trim(), 0, null, comunidade, currentUser.getUserEntity());
                     postService.incluirPost(post);
                     PostResponse response = PostResponse.from(post);
@@ -354,7 +367,10 @@ public class ApiContentController {
 
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     @PostMapping("/communities")
-    public ResponseEntity<?> createCommunity(@RequestBody CommunityRequest request) {
+    public ResponseEntity<?> createCommunity(
+            @RequestBody CommunityRequest request,
+            @AuthenticationPrincipal CustomUserDetails currentUser
+    ) {
         try {
             Comunidade comunidade = new Comunidade(
                     request.nome(),
@@ -362,11 +378,74 @@ public class ApiContentController {
                     NivelDePermissaoComunidade.valueOf(request.nivelDePermissao()),
                     null
             );
-            comunidadeService.incluirComunidade(comunidade);
-            return ResponseEntity.status(HttpStatus.CREATED).body(CommunityResponse.from(comunidade));
+            comunidadeService.incluirComunidade(comunidade, currentUser.getUserEntity());
+            return ResponseEntity.status(HttpStatus.CREATED).body(CommunityResponse.from(comunidade, currentUser.getUserEntity()));
         } catch (RuntimeException exception) {
             return ResponseEntity.badRequest().body(new ErrorResponse("Nao foi possivel criar a comunidade."));
         }
+    }
+
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    @PutMapping("/communities/{id}")
+    public ResponseEntity<?> updateCommunity(
+            @PathVariable Long id,
+            @RequestBody CommunityRequest request,
+            @AuthenticationPrincipal CustomUserDetails currentUser
+    ) {
+        try {
+            Comunidade comunidade = new Comunidade(
+                    request.nome(),
+                    request.descricao(),
+                    NivelDePermissaoComunidade.valueOf(request.nivelDePermissao()),
+                    null
+            );
+            Comunidade updated = comunidadeService.atualizarComunidade(id, comunidade);
+            return ResponseEntity.ok(CommunityResponse.from(updated, currentUser.getUserEntity()));
+        } catch (RuntimeException exception) {
+            return ResponseEntity.badRequest().body(new ErrorResponse("Nao foi possivel atualizar a comunidade."));
+        }
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @PostMapping("/communities/{id}/membership")
+    public ResponseEntity<?> joinCommunity(
+            @PathVariable Long id,
+            @AuthenticationPrincipal CustomUserDetails currentUser
+    ) {
+        try {
+            Comunidade comunidade = comunidadeService.entrarNaComunidade(id, currentUser.getUserEntity());
+            return ResponseEntity.ok(CommunityResponse.from(comunidade, currentUser.getUserEntity()));
+        } catch (RuntimeException exception) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse("Comunidade nao encontrada."));
+        }
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @DeleteMapping("/communities/{id}/membership")
+    public ResponseEntity<?> leaveCommunity(
+            @PathVariable Long id,
+            @AuthenticationPrincipal CustomUserDetails currentUser
+    ) {
+        try {
+            Comunidade comunidade = comunidadeService.sairDaComunidade(id, currentUser.getUserEntity());
+            return ResponseEntity.ok(CommunityResponse.from(comunidade, currentUser.getUserEntity()));
+        } catch (RuntimeException exception) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse("Comunidade nao encontrada."));
+        }
+    }
+
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    @DeleteMapping("/communities/{communityId}/posts/{postId}")
+    public ResponseEntity<?> deletePost(@PathVariable Long communityId, @PathVariable Long postId) {
+        return postService.buscarPorId(postId)
+                .<ResponseEntity<?>>map(post -> {
+                    if (post.getComunidade() == null || !post.getComunidade().getId().equals(communityId)) {
+                        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse("Mensagem nao encontrada."));
+                    }
+                    postService.excluirPost(post);
+                    return ResponseEntity.noContent().build();
+                })
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse("Mensagem nao encontrada.")));
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
