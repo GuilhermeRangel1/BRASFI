@@ -66,6 +66,24 @@ async function api(path, options = {}) {
   return data;
 }
 
+async function uploadFile(path, file) {
+  const formData = new FormData();
+  formData.append('file', file);
+
+  const response = await fetch(`${API_BASE}${path}`, {
+    method: 'POST',
+    credentials: 'include',
+    body: formData
+  });
+
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    throw new Error(data.message || 'Não foi possível enviar o arquivo.');
+  }
+
+  return data;
+}
+
 function App() {
   const [view, setView] = useState('dashboard');
   const [dashboard, setDashboard] = useState(null);
@@ -388,6 +406,10 @@ function App() {
     return updated;
   }
 
+  async function uploadLearningMaterial(file) {
+    return uploadFile('/api/v1/uploads/learning-materials', file);
+  }
+
   async function sendPost(event) {
     event.preventDefault();
     const formElement = event.currentTarget;
@@ -504,6 +526,7 @@ function App() {
                 deleteLearningTrack={deleteLearningTrack}
                 enrollLearningTrack={enrollLearningTrack}
                 saveLearningProgress={saveLearningProgress}
+                uploadLearningMaterial={uploadLearningMaterial}
               />
             )}
             {view === 'events' && (
@@ -545,6 +568,7 @@ function App() {
                 createLearningTrack={createLearningTrack}
                 updateLearningTrack={updateLearningTrack}
                 deleteLearningTrack={deleteLearningTrack}
+                uploadLearningMaterial={uploadLearningMaterial}
                 setView={setView}
               />
             )}
@@ -908,7 +932,8 @@ function LearningTracks({
   updateLearningTrack,
   deleteLearningTrack,
   enrollLearningTrack,
-  saveLearningProgress
+  saveLearningProgress,
+  uploadLearningMaterial
 }) {
   const [selectedTrackId, setSelectedTrackId] = useState(tracks[0]?.id ?? null);
   const [editingTrack, setEditingTrack] = useState(null);
@@ -933,9 +958,10 @@ function LearningTracks({
           </button>
         )}
         {trackModalOpen && (
-          <TrackFormModal
-            onClose={() => setTrackModalOpen(false)}
-            onSubmit={async (event) => {
+            <TrackFormModal
+              uploadLearningMaterial={uploadLearningMaterial}
+              onClose={() => setTrackModalOpen(false)}
+              onSubmit={async (event) => {
               const created = await createLearningTrack(event);
               setSelectedTrackId(created.id);
               setTrackModalOpen(false);
@@ -1076,6 +1102,24 @@ function LearningTracks({
                   <div>
                     <h3>{step.title}</h3>
                     <p>{step.description}</p>
+                    {step.materials?.length > 0 && (
+                      <div className="step-materials">
+                        <strong>Materiais desta etapa</strong>
+                        <div>
+                          {step.materials.map((material) => (
+                            isMaterialLink(material) ? (
+                              <a key={material} href={materialHref(material)} target="_blank" rel="noreferrer">
+                                <BookOpenCheck size={15} /> {materialLabel(material)}
+                              </a>
+                            ) : (
+                              <span key={material}>
+                                <BookOpenCheck size={15} /> {material}
+                              </span>
+                            )
+                          ))}
+                        </div>
+                      </div>
+                    )}
                     <button className="step-action" type="button" onClick={() => toggleStep(index)} disabled={savingProgress}>
                       {completed ? 'Concluída' : step.action}
                     </button>
@@ -1136,6 +1180,7 @@ function LearningTracks({
       {trackModalOpen && (
         <TrackFormModal
           track={editingTrack}
+          uploadLearningMaterial={uploadLearningMaterial}
           onClose={() => {
             setTrackModalOpen(false);
             setEditingTrack(null);
@@ -1147,11 +1192,15 @@ function LearningTracks({
   );
 }
 
-function TrackFormModal({ track, onClose, onSubmit }) {
+function TrackFormModal({ track, onClose, onSubmit, uploadLearningMaterial }) {
   const isEditing = Boolean(track);
   const [outcomes, setOutcomes] = useState(track?.outcomes?.length ? track.outcomes : ['']);
   const [resources, setResources] = useState(track?.resources?.length ? track.resources : ['']);
-  const [steps, setSteps] = useState(track?.steps?.length ? track.steps : [{ title: '', description: '', action: '' }]);
+  const [steps, setSteps] = useState(track?.steps?.length
+    ? track.steps.map((step) => ({ ...step, materials: step.materials?.length ? step.materials : [''] }))
+    : [{ title: '', description: '', action: '', materials: [''] }]);
+  const [uploadingStepIndex, setUploadingStepIndex] = useState(null);
+  const [uploadError, setUploadError] = useState(null);
 
   function addOutcome() {
     setOutcomes((current) => [...current, '']);
@@ -1178,7 +1227,7 @@ function TrackFormModal({ track, onClose, onSubmit }) {
   }
 
   function addStep() {
-    setSteps((current) => [...current, { title: '', description: '', action: '' }]);
+    setSteps((current) => [...current, { title: '', description: '', action: '', materials: [''] }]);
   }
 
   function updateStep(index, field, value) {
@@ -1189,6 +1238,62 @@ function TrackFormModal({ track, onClose, onSubmit }) {
 
   function removeStep(index) {
     setSteps((current) => current.length === 1 ? current : current.filter((_, stepIndex) => stepIndex !== index));
+  }
+
+  function addStepMaterial(stepIndex) {
+    setSteps((current) => current.map((step, index) => (
+      index === stepIndex ? { ...step, materials: [...(step.materials ?? ['']), ''] } : step
+    )));
+  }
+
+  function updateStepMaterial(stepIndex, materialIndex, value) {
+    setSteps((current) => current.map((step, index) => (
+      index === stepIndex
+        ? {
+            ...step,
+            materials: (step.materials ?? ['']).map((material, currentMaterialIndex) => (
+              currentMaterialIndex === materialIndex ? value : material
+            ))
+          }
+        : step
+    )));
+  }
+
+  function removeStepMaterial(stepIndex, materialIndex) {
+    setSteps((current) => current.map((step, index) => {
+      if (index !== stepIndex) {
+        return step;
+      }
+
+      const materials = step.materials ?? [''];
+      return {
+        ...step,
+        materials: materials.length === 1 ? [''] : materials.filter((_, currentMaterialIndex) => currentMaterialIndex !== materialIndex)
+      };
+    }));
+  }
+
+  async function uploadStepMaterial(stepIndex, file) {
+    if (!file || !uploadLearningMaterial) {
+      return;
+    }
+
+    setUploadingStepIndex(stepIndex);
+    setUploadError(null);
+    try {
+      const uploaded = await uploadLearningMaterial(file);
+      const materialReference = formatUploadedMaterial(uploaded);
+      setSteps((current) => current.map((step, index) => {
+        if (index !== stepIndex) {
+          return step;
+        }
+
+        const filledMaterials = (step.materials ?? []).filter(Boolean);
+        return { ...step, materials: [...filledMaterials, materialReference] };
+      }));
+    } finally {
+      setUploadingStepIndex(null);
+    }
   }
 
   return (
@@ -1291,6 +1396,45 @@ function TrackFormModal({ track, onClose, onSubmit }) {
                     onChange={(event) => updateStep(index, 'action', event.target.value)}
                     required
                   />
+                  <div className="step-material-editor">
+                    <div className="step-material-editor-header">
+                      <span>Materiais da etapa</span>
+                      <button className="ghost-button surface compact" type="button" onClick={() => addStepMaterial(index)}>
+                        <Plus size={15} /> Adicionar material
+                      </button>
+                    </div>
+                    {(step.materials ?? ['']).map((material, materialIndex) => (
+                      <div className="dynamic-field-row" key={`step-${index}-material-${materialIndex}`}>
+                        <input
+                          name={`stepMaterials[${index}][]`}
+                          placeholder="Link, leitura, checklist ou referência"
+                          value={material}
+                          onChange={(event) => updateStepMaterial(index, materialIndex, event.target.value)}
+                        />
+                        <button
+                          className="danger-button compact"
+                          type="button"
+                          onClick={() => removeStepMaterial(index, materialIndex)}
+                          disabled={(step.materials ?? ['']).length === 1}
+                        >
+                          <Trash2 size={15} />
+                        </button>
+                      </div>
+                    ))}
+                    <label className={uploadingStepIndex === index ? 'file-upload-button uploading' : 'file-upload-button'}>
+                      <BookOpenCheck size={16} />
+                      {uploadingStepIndex === index ? 'Enviando arquivo...' : 'Anexar arquivo'}
+                      <input
+                        type="file"
+                        onChange={(event) => {
+                          uploadStepMaterial(index, event.target.files?.[0]).catch((error) => setUploadError({ stepIndex: index, message: error.message }));
+                          event.target.value = '';
+                        }}
+                        disabled={uploadingStepIndex !== null}
+                      />
+                    </label>
+                    {uploadError?.stepIndex === index && uploadingStepIndex === null && <p className="upload-message">{uploadError.message}</p>}
+                  </div>
                 </article>
               ))}
             </div>
@@ -1560,6 +1704,7 @@ function AdminPanel({
   createLearningTrack,
   updateLearningTrack,
   deleteLearningTrack,
+  uploadLearningMaterial,
   setView
 }) {
   const [section, setSection] = useState(isAdmin ? 'events' : 'communities');
@@ -1691,6 +1836,7 @@ function AdminPanel({
           {trackModalOpen && (
             <TrackFormModal
               track={editingTrack}
+              uploadLearningMaterial={uploadLearningMaterial}
               onClose={() => {
                 setTrackModalOpen(false);
                 setEditingTrack(null);
@@ -1818,6 +1964,42 @@ function roleLabel(role) {
   }[role] ?? 'Usuário';
 }
 
+function isExternalUrl(value) {
+  return /^https?:\/\//i.test(String(value ?? '').trim());
+}
+
+function isUploadedMaterial(value) {
+  return String(value ?? '').includes('||/uploads/');
+}
+
+function isMaterialLink(value) {
+  const text = String(value ?? '').trim();
+  return isExternalUrl(text) || text.startsWith('/uploads/') || isUploadedMaterial(text);
+}
+
+function materialHref(value) {
+  const text = String(value ?? '').trim();
+  if (isUploadedMaterial(text)) {
+    return text.split('||').at(-1);
+  }
+  return text;
+}
+
+function materialLabel(value) {
+  const text = String(value ?? '').trim();
+  if (isUploadedMaterial(text)) {
+    return text.split('||')[0];
+  }
+  if (text.startsWith('/uploads/')) {
+    return decodeURIComponent(text.split('/').at(-1) ?? text);
+  }
+  return text;
+}
+
+function formatUploadedMaterial(uploaded) {
+  return `${uploaded.fileName}||${uploaded.url}`;
+}
+
 function sortEvents(events) {
   return [...events].sort((first, second) => (
     new Date(`${first.dataEvento}T00:00:00`) - new Date(`${second.dataEvento}T00:00:00`)
@@ -1855,7 +2037,8 @@ function readStepFields(form) {
   return Array.from({ length: total }, (_, index) => ({
     title: String(titles[index] ?? '').trim(),
     description: String(descriptions[index] ?? '').trim(),
-    action: String(actions[index] ?? '').trim()
+    action: String(actions[index] ?? '').trim(),
+    materials: readNamedList(form, `stepMaterials[${index}][]`)
   })).filter((step) => step.title || step.description || step.action);
 }
 

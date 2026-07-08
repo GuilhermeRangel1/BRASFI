@@ -122,7 +122,9 @@ public class LearningTrackService {
 
     @Transactional
     public void criarTrilhaInicialSeNecessario() {
-        if (learningTrackRepository.findBySlug("financas-sustentaveis").isPresent()) {
+        var existingTrack = learningTrackRepository.findBySlug("financas-sustentaveis");
+        if (existingTrack.isPresent()) {
+            preencherMateriaisIniciaisSeNecessario(existingTrack.get());
             return;
         }
 
@@ -147,25 +149,51 @@ public class LearningTrackService {
         track.addStep(new LearningTrackStep(
                 "Base conceitual",
                 "Comece pelos termos essenciais: ESG, impacto, materialidade e risco climático.",
-                "Assistir aula introdutória"
+                "Assistir aula introdutória",
+                List.of("Glossário ESG e finanças sustentáveis", "Mapa de conceitos de risco climático")
         ));
         track.addStep(new LearningTrackStep(
                 "Aplicação no mercado",
                 "Veja como indicadores e métricas apoiam decisões de investimento e gestão.",
-                "Participar de workshop"
+                "Participar de workshop",
+                List.of("Checklist de análise de oportunidade", "Exemplo de indicadores ESG")
         ));
         track.addStep(new LearningTrackStep(
                 "Discussão em comunidade",
                 "Leve dúvidas e referências para uma comunidade ativa da plataforma.",
-                "Publicar uma pergunta"
+                "Publicar uma pergunta",
+                List.of("Roteiro para debate em comunidade")
         ));
         track.addStep(new LearningTrackStep(
                 "Projeto prático",
                 "Organize um pequeno estudo de caso para consolidar aprendizado e colaboração.",
-                "Montar plano de ação"
+                "Montar plano de ação",
+                List.of("Modelo de plano de ação", "Roteiro para estudo de caso")
         ));
 
         learningTrackRepository.save(track);
+    }
+
+    private void preencherMateriaisIniciaisSeNecessario(LearningTrack track) {
+        List<List<String>> defaultMaterials = List.of(
+                List.of("Glossário ESG e finanças sustentáveis", "Mapa de conceitos de risco climático"),
+                List.of("Checklist de análise de oportunidade", "Exemplo de indicadores ESG"),
+                List.of("Roteiro para debate em comunidade"),
+                List.of("Modelo de plano de ação", "Roteiro para estudo de caso")
+        );
+
+        boolean changed = false;
+        for (int index = 0; index < track.getSteps().size() && index < defaultMaterials.size(); index++) {
+            LearningTrackStep step = track.getSteps().get(index);
+            if (step.getMaterials() == null || step.getMaterials().isEmpty()) {
+                step.setMaterials(defaultMaterials.get(index));
+                changed = true;
+            }
+        }
+
+        if (changed) {
+            learningTrackRepository.save(track);
+        }
     }
 
     private void aplicarDados(LearningTrack track, LearningTrackRequest request) {
@@ -200,7 +228,12 @@ public class LearningTrackService {
                     validarTexto(step.title(), "O título de cada etapa é obrigatório.");
                     validarTexto(step.description(), "A descrição de cada etapa é obrigatória.");
                     validarTexto(step.action(), "A ação de cada etapa é obrigatória.");
-                    return new LearningTrackStep(step.title().trim(), step.description().trim(), step.action().trim());
+                    return new LearningTrackStep(
+                            step.title().trim(),
+                            step.description().trim(),
+                            step.action().trim(),
+                            limparLista(step.materials())
+                    );
                 })
                 .toList());
     }
@@ -258,7 +291,12 @@ public class LearningTrackService {
                 track.getOutcomes(),
                 track.getSteps()
                         .stream()
-                        .map(step -> new LearningStepResponse(step.getTitle(), step.getDescription(), step.getAction()))
+                        .map(step -> new LearningStepResponse(
+                                step.getTitle(),
+                                step.getDescription(),
+                                step.getAction(),
+                                step.getMaterials()
+                        ))
                         .toList(),
                 track.getResources(),
                 progressResponse,

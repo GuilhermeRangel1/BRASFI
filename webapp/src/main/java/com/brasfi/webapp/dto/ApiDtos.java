@@ -18,6 +18,9 @@ public final class ApiDtos {
     public record ErrorResponse(String message) {
     }
 
+    public record FileUploadResponse(String fileName, String url, String contentType, long size) {
+    }
+
     public record UserResponse(Long id, String name, String email, int idade, String role) {
         public static UserResponse from(User user) {
             return new UserResponse(user.getId(), user.getName(), user.getEmail(), user.getIdade(), roleOf(user));
@@ -172,10 +175,10 @@ public final class ApiDtos {
     ) {
     }
 
-    public record LearningStepResponse(String title, String description, String action) {
+    public record LearningStepResponse(String title, String description, String action, List<String> materials) {
     }
 
-    public record LearningStepRequest(String title, String description, String action) {
+    public record LearningStepRequest(String title, String description, String action, List<String> materials) {
     }
 
     public record LearningProgressResponse(

@@ -30,6 +30,8 @@ services:
       ADMIN_PASSWORD: ${ADMIN_PASSWORD:-admin123}
       ADMIN_CPF: ${ADMIN_CPF:-00000000000}
       ALLOW_PRIVILEGED_REGISTRATION: ${ALLOW_PRIVILEGED_REGISTRATION:-false}
+    volumes:
+      - uploads_data:/app/uploads
     ports:
       - "${APP_PORT:-8080}:8080"
     container_name: ${APP_CONTAINER_NAME:-webapp}
@@ -44,3 +46,4 @@ services:
 
 volumes:
   db_data:
+  uploads_data:

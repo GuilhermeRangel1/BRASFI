@@ -7,6 +7,7 @@ import com.brasfi.webapp.dto.ApiDtos.DashboardResponse;
 import com.brasfi.webapp.dto.ApiDtos.ErrorResponse;
 import com.brasfi.webapp.dto.ApiDtos.EventRequest;
 import com.brasfi.webapp.dto.ApiDtos.EventResponse;
+import com.brasfi.webapp.dto.ApiDtos.FileUploadResponse;
 import com.brasfi.webapp.dto.ApiDtos.LearningProgressRequest;
 import com.brasfi.webapp.dto.ApiDtos.LearningTrackRequest;
 import com.brasfi.webapp.dto.ApiDtos.LearningTrackResponse;
@@ -26,6 +27,7 @@ import com.brasfi.webapp.security.CustomUserDetails;
 import com.brasfi.webapp.service.ComunidadeService;
 import com.brasfi.webapp.service.EventoInscricaoService;
 import com.brasfi.webapp.service.EventoService;
+import com.brasfi.webapp.service.FileStorageService;
 import com.brasfi.webapp.service.LearningTrackService;
 import com.brasfi.webapp.service.PostService;
 import org.springframework.http.HttpStatus;
@@ -42,6 +44,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.util.Arrays;
@@ -58,6 +61,7 @@ public class ApiContentController {
     private final SimpMessagingTemplate messagingTemplate;
     private final LearningTrackService learningTrackService;
     private final EventoInscricaoService eventoInscricaoService;
+    private final FileStorageService fileStorageService;
 
     public ApiContentController(
             EventoService eventoService,
@@ -66,7 +70,8 @@ public class ApiContentController {
             PostService postService,
             SimpMessagingTemplate messagingTemplate,
             LearningTrackService learningTrackService,
-            EventoInscricaoService eventoInscricaoService
+            EventoInscricaoService eventoInscricaoService,
+            FileStorageService fileStorageService
     ) {
         this.eventoService = eventoService;
         this.comunidadeService = comunidadeService;
@@ -75,6 +80,7 @@ public class ApiContentController {
         this.messagingTemplate = messagingTemplate;
         this.learningTrackService = learningTrackService;
         this.eventoInscricaoService = eventoInscricaoService;
+        this.fileStorageService = fileStorageService;
     }
 
     @GetMapping("/dashboard")
@@ -194,6 +200,17 @@ public class ApiContentController {
     public ResponseEntity<?> createLearningTrack(@RequestBody LearningTrackRequest request) {
         try {
             return ResponseEntity.status(HttpStatus.CREATED).body(learningTrackService.criarTrilha(request));
+        } catch (RuntimeException exception) {
+            return ResponseEntity.badRequest().body(new ErrorResponse(exception.getMessage()));
+        }
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/uploads/learning-materials")
+    public ResponseEntity<?> uploadLearningMaterial(@RequestParam("file") MultipartFile file) {
+        try {
+            FileUploadResponse response = fileStorageService.storeLearningMaterial(file);
+            return ResponseEntity.status(HttpStatus.CREATED).body(response);
         } catch (RuntimeException exception) {
             return ResponseEntity.badRequest().body(new ErrorResponse(exception.getMessage()));
         }

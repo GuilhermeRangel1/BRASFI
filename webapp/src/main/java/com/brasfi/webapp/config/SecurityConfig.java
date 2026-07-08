@@ -27,7 +27,7 @@ public class SecurityConfig {
         http
             .cors(cors -> {})
             .authorizeHttpRequests(authorize -> authorize
-                .requestMatchers("/", "/login", "/register", "/sobre", "/css/**", "/js/**", "/img/**", "/error").permitAll()
+                .requestMatchers("/", "/login", "/register", "/sobre", "/css/**", "/js/**", "/img/**", "/uploads/**", "/error").permitAll()
                 .requestMatchers("/api/v1/auth/register", "/api/v1/auth/me").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/v1/dashboard", "/api/v1/learning-tracks", "/api/v1/events/**", "/api/v1/communities/**").permitAll()
                 .anyRequest().authenticated()
