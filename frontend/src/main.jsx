@@ -91,6 +91,9 @@ function App() {
   const [communities, setCommunities] = useState([]);
   const [learningTracks, setLearningTracks] = useState([]);
   const [profile, setProfile] = useState(null);
+  const [selectedEventId, setSelectedEventId] = useState(null);
+  const [eventDetail, setEventDetail] = useState(null);
+  const [eventDetailLoading, setEventDetailLoading] = useState(false);
   const [selectedCommunityId, setSelectedCommunityId] = useState(null);
   const [posts, setPosts] = useState([]);
   const [auth, setAuth] = useState({ authenticated: false, user: null });
@@ -157,6 +160,37 @@ function App() {
       setView('dashboard');
     }
   }, [auth.authenticated, view]);
+
+  useEffect(() => {
+    if (view !== 'event-detail' || !selectedEventId) {
+      return undefined;
+    }
+
+    let active = true;
+    setEventDetailLoading(true);
+    api(`/api/v1/events/${selectedEventId}`)
+      .then((event) => {
+        if (active) {
+          setEventDetail(event);
+          setEvents((current) => sortEvents(current.map((item) => (item.id === event.id ? event : item))));
+        }
+      })
+      .catch((error) => {
+        if (active) {
+          setNotice(error.message);
+          setView('events');
+        }
+      })
+      .finally(() => {
+        if (active) {
+          setEventDetailLoading(false);
+        }
+      });
+
+    return () => {
+      active = false;
+    };
+  }, [selectedEventId, view]);
 
   useEffect(() => {
     if (!selectedCommunityId) {
@@ -281,6 +315,7 @@ function App() {
       })
     });
     setEvents((current) => sortEvents(current.map((item) => (item.id === eventId ? updated : item))));
+    setEventDetail((current) => (current?.id === eventId ? updated : current));
     setNotice('Evento atualizado.');
     loadAll().catch((error) => setNotice(error.message));
     return updated;
@@ -289,6 +324,11 @@ function App() {
   async function deleteEvent(eventId) {
     await api(`/api/v1/events/${eventId}`, { method: 'DELETE' });
     setEvents((current) => current.filter((event) => event.id !== eventId));
+    if (selectedEventId === eventId) {
+      setSelectedEventId(null);
+      setEventDetail(null);
+      setView('events');
+    }
     setNotice('Evento removido.');
     loadAll().catch((error) => setNotice(error.message));
   }
@@ -299,11 +339,20 @@ function App() {
       return;
     }
 
-    await api(`/api/v1/events/${eventId}/registrations`, {
+    const updated = await api(`/api/v1/events/${eventId}/registrations`, {
       method: isRegistered ? 'DELETE' : 'POST'
     });
+    setEvents((current) => sortEvents(current.map((event) => (event.id === eventId ? updated : event))));
+    setEventDetail((current) => (current?.id === eventId ? updated : current));
     setNotice(isRegistered ? 'Inscrição cancelada.' : 'Inscrição confirmada.');
     await loadAll();
+    return updated;
+  }
+
+  function openEventDetail(eventId) {
+    setSelectedEventId(eventId);
+    setEventDetail(events.find((event) => event.id === eventId) ?? null);
+    setView('event-detail');
   }
 
   async function createCommunity(event) {
@@ -507,11 +556,12 @@ function App() {
           <div className="loading-state">Carregando plataforma...</div>
         ) : (
           <>
-            {view === 'dashboard' && <Dashboard dashboard={dashboard} setView={setView} />}
+            {view === 'dashboard' && <Dashboard dashboard={dashboard} setView={setView} openEventDetail={openEventDetail} />}
             {view === 'profile' && auth.authenticated && (
               <ProfilePage
                 profile={profile}
                 setView={setView}
+                openEventDetail={openEventDetail}
                 setSelectedCommunityId={setSelectedCommunityId}
               />
             )}
@@ -527,6 +577,7 @@ function App() {
                 enrollLearningTrack={enrollLearningTrack}
                 saveLearningProgress={saveLearningProgress}
                 uploadLearningMaterial={uploadLearningMaterial}
+                openEventDetail={openEventDetail}
               />
             )}
             {view === 'events' && (
@@ -538,6 +589,20 @@ function App() {
                 updateEvent={updateEvent}
                 deleteEvent={deleteEvent}
                 toggleEventRegistration={toggleEventRegistration}
+                openEventDetail={openEventDetail}
+              />
+            )}
+            {view === 'event-detail' && (
+              <EventDetail
+                event={eventDetail}
+                loading={eventDetailLoading}
+                auth={auth}
+                isAdmin={isAdmin}
+                setView={setView}
+                updateEvent={updateEvent}
+                deleteEvent={deleteEvent}
+                toggleEventRegistration={toggleEventRegistration}
+                onEventUpdated={setEventDetail}
               />
             )}
             {view === 'communities' && (
@@ -620,7 +685,7 @@ function AuthBox({ mode, setMode, onLogin, onRegister }) {
   );
 }
 
-function ProfilePage({ profile, setView, setSelectedCommunityId }) {
+function ProfilePage({ profile, setView, openEventDetail, setSelectedCommunityId }) {
   if (!profile) {
     return <div className="loading-state">Carregando sua jornada...</div>;
   }
@@ -688,7 +753,7 @@ function ProfilePage({ profile, setView, setSelectedCommunityId }) {
           <SectionHeader icon={CalendarDays} title="Eventos inscritos" />
           <div className="compact-list">
             {registeredEvents.map((event) => (
-              <button className="compact-row" key={event.id} onClick={() => setView('events')}>
+              <button className="compact-row" key={event.id} onClick={() => openEventDetail(event.id)}>
                 <strong>{event.titulo}</strong>
                 <span>{formatDate(event.dataEvento)} · {event.categoriaLabel} <ArrowRight size={15} /></span>
               </button>
@@ -755,7 +820,7 @@ function EmptyAction({ text, action, onClick }) {
   );
 }
 
-function Dashboard({ dashboard, setView }) {
+function Dashboard({ dashboard, setView, openEventDetail }) {
   const impactItems = [
     ['15 estados e 10 países', 'presença nacional e conexões internacionais'],
     ['+200', 'profissionais capacitados desde 2020'],
@@ -903,7 +968,9 @@ function Dashboard({ dashboard, setView }) {
         <div>
           <SectionHeader icon={CalendarDays} title="Próximos encontros" />
           <div className="event-list">
-            {(dashboard?.proximosEventos ?? []).slice(0, 2).map((event) => <EventItem key={event.id} event={event} />)}
+            {(dashboard?.proximosEventos ?? []).slice(0, 2).map((event) => (
+              <EventItem key={event.id} event={event} onOpenDetail={openEventDetail} />
+            ))}
             {(dashboard?.proximosEventos ?? []).length === 0 && <EmptyState text="Nenhum evento futuro cadastrado." />}
           </div>
         </div>
@@ -933,7 +1000,8 @@ function LearningTracks({
   deleteLearningTrack,
   enrollLearningTrack,
   saveLearningProgress,
-  uploadLearningMaterial
+  uploadLearningMaterial,
+  openEventDetail
 }) {
   const [selectedTrackId, setSelectedTrackId] = useState(tracks[0]?.id ?? null);
   const [editingTrack, setEditingTrack] = useState(null);
@@ -1135,7 +1203,7 @@ function LearningTracks({
             <SectionHeader icon={PlayCircle} title="Eventos recomendados" />
             <div className="compact-list">
               {recommendedEvents.map((event) => (
-                <button className="compact-row" key={event.id} onClick={() => setView('events')}>
+                <button className="compact-row" key={event.id} onClick={() => openEventDetail(event.id)}>
                   <strong>{event.titulo}</strong>
                   <span>{formatDate(event.dataEvento)} <ArrowRight size={15} /></span>
                 </button>
@@ -1484,7 +1552,7 @@ function DynamicListEditor({ title, description, items, name, placeholder, onAdd
   );
 }
 
-function Events({ events, auth, isAdmin, createEvent, updateEvent, deleteEvent, toggleEventRegistration }) {
+function Events({ events, auth, isAdmin, createEvent, updateEvent, deleteEvent, toggleEventRegistration, openEventDetail }) {
   const [editingEvent, setEditingEvent] = useState(null);
   const [eventModalOpen, setEventModalOpen] = useState(false);
   const [eventSaving, setEventSaving] = useState(false);
@@ -1543,6 +1611,7 @@ function Events({ events, auth, isAdmin, createEvent, updateEvent, deleteEvent, 
                 onEdit={openEditModal}
                 onDelete={deleteEvent}
                 toggleEventRegistration={toggleEventRegistration}
+                onOpenDetail={openEventDetail}
               />
             ))}
             {upcoming.length === 0 && <EmptyState text="Nenhum evento futuro cadastrado." />}
@@ -1559,6 +1628,7 @@ function Events({ events, auth, isAdmin, createEvent, updateEvent, deleteEvent, 
                 isAdmin={isAdmin}
                 onEdit={openEditModal}
                 onDelete={deleteEvent}
+                onOpenDetail={openEventDetail}
               />
             ))}
             {past.length === 0 && <EmptyState text="Nenhum evento gravado cadastrado." />}
@@ -1578,6 +1648,158 @@ function Events({ events, auth, isAdmin, createEvent, updateEvent, deleteEvent, 
         />
       )}
     </>
+  );
+}
+
+function EventDetail({
+  event,
+  loading,
+  auth,
+  isAdmin,
+  setView,
+  updateEvent,
+  deleteEvent,
+  toggleEventRegistration,
+  onEventUpdated
+}) {
+  const [editing, setEditing] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const embedUrl = youtubeEmbedUrl(event?.urlVideo);
+  const canRegister = event?.futuro && !isAdmin;
+
+  async function handleEditSubmit(formEvent) {
+    setSaving(true);
+    try {
+      await updateEvent(event.id, formEvent);
+      const fresh = await api(`/api/v1/events/${event.id}`);
+      onEventUpdated(fresh);
+      setEditing(false);
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  async function handleRegistration() {
+    const updated = await toggleEventRegistration(event.id, event.inscrito);
+    if (updated) {
+      onEventUpdated(updated);
+    }
+  }
+
+  if (loading && !event) {
+    return <div className="loading-state">Carregando evento...</div>;
+  }
+
+  if (!event) {
+    return (
+      <div className="empty-action">
+        <span>Evento não encontrado.</span>
+        <button className="ghost-button surface compact" type="button" onClick={() => setView('events')}>
+          Voltar para eventos <ArrowRight size={15} />
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="event-detail-page">
+      <button className="detail-back-button" type="button" onClick={() => setView('events')}>
+        <ArrowRight size={16} /> Voltar para eventos
+      </button>
+
+      <section className="event-detail-hero">
+        <div className="date-box event-detail-date">
+          <span>{new Date(`${event.dataEvento}T00:00:00`).toLocaleDateString('pt-BR', { month: 'short' })}</span>
+          <strong>{new Date(`${event.dataEvento}T00:00:00`).getDate()}</strong>
+        </div>
+        <div>
+          <span className="hero-kicker"><CalendarDays size={18} /> {event.categoriaLabel}</span>
+          <h2>{event.titulo}</h2>
+          <p>{event.conteudo}</p>
+          <div className="event-detail-meta">
+            <span>{formatDate(event.dataEvento)}</span>
+            <span>{event.convidados}</span>
+            <span>{event.totalInscritos ?? 0} inscritos</span>
+            <span>{event.futuro ? 'Agenda aberta' : 'Gravado'}</span>
+          </div>
+          <div className="event-detail-actions">
+            {canRegister && (
+              <button
+                className={event.inscrito ? 'event-register-button active' : 'event-register-button'}
+                type="button"
+                onClick={handleRegistration}
+              >
+                <CheckCircle2 size={16} />
+                {event.inscrito ? 'Cancelar inscrição' : auth.authenticated ? 'Inscrever-se' : 'Entrar para se inscrever'}
+              </button>
+            )}
+            {event.urlVideo && (
+              <a className="ghost-button surface compact" href={event.urlVideo} target="_blank" rel="noreferrer">
+                <Video size={16} /> Abrir vídeo
+              </a>
+            )}
+            {isAdmin && (
+              <>
+                <button className="ghost-button surface compact" type="button" onClick={() => setEditing(true)}>
+                  <Pencil size={16} /> Editar
+                </button>
+                <button className="danger-button compact" type="button" onClick={() => deleteEvent(event.id)}>
+                  <Trash2 size={16} /> Remover
+                </button>
+              </>
+            )}
+          </div>
+        </div>
+      </section>
+
+      <div className="event-detail-grid">
+        <section className="event-detail-panel">
+          <SectionHeader icon={MessageSquareText} title="Descrição completa" />
+          <p>{event.conteudo}</p>
+        </section>
+
+        <section className="event-detail-panel">
+          <SectionHeader icon={UsersRound} title="Convidados" />
+          <p>{event.convidados}</p>
+        </section>
+
+        <section className="event-detail-panel event-detail-video">
+          <SectionHeader icon={Video} title="Vídeo do evento" />
+          {embedUrl ? (
+            <iframe
+              src={embedUrl}
+              title={`Video: ${event.titulo}`}
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowFullScreen
+            />
+          ) : (
+            <EmptyAction
+              text="O vídeo está disponível em uma página externa."
+              action="Abrir vídeo"
+              onClick={() => window.open(event.urlVideo, '_blank', 'noopener,noreferrer')}
+            />
+          )}
+        </section>
+
+        <aside className="event-detail-panel">
+          <SectionHeader icon={CheckCircle2} title="Status" />
+          <div className="event-status-list">
+            <span>{event.futuro ? 'Evento futuro' : 'Evento gravado'}</span>
+            <span>{event.inscrito ? 'Você está inscrito' : 'Inscrição não realizada'}</span>
+            <span>{event.totalInscritos ?? 0} participantes registrados</span>
+          </div>
+        </aside>
+      </div>
+
+      {editing && (
+        <EventFormModal
+          event={event}
+          saving={saving}
+          onClose={() => setEditing(false)}
+          onSubmit={handleEditSubmit}
+        />
+      )}
+    </div>
   );
 }
 
@@ -1888,7 +2110,7 @@ function AdminPanel({
   );
 }
 
-function EventItem({ event, auth, isAdmin = false, onEdit, onDelete, toggleEventRegistration }) {
+function EventItem({ event, auth, isAdmin = false, onEdit, onDelete, toggleEventRegistration, onOpenDetail }) {
   const canRegister = !isAdmin && event.futuro && toggleEventRegistration;
 
   return (
@@ -1912,6 +2134,11 @@ function EventItem({ event, auth, isAdmin = false, onEdit, onDelete, toggleEvent
           >
             <CheckCircle2 size={16} />
             {event.inscrito ? 'Inscrito' : auth?.authenticated ? 'Inscrever-se' : 'Entrar para se inscrever'}
+          </button>
+        )}
+        {onOpenDetail && (
+          <button className="event-detail-button" type="button" onClick={() => onOpenDetail(event.id)}>
+            Ver detalhes <ArrowRight size={15} />
           </button>
         )}
         {isAdmin && (
@@ -1951,6 +2178,7 @@ function titleFor(view) {
     profile: 'Minha jornada',
     learning: 'Trilhas de aprendizagem',
     events: 'Eventos',
+    'event-detail': 'Detalhe do evento',
     communities: 'Comunidades',
     admin: 'Administração'
   }[view];
@@ -1998,6 +2226,28 @@ function materialLabel(value) {
 
 function formatUploadedMaterial(uploaded) {
   return `${uploaded.fileName}||${uploaded.url}`;
+}
+
+function youtubeEmbedUrl(url) {
+  try {
+    const parsed = new URL(url);
+    const host = parsed.hostname.replace(/^www\./, '');
+    if (host === 'youtu.be') {
+      return `https://www.youtube.com/embed/${parsed.pathname.slice(1)}`;
+    }
+    if (host === 'youtube.com' || host === 'm.youtube.com') {
+      const videoId = parsed.searchParams.get('v');
+      if (videoId) {
+        return `https://www.youtube.com/embed/${videoId}`;
+      }
+      if (parsed.pathname.startsWith('/embed/')) {
+        return parsed.toString();
+      }
+    }
+  } catch {
+    return null;
+  }
+  return null;
 }
 
 function sortEvents(events) {

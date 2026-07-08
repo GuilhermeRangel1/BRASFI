@@ -1434,6 +1434,155 @@ h1 {
   background: #dff58f;
 }
 
+.event-detail-button {
+  min-height: 36px;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin-top: 10px;
+  margin-left: 8px;
+  padding: 0 12px;
+  border: 1px solid #cfe0c8;
+  border-radius: 8px;
+  color: #214232;
+  background: #ffffff;
+  font-weight: 800;
+}
+
+.event-detail-button:hover {
+  color: #10231c;
+  background: #eaf3e4;
+}
+
+.event-detail-page {
+  display: grid;
+  gap: 18px;
+}
+
+.detail-back-button {
+  width: fit-content;
+  min-height: 38px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 0;
+  border-radius: 8px;
+  padding: 0 12px;
+  color: #214232;
+  background: #e8f0e4;
+  font-weight: 800;
+}
+
+.detail-back-button svg {
+  transform: rotate(180deg);
+}
+
+.event-detail-hero {
+  min-height: 360px;
+  display: grid;
+  grid-template-columns: 92px minmax(0, 1fr);
+  gap: clamp(20px, 4vw, 42px);
+  align-items: end;
+  padding: clamp(24px, 5vw, 44px);
+  border-radius: 8px;
+  color: #ffffff;
+  background:
+    linear-gradient(110deg, rgba(16, 35, 28, 0.96), rgba(36, 107, 79, 0.72)),
+    url('/img/brasfi.jpg') center / cover;
+  box-shadow: 0 22px 58px rgba(29, 50, 38, 0.18);
+}
+
+.event-detail-hero h2 {
+  max-width: 980px;
+  margin-bottom: 14px;
+  font-size: clamp(2rem, 5vw, 4.3rem);
+  line-height: 1;
+}
+
+.event-detail-hero p {
+  max-width: 840px;
+  color: #e3eee1;
+  font-size: 1.04rem;
+  line-height: 1.65;
+}
+
+.event-detail-date {
+  width: 92px;
+  height: 92px;
+  background: #dff58f;
+  color: #10231c;
+}
+
+.event-detail-date strong {
+  font-size: 2.1rem;
+}
+
+.event-detail-meta,
+.event-detail-actions,
+.event-status-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+}
+
+.event-detail-meta span,
+.event-status-list span {
+  display: inline-flex;
+  align-items: center;
+  min-height: 32px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  color: #10231c;
+  background: #eef9c4;
+  font-size: 0.84rem;
+  font-weight: 800;
+}
+
+.event-detail-actions {
+  margin-top: 18px;
+}
+
+.event-detail-actions .event-register-button {
+  margin-top: 0;
+}
+
+.event-detail-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(300px, 0.8fr);
+  gap: 18px;
+  align-items: start;
+}
+
+.event-detail-panel {
+  display: grid;
+  gap: 12px;
+  padding: 18px;
+  border: 1px solid #e2e8df;
+  border-radius: 8px;
+  background: #ffffff;
+  box-shadow: 0 18px 42px rgba(37, 52, 43, 0.08);
+}
+
+.event-detail-panel p {
+  margin-bottom: 0;
+  color: #3f4e43;
+  line-height: 1.7;
+}
+
+.event-detail-video {
+  grid-column: 1 / -1;
+  justify-items: center;
+}
+
+.event-detail-video iframe {
+  width: 100%;
+  max-width: 1040px;
+  aspect-ratio: 16 / 9;
+  border: 0;
+  border-radius: 8px;
+  background: #10231c;
+}
+
 .admin-layout {
   display: grid;
   gap: 18px;
@@ -1929,6 +2078,7 @@ h1 {
 
   .community-layout,
   .admin-grid,
+  .event-detail-grid,
   .home-feature,
   .hub-section,
   .intro-section,
@@ -2049,9 +2199,20 @@ h1 {
   .home-hero,
   .admin-hero,
   .profile-hero,
+  .event-detail-hero,
   .track-hero {
     min-height: 420px;
     padding: 22px;
+  }
+
+  .event-detail-hero {
+    grid-template-columns: 1fr;
+    align-items: end;
+  }
+
+  .event-detail-date {
+    width: 76px;
+    height: 76px;
   }
 
   .home-hero,

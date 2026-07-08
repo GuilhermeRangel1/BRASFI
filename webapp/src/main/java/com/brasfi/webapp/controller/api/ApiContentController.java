@@ -156,6 +156,17 @@ public class ApiContentController {
                 .toList();
     }
 
+    @GetMapping("/events/{id}")
+    public ResponseEntity<?> eventDetail(
+            @PathVariable Long id,
+            @AuthenticationPrincipal CustomUserDetails currentUser
+    ) {
+        var usuario = currentUser == null ? null : currentUser.getUserEntity();
+        return eventoService.findById(id)
+                .<ResponseEntity<?>>map(evento -> ResponseEntity.ok(eventoInscricaoService.toResponse(evento, usuario)))
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse("Evento não encontrado.")));
+    }
+
     @GetMapping("/events/categories")
     public List<CategoryResponse> eventCategories() {
         return Arrays.stream(EventoCategoria.values())
